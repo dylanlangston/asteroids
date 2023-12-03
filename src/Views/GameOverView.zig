@@ -1,20 +1,13 @@
 const std = @import("std");
 const builtin = @import("builtin");
-const View = @import("./View.zig").View;
-const ViewModel = @import("../ViewModels/ViewModel.zig").ViewModel;
 const raylib = @import("raylib");
-const Views = @import("../ViewLocator.zig").Views;
-const Inputs = @import("../Inputs.zig").Inputs;
 const Shared = @import("../Shared.zig").Shared;
-const Colors = @import("../Colors.zig").Colors;
-const Logger = @import("../Logger.zig").Logger;
-const BaseView = @import("../Views/View.zig").View;
 const GameOverViewModel = @import("../ViewModels/GameOverViewModel.zig").GameOverViewModel;
 
 const vm: type = GameOverViewModel.GetVM();
 
-pub fn DrawFunction() Views {
-    raylib.clearBackground(Colors.Gray.Base);
+pub fn DrawFunction() Shared.View.Views {
+    raylib.clearBackground(Shared.Color.Gray.Base);
 
     const screenWidth: f32 = @floatFromInt(raylib.getScreenWidth());
     const screenHeight: f32 = @floatFromInt(raylib.getScreenHeight());
@@ -42,13 +35,13 @@ pub fn DrawFunction() Views {
             rec2,
             raylib.Vector2.init(0, 0),
             0,
-            Colors.Brown.Light,
+            Shared.Color.Brown.Light,
         );
     }
 
-    const foregroundColor = Colors.Blue.Base;
-    const backgroundColor = Colors.Blue.Light.alpha(0.75);
-    const accentColor = Colors.Blue.Dark;
+    const foregroundColor = Shared.Color.Blue.Base;
+    const backgroundColor = Shared.Color.Blue.Light.alpha(0.75);
+    const accentColor = Shared.Color.Blue.Dark;
     _ = accentColor;
 
     const background_rec = raylib.Rectangle.init(
@@ -94,17 +87,17 @@ pub fn DrawFunction() Views {
         foregroundColor,
     );
 
-    if (Inputs.A_Pressed()) {
+    if (Shared.Input.A_Pressed()) {
         if (vm.BackgroundTexture != null) {
             vm.BackgroundTexture.?.unload();
         }
-        return Views.Menu;
+        return Shared.View.Views.Menu;
     }
 
-    return Views.Game_Over;
+    return Shared.View.Views.Game_Over;
 }
 
-pub const GameOverView = View{
+pub const GameOverView = Shared.View.View{
     .DrawRoutine = &DrawFunction,
     .VM = &GameOverViewModel,
 };

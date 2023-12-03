@@ -16,7 +16,7 @@ pub const View = struct {
         }
     }
     pub inline fn deinit(self: View) void {
-        if (@intFromPtr(self.VM) != 0 and @intFromPtr(self.VM.*.DeInit) != 0) {
+        if (@intFromPtr(self.VM) != 0 and @intFromPtr(self.VM.*.DeInit) != 0 and (isInitialized == true or @intFromPtr(self.VM.*.Init) == 0)) {
             self.VM.*.DeInit();
             isInitialized = false;
         }

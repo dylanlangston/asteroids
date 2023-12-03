@@ -1,20 +1,15 @@
 const std = @import("std");
 const Shared = @import("../Shared.zig").Shared;
-const View = @import("./View.zig").View;
-const ViewModel = @import("../ViewModels/ViewModel.zig").ViewModel;
 const raylib = @import("raylib");
-const Views = @import("../ViewLocator.zig").Views;
-const Colors = @import("../Colors.zig").Colors;
-const Logger = @import("../Logger.zig").Logger;
 const DylanSplashScreenViewModel = @import("../ViewModels/DylanSplashScreenViewModel.zig").DylanSplashScreenViewModel;
 
 var framesCounter: f32 = 0;
-fn DrawFunction() Views {
+fn DrawFunction() Shared.View.Views {
     const vm = DylanSplashScreenViewModel.GetVM();
 
     framesCounter += raylib.getFrameTime() * 60;
 
-    raylib.clearBackground(Colors.Tone.Dark);
+    raylib.clearBackground(Shared.Color.Tone.Dark);
 
     const text = Shared.Locale.GetLocale().?.Dylan_Splash_Text;
     const font = Shared.Font.Get(.Unknown);
@@ -84,13 +79,13 @@ fn DrawFunction() Views {
 
     if (framesCounter >= 260) {
         framesCounter = 0;
-        return Views.Menu;
+        return Shared.View.Views.Menu;
     }
 
-    return Views.Dylan_Splash_Screen;
+    return Shared.View.Views.Dylan_Splash_Screen;
 }
 
-pub const DylanSplashScreenView = View{
+pub const DylanSplashScreenView = Shared.View.View{
     .DrawRoutine = DrawFunction,
     .VM = &DylanSplashScreenViewModel,
 };

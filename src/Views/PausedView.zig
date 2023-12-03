@@ -1,22 +1,14 @@
 const std = @import("std");
 const builtin = @import("builtin");
-const View = @import("./View.zig").View;
-const ViewModel = @import("../ViewModels/ViewModel.zig").ViewModel;
 const raylib = @import("raylib");
-const Views = @import("../ViewLocator.zig").Views;
-const Inputs = @import("../Inputs.zig").Inputs;
 const Shared = @import("../Shared.zig").Shared;
-const Colors = @import("../Colors.zig").Colors;
-const Logger = @import("../Logger.zig").Logger;
-const BaseView = @import("../Views/View.zig").View;
 const PausedViewModel = @import("../ViewModels/PausedViewModel.zig").PausedViewModel;
 const PauseOptions = @import("../ViewModels/PausedViewModel.zig").PauseOptions;
-const ViewLocator = @import("../ViewLocator.zig").ViewLocator;
 
 const vm: type = PausedViewModel.GetVM();
 
-pub fn DrawFunction() Views {
-    raylib.clearBackground(Colors.Blue.Base);
+pub fn DrawFunction() Shared.View.Views {
+    raylib.clearBackground(Shared.Color.Blue.Base);
 
     const screenWidth: f32 = @floatFromInt(raylib.getScreenWidth());
     const screenHeight: f32 = @floatFromInt(raylib.getScreenHeight());
@@ -44,13 +36,13 @@ pub fn DrawFunction() Views {
             rec2,
             raylib.Vector2.init(0, 0),
             0,
-            Colors.Brown.Light,
+            Shared.Color.Brown.Light,
         );
     }
 
-    const foregroundColor = Colors.Blue.Base;
-    const backgroundColor = Colors.Blue.Light.alpha(0.75);
-    const accentColor = Colors.Blue.Dark;
+    const foregroundColor = Shared.Color.Blue.Base;
+    const backgroundColor = Shared.Color.Blue.Light.alpha(0.75);
+    const accentColor = Shared.Color.Blue.Dark;
 
     const background_rec = raylib.Rectangle.init(
         startX,
@@ -141,37 +133,37 @@ pub fn DrawFunction() Views {
         if (vm.selection == PauseOptions.Quit) accentColor else foregroundColor,
     );
 
-    if (Inputs.Left_Pressed() and vm.selection != PauseOptions.Continue) {
+    if (Shared.Input.Left_Pressed() and vm.selection != PauseOptions.Continue) {
         vm.selection = PauseOptions.Continue;
     }
 
-    if (Inputs.Right_Pressed() and vm.selection != PauseOptions.Quit) {
+    if (Shared.Input.Right_Pressed() and vm.selection != PauseOptions.Quit) {
         vm.selection = PauseOptions.Quit;
     }
 
-    if (Inputs.A_Pressed()) {
+    if (Shared.Input.A_Pressed()) {
         if (vm.BackgroundTexture != null) {
             vm.BackgroundTexture.?.unload();
         }
         return GetSelection();
     }
 
-    return Views.Paused;
+    return Shared.View.Views.Paused;
 }
 
-inline fn GetSelection() Views {
+inline fn GetSelection() Shared.View.Views {
     switch (vm.selection) {
         PauseOptions.Continue => {
             return vm.View;
         },
         PauseOptions.Quit => {
-            ViewLocator.Destroy(vm.View);
-            return Views.Menu;
+            Shared.View.ViewLocator.Destroy(vm.View);
+            return Shared.View.Views.Menu;
         },
     }
 }
 
-pub const PausedView = View{
+pub const PausedView = Shared.View.View{
     .DrawRoutine = &DrawFunction,
     .VM = &PausedViewModel,
 };

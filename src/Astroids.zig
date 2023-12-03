@@ -1,76 +1,53 @@
 const builtin = @import("builtin");
 const std = @import("std");
 const raylib = @import("raylib");
-const vl = @import("./ViewLocator.zig");
 const Shared = @import("Shared.zig").Shared;
-const Locale = @import("Localelizer.zig").Locale;
-const Locales = @import("Localelizer.zig").Locales;
-const Logger = @import("Logger.zig").Logger;
-const Views = @import("ViewLocator.zig").Views;
-const Inputs = @import("Inputs.zig").Inputs;
-const JSController = @import("JSGameController.zig");
 
 pub inline fn main() void {
-
-    // Check that we can allocate memory
-    const alloc = comptime Shared.GetAllocator();
-    if (alloc.create(u1)) |f| {
-        defer alloc.destroy(f);
-    } else |err| {
-        std.debug.print("Failed to allocate!! {}", .{err});
-        return;
-    }
-
     // Cleanup code
     defer Shared.deinit();
-
-    const _settings = Shared.Settings.GetSettings();
+    const settings = Shared.Settings.GetSettings();
 
     // Set logging level
-    if (_settings.Debug) {
+    if (settings.Debug) {
         raylib.setTraceLogLevel(raylib.TraceLogLevel.log_all);
     } else {
         raylib.setTraceLogLevel(raylib.TraceLogLevel.log_info);
     }
 
     // Create window
-    Logger.Info("Creating Window");
+    Shared.Log.Info("Creating Window");
     raylib.setConfigFlags(
         @enumFromInt( //@intFromEnum(raylib.ConfigFlags.flag_window_always_run) +
             @intFromEnum(raylib.ConfigFlags.flag_msaa_4x_hint) +
             @intFromEnum(raylib.ConfigFlags.flag_window_resizable)),
     );
-    raylib.initWindow(_settings.CurrentResolution.Width, _settings.CurrentResolution.Height, "Scale Game!");
+    raylib.initWindow(settings.CurrentResolution.Width, settings.CurrentResolution.Height, "Astroids Game!");
     defer raylib.closeWindow();
     raylib.initAudioDevice();
     defer raylib.closeAudioDevice();
     raylib.setExitKey(.key_null);
-    raylib.setTargetFPS(_settings.TargetFPS);
+    raylib.setTargetFPS(settings.TargetFPS);
 
     // Default View on startup is the Splash Screen
-    var current_view: vl.Views = vl.Views.Raylib_Splash_Screen;
+    var current_view: Shared.View.Views = Shared.View.Views.Raylib_Splash_Screen;
 
-    if (_settings.Debug and _settings.DebugView != null) {
-        current_view = @enumFromInt(_settings.DebugView.?);
+    // If DebugView is configure use that instead
+    if (settings.Debug and settings.DebugView != null) {
+        current_view = @enumFromInt(settings.DebugView.?);
     }
     defer DeinitViews();
 
-    // Get the current view
-    var view = vl.ViewLocator.Build(current_view);
-    view.init();
-
-    Logger.Info_Formatted("Platform {}", .{builtin.os.tag});
-
     // Load locale
-    Logger.Info("Load Locale");
-    var locale: ?Locale = null;
+    Shared.Log.Info("Load Locale");
+    var locale: ?Shared.Locale.Locale = null;
     locale = Shared.Locale.GetLocale();
 
     // fallback if locale is not set
     if (locale == null) {
         // For now just set the locale to english since that's the only locale
         Shared.Settings.UpdateSettings(.{
-            .UserLocale = Locales.english,
+            .UserLocale = Shared.Locale.Locales.english,
         });
 
         // Refresh locale
@@ -79,7 +56,11 @@ pub inline fn main() void {
 
     raylib.setWindowTitle(locale.?.Title);
 
-    Logger.Info("Begin Game Loop");
+    // Get the current view
+    var view = Shared.View.ViewLocator.Build(current_view);
+    view.init();
+
+    Shared.Log.Info("Begin Game Loop");
     while (!raylib.windowShouldClose()) {
         raylib.beginDrawing();
         defer raylib.endDrawing();
@@ -94,7 +75,7 @@ pub inline fn main() void {
 
         if (new_view != current_view) {
             // get the next view
-            const next_view = vl.ViewLocator.Build(new_view);
+            const next_view = Shared.View.ViewLocator.Build(new_view);
 
             // deinit old view
             const should_deinit = !next_view.shouldBypassDeinit();
@@ -102,19 +83,21 @@ pub inline fn main() void {
 
             // Update the View
             view = next_view;
+
+            // Init new View
             view.init();
 
-            Logger.Debug_Formatted("New View: {}", .{new_view});
+            Shared.Log.Debug_Formatted("New View: {}", .{new_view});
         }
 
         // Quit main loop
-        if (new_view == Views.Quit) break;
+        if (new_view == Shared.View.Views.Quit) break;
     }
 }
 
 inline fn DeinitViews() void {
-    for (std.enums.values(Views)) |v| {
-        const view = vl.ViewLocator.Build(v);
+    for (std.enums.values(Shared.View.Views)) |v| {
+        const view = Shared.View.ViewLocator.Build(v);
         view.deinit();
     }
 }

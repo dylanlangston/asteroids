@@ -126,10 +126,16 @@ pub const Settings = struct {
     };
 
     const Resolution = struct {
-        Width: i16,
-        Height: i16,
+        Width: i32,
+        Height: i32,
     };
 };
+
+export fn updateWasmResolution(width: i32, height: i32) void {
+    Shared.Settings.UpdateSettings(.{
+        .CurrentResolution = Settings.Resolution{ .Width = width, .Height = height },
+    });
+}
 
 extern fn WASMLoad() [*c]const u8;
 extern fn WASMLoaded([*c]const u8) void;

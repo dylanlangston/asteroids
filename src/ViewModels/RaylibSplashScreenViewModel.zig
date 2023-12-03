@@ -1,11 +1,9 @@
 const std = @import("std");
 const raylib = @import("raylib");
-const ViewModel = @import("./ViewModel.zig").ViewModel;
 const Shared = @import("../Shared.zig").Shared;
 const States = @import("../Views/RaylibSplashScreenView.zig").States;
-const Logger = @import("../Logger.zig").Logger;
 
-pub const RaylibSplashScreenViewModel = ViewModel.Create(
+pub const RaylibSplashScreenViewModel = Shared.View.ViewModel.Create(
     struct {
         pub var framesCounter: f32 = 0;
         pub var lettersCount: f32 = 0;
@@ -27,26 +25,28 @@ pub const RaylibSplashScreenViewModel = ViewModel.Create(
             rightSideRecHeight = 16;
         }
 
-        pub inline fn Update() void {
+        pub inline fn Update(screenWidth: f32, screenHeight: f32, logoSize: f32, logoThickness: f32) void {
+            _ = screenHeight;
+            _ = screenWidth;
             switch (state) {
                 States.Blinking => {
                     framesCounter += raylib.getFrameTime() * 60;
-                    if (framesCounter >= 120) {
+                    if (framesCounter >= logoSize / 2) {
                         state = States.ExpandTopLeft;
                         framesCounter = 0;
                     }
                 },
                 States.ExpandTopLeft => {
-                    topSideRecWidth = @min(topSideRecWidth + (4 * raylib.getFrameTime() * 60), 256);
-                    leftSideRecHeight = @min(leftSideRecHeight + (4 * raylib.getFrameTime() * 60), 256);
+                    topSideRecWidth = @min(topSideRecWidth + ((logoThickness / 4) * raylib.getFrameTime() * 60), logoSize);
+                    leftSideRecHeight = @min(leftSideRecHeight + ((logoThickness / 4) * raylib.getFrameTime() * 60), logoSize);
 
-                    if (topSideRecWidth == 256) state = States.ExpandBottomRight;
+                    if (topSideRecWidth == logoSize) state = States.ExpandBottomRight;
                 },
                 States.ExpandBottomRight => {
-                    bottomSideRecWidth = @min(bottomSideRecWidth + (4 * raylib.getFrameTime() * 60), 256);
-                    rightSideRecHeight = @min(rightSideRecHeight + (4 * raylib.getFrameTime() * 60), 256);
+                    bottomSideRecWidth = @min(bottomSideRecWidth + ((logoThickness / 4) * raylib.getFrameTime() * 60), logoSize);
+                    rightSideRecHeight = @min(rightSideRecHeight + ((logoThickness / 4) * raylib.getFrameTime() * 60), logoSize);
 
-                    if (bottomSideRecWidth == 256) state = States.Letters;
+                    if (bottomSideRecWidth == logoSize) state = States.Letters;
                 },
                 States.Letters => {
                     framesCounter += raylib.getFrameTime() * 60;

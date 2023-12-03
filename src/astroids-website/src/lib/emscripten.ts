@@ -3,6 +3,7 @@ import { Localizer } from "$lib/localizer"
 export class Module {
 
     public requestFullscreen?: (lockPointer: boolean, resizeCanvas: boolean) => void;
+    public _updateWasmResolution?: (width: number, height: number) => void;
     public _updateWasmLocale?: (locale: number) => void;
     public _set_js_key?: (location: number, down: boolean) => void;
     public _requestPause?: () => void;

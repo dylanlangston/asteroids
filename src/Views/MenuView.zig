@@ -1,20 +1,14 @@
 const std = @import("std");
 const builtin = @import("builtin");
-const View = @import("./View.zig").View;
-const ViewModel = @import("../ViewModels/ViewModel.zig").ViewModel;
 const raylib = @import("raylib");
-const Views = @import("../ViewLocator.zig").Views;
-const Inputs = @import("../Inputs.zig").Inputs;
 const MenuViewModel = @import("../ViewModels/MenuViewModel.zig").MenuViewModel;
 const Selection = @import("../ViewModels/MenuViewModel.zig").Selection;
 const Shared = @import("../Shared.zig").Shared;
-const Colors = @import("../Colors.zig").Colors;
-const Logger = @import("../Logger.zig").Logger;
 
 const vm: type = MenuViewModel.GetVM();
 
-pub fn DrawFunction() Views {
-    raylib.clearBackground(Colors.Gray.Base);
+pub fn DrawFunction() Shared.View.Views {
+    raylib.clearBackground(Shared.Color.Gray.Base);
 
     const locale = Shared.Locale.GetLocale().?;
     const font = Shared.Font.Get(.Unknown);
@@ -32,9 +26,9 @@ pub fn DrawFunction() Views {
         vm.offset_y -= screenHeightF;
     }
 
-    const foregroundColor = Colors.Blue.Base;
-    const backgroundColor = Colors.Blue.Light.alpha(0.75);
-    const accentColor = Colors.Blue.Dark;
+    const foregroundColor = Shared.Color.Blue.Base;
+    const backgroundColor = Shared.Color.Blue.Light.alpha(0.75);
+    const accentColor = Shared.Color.Blue.Dark;
 
     // Title
     const titleFont = Shared.Font.Get(.Unknown);
@@ -54,7 +48,7 @@ pub fn DrawFunction() Views {
         ),
         titleFontsizeF,
         @floatFromInt(titleFont.glyphPadding),
-        Colors.Brown.Base,
+        Shared.Color.Brown.Base,
     );
 
     // raylib.drawText(
@@ -120,16 +114,16 @@ pub fn DrawFunction() Views {
         if (index == 3) break;
     }
 
-    if (Inputs.A_Pressed()) {
+    if (Shared.Input.A_Pressed()) {
         return GetSelection();
     }
 
     const selection_int = @intFromEnum(vm.selection);
-    if (Inputs.Up_Pressed() and selection_int > 0) {
+    if (Shared.Input.Up_Pressed() and selection_int > 0) {
         vm.selection = @enumFromInt(selection_int - 1);
     }
 
-    if (Inputs.Down_Pressed()) {
+    if (Shared.Input.Down_Pressed()) {
         if (builtin.target.os.tag == .wasi) {
             // Disable quit in WASM
             if (selection_int < 0) {
@@ -140,27 +134,27 @@ pub fn DrawFunction() Views {
         }
     }
 
-    return Views.Menu;
+    return Shared.View.Views.Menu;
 }
 
-inline fn GetSelection() Views {
+inline fn GetSelection() Shared.View.Views {
     switch (vm.selection) {
         Selection.Start => {
-            return Views.Menu;
+            return Shared.View.Views.Menu;
         },
         Selection.Settings => {
-            return Views.Settings;
+            return Shared.View.Views.Settings;
         },
         Selection.Quit => {
-            return Views.Quit;
+            return Shared.View.Views.Quit;
         },
         else => {
-            return Views.Menu;
+            return Shared.View.Views.Menu;
         },
     }
 }
 
-pub const MenuView = View{
+pub const MenuView = Shared.View.View{
     .DrawRoutine = DrawFunction,
     .VM = &MenuViewModel,
 };

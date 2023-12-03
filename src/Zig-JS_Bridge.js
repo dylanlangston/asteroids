@@ -1,6 +1,6 @@
 mergeInto(LibraryManager.library, {
   WASMSave: function(pointer, length) {
-    const settings = Module.ptrToString(pointer);
+    const settings = Module.UTF8ToString(pointer, length);
     window.localStorage.setItem("settings", settings);
   },
   WASMLoad: function() {

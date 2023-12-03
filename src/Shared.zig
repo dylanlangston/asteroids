@@ -2,43 +2,59 @@ const builtin = @import("builtin");
 const std = @import("std");
 const raylib = @import("raylib");
 const BaseView = @import("./Views/View.zig").View;
-const SettingsManager = @import("./Settings.zig").Settings;
+const SettingsManager = @import("Settings.zig").Settings;
 const LocalelizerLocale = @import("Localelizer.zig").Locale;
-const Locales = @import("Localelizer.zig").Locales;
+const LocalelizerLocales = @import("Localelizer.zig").Locales;
 const Localelizer = @import("Localelizer.zig").Localelizer;
 const AssetManager = @import("AssetManager.zig").AssetManager;
+const Inputs = @import("Inputs.zig").Inputs;
 const Logger = @import("Logger.zig").Logger;
 const PausedViewModel = @import("./ViewModels/PausedViewModel.zig").PausedViewModel;
 const GameOverViewModel = @import("./ViewModels/GameOverViewModel.zig").GameOverViewModel;
 const GameplayIntroViewModel = @import("./ViewModels/GameplayIntroViewModel.zig").GameplayIntroViewModel;
-const vl = @import("./ViewLocator.zig");
+const vl = @import("ViewLocator.zig");
 const Views = @import("ViewLocator.zig").Views;
+const V = @import("./Views/View.zig").View;
+const VM = @import("./ViewModels/ViewModel.zig").ViewModel;
+const Colors = @import("Colors.zig").Colors;
 
 pub const Shared = struct {
-    var gp: std.heap.GeneralPurposeAllocator(.{}) = GetGPAllocator();
-    inline fn GetGPAllocator() std.heap.GeneralPurposeAllocator(.{}) {
-        if (builtin.mode == .Debug) {
-            return std.heap.GeneralPurposeAllocator(.{ .safety = true }){};
-        }
+    const Alloc = struct {
+        pub var gp: std.heap.GeneralPurposeAllocator(.{}) = GetGPAllocator();
+        inline fn GetGPAllocator() std.heap.GeneralPurposeAllocator(.{}) {
+            if (builtin.mode == .Debug) {
+                if (builtin.os.tag == .wasi) {
+                    return std.heap.GeneralPurposeAllocator(.{
+                        .safety = true,
+                    }){};
+                }
+                return std.heap.GeneralPurposeAllocator(.{ .safety = true }){};
+            }
 
-        return undefined;
-    }
-    const allocator: std.mem.Allocator = InitAllocator();
-    inline fn InitAllocator() std.mem.Allocator {
-        if (builtin.os.tag == .wasi) {
-            return std.heap.raw_c_allocator;
-        } else if (builtin.mode == .Debug) {
-            return gp.allocator();
-        } else {
-            return std.heap.c_allocator;
+            return undefined;
         }
-    }
+        pub var arena: std.heap.ArenaAllocator = std.heap.ArenaAllocator.init(InitAllocator());
+        pub const allocator: std.mem.Allocator = arena.allocator();
+        inline fn InitAllocator() std.mem.Allocator {
+            if (builtin.os.tag == .wasi) {
+                return std.heap.raw_c_allocator;
+            } else if (builtin.mode == .Debug) {
+                return gp.allocator();
+            } else {
+                return std.heap.c_allocator;
+            }
+        }
+    };
 
     pub inline fn GetAllocator() std.mem.Allocator {
-        return allocator;
+        return Alloc.allocator;
     }
 
     pub const Log = Logger;
+
+    pub const Input = Inputs;
+
+    pub const Color = Colors;
 
     pub const Font = struct {
         pub const Fonts = AssetManager.Fonts;
@@ -100,17 +116,31 @@ pub const Shared = struct {
         }
     };
 
-    var loaded_settings: ?SettingsManager = null;
     pub const Settings = struct {
+        var loaded_settings: ?SettingsManager = null;
         pub fn GetSettings() SettingsManager {
             if (loaded_settings == null) {
-                loaded_settings = SettingsManager.load(allocator);
+                loaded_settings = SettingsManager.load(Alloc.allocator);
             }
             return loaded_settings.?;
         }
 
         pub fn UpdateSettings(newValue: anytype) void {
-            loaded_settings = SettingsManager.update(GetSettings(), newValue);
+            const original_settings = GetSettings();
+            loaded_settings = SettingsManager.update(original_settings, newValue);
+
+            if (original_settings.CurrentResolution.Width != loaded_settings.?.CurrentResolution.Width or
+                original_settings.CurrentResolution.Height != loaded_settings.?.CurrentResolution.Height)
+            {
+                raylib.setWindowSize(
+                    loaded_settings.?.CurrentResolution.Width,
+                    loaded_settings.?.CurrentResolution.Height,
+                );
+            }
+
+            if (original_settings.UserLocale != loaded_settings.?.UserLocale) {
+                _ = Locale.RefreshLocale();
+            }
 
             if (builtin.target.os.tag == .wasi) {
                 SaveNow();
@@ -118,18 +148,21 @@ pub const Shared = struct {
         }
 
         pub fn SaveNow() void {
-            _ = loaded_settings.?.save(allocator);
+            _ = loaded_settings.?.save(Alloc.allocator);
         }
     };
 
     pub const Locale = struct {
+        pub const Locale = LocalelizerLocale;
+        pub const Locales = LocalelizerLocales;
+
         var locale: ?LocalelizerLocale = null;
         inline fn GetLocale_Internal() ?LocalelizerLocale {
             const user_locale = Shared.Settings.GetSettings().UserLocale;
-            if (user_locale == Locales.unknown) return null;
+            if (user_locale == LocalelizerLocales.unknown) return null;
 
             if (locale == null) {
-                locale = Localelizer.get(user_locale, allocator) catch return null;
+                locale = Localelizer.get(user_locale, Alloc.allocator) catch return null;
             }
 
             return locale;
@@ -150,6 +183,8 @@ pub const Shared = struct {
     pub const View = struct {
         pub const ViewLocator = vl.ViewLocator;
         pub const Views = vl.Views;
+        pub const ViewModel = VM;
+        pub const View = V;
 
         pub inline fn Pause(view: vl.Views) vl.Views {
             const paused_vm = PausedViewModel.GetVM();
@@ -166,12 +201,15 @@ pub const Shared = struct {
 
     pub inline fn deinit() void {
         // GeneralPurposeAllocator
-        defer _ = gp.deinit();
+        defer _ = Alloc.gp.deinit();
+
+        // Arena Allocator
+        defer Alloc.arena.deinit();
 
         // Localelizer
         defer Localelizer.deinit();
 
         // Settings
-        _ = loaded_settings.?.save(allocator);
+        _ = Settings.loaded_settings.?.save(Alloc.allocator);
     }
 };

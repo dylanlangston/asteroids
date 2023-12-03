@@ -1,57 +1,147 @@
 const std = @import("std");
 const Shared = @import("../Shared.zig").Shared;
-const View = @import("./View.zig").View;
-const ViewModel = @import("../ViewModels/ViewModel.zig").ViewModel;
+const View = @import("View.zig").View;
+const Views = Shared.View.Views;
+const ViewModel = Shared.View.ViewModel;
 const raylib = @import("raylib");
-const Views = @import("../ViewLocator.zig").Views;
 const SplashScreenViewModel = @import("../ViewModels/RaylibSplashScreenViewModel.zig").RaylibSplashScreenViewModel;
 
 const logo_color = raylib.Color.orange;
+const vm = SplashScreenViewModel.GetVM();
 
 inline fn DrawSplashScreen() Views {
-    const vm = SplashScreenViewModel.GetVM();
-
-    // Update View Model
-    vm.Update();
-
     var screen_color = raylib.Color.white;
     if (vm.alpha < 1.0) {
         screen_color = raylib.Color.black.brightness(vm.alpha);
     }
     raylib.clearBackground(screen_color);
 
-    const screenWidth = raylib.getScreenWidth();
-    const screenHeight = raylib.getScreenHeight();
+    const screenWidth: f32 = @floatFromInt(raylib.getScreenWidth());
+    const screenHeight: f32 = @floatFromInt(raylib.getScreenHeight());
 
-    const logoPositionX = @divTrunc(screenWidth, 2) - 128;
-    const logoPositionY = @divTrunc(screenHeight, 2) - 128;
+    const logoSize: f32 = screenHeight / (3 + (1 / 3));
+    const logoThickness: f32 = screenWidth / 100;
+
+    const logoPositionX: f32 = (screenWidth - logoSize) / 2;
+    const logoPositionY: f32 = (screenHeight - logoSize) / 2;
+
+    // Update View Model
+    vm.Update(screenWidth, screenHeight, logoSize, logoThickness);
 
     switch (vm.state) {
         States.Blinking => {
-            if (@rem(@divTrunc(vm.framesCounter, 15), 2) == 0)
-                raylib.drawRectangle(logoPositionX, logoPositionY, 16, 16, logo_color);
+            if (@rem(@divTrunc(vm.framesCounter, 15), 2) == 0) {
+                raylib.drawRectangleRec(
+                    raylib.Rectangle.init(
+                        logoPositionX,
+                        logoPositionY,
+                        logoThickness,
+                        logoThickness,
+                    ),
+                    logo_color,
+                );
+            }
         },
         States.ExpandTopLeft => {
-            raylib.drawRectangle(logoPositionX, logoPositionY, @intFromFloat(vm.topSideRecWidth), 16, logo_color);
-            raylib.drawRectangle(logoPositionX, logoPositionY, 16, @intFromFloat(vm.leftSideRecHeight), logo_color);
+            lines.top(
+                logoPositionX,
+                logoPositionY,
+                logoThickness,
+                logoSize,
+                false,
+            );
+            lines.left(
+                logoPositionX,
+                logoPositionY,
+                logoThickness,
+                logoSize,
+                false,
+            );
         },
         States.ExpandBottomRight => {
-            raylib.drawRectangle(logoPositionX, logoPositionY, @intFromFloat(vm.topSideRecWidth), 16, logo_color);
-            raylib.drawRectangle(logoPositionX, logoPositionY, 16, @intFromFloat(vm.leftSideRecHeight), logo_color);
+            lines.top(
+                logoPositionX,
+                logoPositionY,
+                logoThickness,
+                logoSize,
+                true,
+            );
+            lines.left(
+                logoPositionX,
+                logoPositionY,
+                logoThickness,
+                logoSize,
+                true,
+            );
 
-            raylib.drawRectangle(logoPositionX + 240, logoPositionY, 16, @intFromFloat(vm.rightSideRecHeight), logo_color);
-            raylib.drawRectangle(logoPositionX, logoPositionY + 240, @intFromFloat(vm.bottomSideRecWidth), 16, logo_color);
+            lines.bottom(
+                logoPositionX,
+                logoPositionY,
+                logoThickness,
+                logoSize,
+                false,
+            );
+            lines.right(
+                logoPositionX,
+                logoPositionY,
+                logoThickness,
+                logoSize,
+                false,
+            );
         },
         States.Letters => {
-            raylib.drawRectangle(logoPositionX, logoPositionY, @intFromFloat(vm.topSideRecWidth), 16, raylib.fade(logo_color, vm.alpha));
-            raylib.drawRectangle(logoPositionX, logoPositionY + 16, 16, @intFromFloat(vm.leftSideRecHeight - 32), raylib.fade(logo_color, vm.alpha));
+            raylib.drawRectangleRec(
+                raylib.Rectangle.init(
+                    (screenWidth - logoSize) / 2,
+                    (screenHeight - logoSize) / 2,
+                    logoSize,
+                    logoSize,
+                ),
+                raylib.fade(screen_color, vm.alpha),
+            );
 
-            raylib.drawRectangle(logoPositionX + 240, logoPositionY + 16, 16, @intFromFloat(vm.rightSideRecHeight - 32), raylib.fade(logo_color, vm.alpha));
-            raylib.drawRectangle(logoPositionX, logoPositionY + 240, @intFromFloat(vm.bottomSideRecWidth), 16, raylib.fade(logo_color, vm.alpha));
+            lines.top(
+                logoPositionX,
+                logoPositionY,
+                logoThickness,
+                logoSize,
+                true,
+            );
+            lines.left(
+                logoPositionX,
+                logoPositionY,
+                logoThickness,
+                logoSize,
+                true,
+            );
 
-            raylib.drawRectangle(@divTrunc(screenWidth, 2) - 112, @divTrunc(screenHeight, 2) - 112, 224, 224, raylib.fade(screen_color, vm.alpha));
+            lines.bottom(
+                logoPositionX,
+                logoPositionY,
+                logoThickness,
+                logoSize,
+                true,
+            );
+            lines.right(
+                logoPositionX,
+                logoPositionY,
+                logoThickness,
+                logoSize,
+                true,
+            );
 
-            raylib.drawText(raylib.textSubtext("raylib-zig", 0, @intFromFloat(vm.lettersCount)), @divTrunc(screenWidth, 2) - 96, @divTrunc(screenHeight, 2) + 57, 41, raylib.fade(logo_color, vm.alpha));
+            const fontSizeF: f32 = screenHeight / 19;
+            const fontSize: i32 = @intFromFloat(fontSizeF);
+            const text = "raylib-zig";
+            const textWidth: f32 = @floatFromInt(raylib.measureText(text, fontSize));
+
+            raylib.drawText(
+                raylib.textSubtext("raylib-zig", 0, @intFromFloat(vm.lettersCount)),
+                @intFromFloat((screenWidth - textWidth) / 2),
+                @intFromFloat(logoPositionY + logoSize - fontSizeF - (logoThickness * 2)),
+                fontSize,
+                raylib.fade(logo_color, vm.alpha),
+            );
         },
         States.Exit => {
             return Views.Dylan_Splash_Screen;
@@ -60,6 +150,80 @@ inline fn DrawSplashScreen() Views {
 
     return Views.Raylib_Splash_Screen;
 }
+
+const lines = struct {
+    pub fn top(
+        logoPositionX: f32,
+        logoPositionY: f32,
+        logoThickness: f32,
+        logoSize: f32,
+        expanded: bool,
+    ) void {
+        raylib.drawRectangleRec(
+            raylib.Rectangle.init(
+                logoPositionX,
+                logoPositionY,
+                if (expanded) logoSize else vm.topSideRecWidth,
+                logoThickness,
+            ),
+            logo_color,
+        );
+    }
+
+    pub fn left(
+        logoPositionX: f32,
+        logoPositionY: f32,
+        logoThickness: f32,
+        logoSize: f32,
+        expanded: bool,
+    ) void {
+        raylib.drawRectangleRec(
+            raylib.Rectangle.init(
+                logoPositionX,
+                logoPositionY,
+                logoThickness,
+                if (expanded) logoSize else vm.leftSideRecHeight,
+            ),
+            logo_color,
+        );
+    }
+
+    pub fn bottom(
+        logoPositionX: f32,
+        logoPositionY: f32,
+        logoThickness: f32,
+        logoSize: f32,
+        expanded: bool,
+    ) void {
+        raylib.drawRectangleRec(
+            raylib.Rectangle.init(
+                logoPositionX + logoSize - logoThickness,
+                logoPositionY,
+                logoThickness,
+                if (expanded) logoSize else vm.rightSideRecHeight,
+            ),
+            logo_color,
+        );
+    }
+
+    pub fn right(
+        logoPositionX: f32,
+        logoPositionY: f32,
+        logoThickness: f32,
+        logoSize: f32,
+        expanded: bool,
+    ) void {
+        raylib.drawRectangleRec(
+            raylib.Rectangle.init(
+                logoPositionX,
+                logoPositionY + logoSize - logoThickness,
+                if (expanded) logoSize else vm.bottomSideRecWidth,
+                logoThickness,
+            ),
+            logo_color,
+        );
+    }
+};
 
 fn DrawFunction() Views {
     if (Shared.Settings.GetSettings().Debug) {

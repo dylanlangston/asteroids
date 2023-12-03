@@ -1,5 +1,4 @@
 const std = @import("std");
-const ViewModel = @import("./ViewModel.zig").ViewModel;
 const Shared = @import("../Shared.zig").Shared;
 const Logger = @import("../Logger.zig").Logger;
 const raylib = @import("raylib");
@@ -11,7 +10,7 @@ pub const Selection = enum {
     None,
 };
 
-pub const MenuViewModel = ViewModel.Create(
+pub const MenuViewModel = Shared.View.ViewModel.Create(
     struct {
         pub var selection = Selection.Start;
         pub var Rectangles: [std.enums.directEnumArrayLen(Selection, 0) - 1]raylib.Rectangle = undefined;
@@ -44,10 +43,6 @@ pub const MenuViewModel = ViewModel.Create(
 
 fn init() void {
     MenuViewModel.GetVM().offset_y = 0;
-
-    Logger.Info("Init Menu View Model");
 }
 
-fn deinit() void {
-    Logger.Info("DeInit Menu View Model");
-}
+fn deinit() void {}
