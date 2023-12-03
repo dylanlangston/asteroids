@@ -22,11 +22,10 @@ pub const Settings = struct {
         };
 
         if (builtin.target.os.tag == .wasi) {
-            WASMSave(
+            return WASMSave(
                 settings.items.ptr,
                 settings.items.len,
             );
-            return true;
         }
 
         var settings_file = std.fs.cwd().createFile(settingsFile, .{ .read = true }) catch |err| {
