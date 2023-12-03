@@ -1,0 +1,75 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Build",
+            "type": "shell",
+            "command": "zig build -Doptimize=Debug",
+            "problemMatcher": [],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
+        },
+        {
+            "label": "Build ReleaseFast",
+            "type": "shell",
+            "command": "zig build -Doptimize=ReleaseFast",
+            "problemMatcher": [],
+            "group": {
+                "kind": "build",
+                "isDefault": false
+            }
+        },
+        {
+            "label": "Build ReleaseSafe",
+            "type": "shell",
+            "command": "zig build -Doptimize=ReleaseSafe",
+            "problemMatcher": [],
+            "group": {
+                "kind": "build",
+                "isDefault": false
+            }
+        },
+        {
+            "label": "Build ReleaseSmall",
+            "type": "shell",
+            "command": "zig build -Doptimize=ReleaseSmall",
+            "problemMatcher": [],
+            "group": {
+                "kind": "build",
+                "isDefault": false
+            }
+        },
+        {
+            "label": "Build Web",
+            "type": "shell",
+            "command": "zig build -Dtarget=wasm32-emscripten -Doptimize=ReleaseFast",
+            "problemMatcher": [],
+            "group": {
+                "kind": "build",
+                "isDefault": false
+            }
+        },
+        {
+            "label": "Run",
+            "type": "shell",
+            "command": "zig build run",
+            "problemMatcher": [],
+            "group": {
+                "kind": "none",
+                "isDefault": false
+            }
+        },
+        {
+            "label": "Test",
+            "type": "shell",
+            "command": "zig build test",
+            "problemMatcher": [],
+            "group": {
+                "kind": "test",
+                "isDefault": false
+            }
+        }
+    ]
+}

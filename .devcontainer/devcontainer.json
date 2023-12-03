@@ -1,0 +1,17 @@
+{
+	"name": "Astroids Game",
+	"image": "mcr.microsoft.com/devcontainers/universal:2",
+	"features": {
+		"ghcr.io/devcontainers-contrib/features/zig:1": {}
+	},
+	"postCreateCommand": "git submodule update --init --recursive;cd src/astroids-website/; npm install; cd ../../",
+	"customizations": {
+		"vscode": {
+			"extensions": [
+				"svelte.svelte-vscode",
+				"ziglang.vscode-zig",
+				"vadimcn.vscode-lldb"
+			]
+		}
+	}
+}

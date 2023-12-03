@@ -1,0 +1,119 @@
+name: Deploy Pages
+
+on:
+  push:
+    branches: ["main"]
+    
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Checkout submodules
+        uses: snickerbockers/submodules-init@v4
+      - name: Setup Pages
+        uses: actions/configure-pages@v3
+      - name: Setup Zig
+        uses: goto-bus-stop/setup-zig@v2.1.1
+        with:
+          version: 0.11.0
+          cache: ${{ steps.detect-package-manager.outputs.manager }}
+      - name: Setup Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: "16"
+          cache: ${{ steps.detect-package-manager.outputs.manager }}
+          cache-dependency-path: "${{ github.workspace }}/src/astroids-website"
+      - name: Install Node Modules
+        uses: bahmutov/npm-install@v1.6.0
+        with:
+          # Working directory to specify subfolder in which dependencies are defined
+          working-directory: "${{ github.workspace }}/src/astroids-website"
+      - name: Zig Cache
+        uses: Hanaasagi/zig-action-cache@v1.1.5
+        with:
+          cache-directories: "${{ github.workspace }}/src/emscripten/upstream/"
+      - name: Build Zig
+        run: |
+          cd ${{ github.workspace }}
+          zig build -Dtarget=wasm32-emscripten -Doptimize=ReleaseFast
+      - name: Binaryen Optimize
+        run: |
+          cd ${{ github.workspace }}/src/astroids-website
+          npm exec --package=binaryen -c 'wasm-opt ./static/astroids.wasm -all --post-emscripten --low-memory-unused -tnh --converge -Oz --flatten --rereloop -Oz -Oz -o ./static/astroids.wasm'
+      - name: Build Svelte
+        run: |
+          cd ${{ github.workspace }}/src/astroids-website
+          npm run build
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v2
+        with:
+          path: '${{ github.workspace }}/src/astroids-website/build'
+
+  deploy:
+    needs: build
+    permissions:
+      pages: write      # to deploy to Pages
+      id-token: write   # to verify the deployment originates from an appropriate source
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v2
+        
+  release:
+    runs-on: ubuntu-latest
+    needs: build
+    permissions:
+      contents: write
+    steps:
+    - name: Download artifact
+      uses: actions/download-artifact@v2
+      with:
+        name: github-pages
+        path: astroids
+    - name: Set current datetime
+      id: set_datetime
+      run: echo "datetime=$(date +"%Y%m%d%H%M%S")" >> "$GITHUB_OUTPUT"
+    - name: Create Release
+      id: create_release
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: v${{ steps.set_datetime.outputs.datetime }}
+        release_name: Release v${{ steps.set_datetime.outputs.datetime }}
+        body: Astroids Game - Prerelease v${{ steps.set_datetime.outputs.datetime }}
+        draft: false
+        prerelease: true
+    - name: Create ZIP
+      run: |
+        cd ./astroids
+        mkdir ./astroids
+        tar -xvf ./artifact.tar -C ./astroids
+        zip -r ../astroids.zip ./astroids/
+    - name: Upload Release Asset
+      id: upload-release-asset
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: ./astroids.zip
+        asset_name: astroids.zip
+        asset_content_type: application/zip

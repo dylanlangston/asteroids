@@ -1,0 +1,45 @@
+{
+    "configurations": [
+        {
+            "name": "Debug Web",
+            "request": "launch",
+            "runtimeArgs": [
+                "run",
+                "dev-open"
+            ],
+            "runtimeExecutable": "npm",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "type": "node",
+            "localRoot": "${workspaceFolder}/src/astroids-website",
+            "preLaunchTask": "Build Web",
+        },
+        {
+            "type": "lldb",
+            "request": "custom",
+            "name": "Debug",
+            "targetCreateCommands": [
+                "target create ${workspaceFolder}/zig-out/bin/Astroids"
+            ],
+            "processCreateCommands": [
+                "process launch"
+            ],
+            "preLaunchTask": "Build",
+            "internalConsoleOptions": "openOnSessionStart"
+        },
+        {
+            "type": "lldb",
+            "request": "custom",
+            "name": "Release",
+            "targetCreateCommands": [
+                "target create ${workspaceFolder}/zig-out/bin/Astroids"
+            ],
+            "processCreateCommands": [
+                "process launch"
+            ],
+            "preLaunchTask": "Build ReleaseFast",
+            "internalConsoleOptions": "openOnSessionStart"
+        },
+    ]
+}
