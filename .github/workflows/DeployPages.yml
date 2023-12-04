@@ -128,3 +128,7 @@ jobs:
         asset_path: ./astroids.zip
         asset_name: astroids.zip
         asset_content_type: application/zip
+#TODO - Publish to itch.io as part of the build
+# https://docs.github.com/en/actions/security-guides/using-secrets-in-github-actions
+# https://itch.io/docs/butler/login.html#running-butler-from-ci-builds-travis-ci-gitlab-ci-etc
+# https://github.com/marketplace/actions/butler-push
