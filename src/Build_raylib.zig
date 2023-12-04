@@ -121,7 +121,7 @@ pub fn build(b: *std.Build) !void {
 }
 
 const emccOutputDir = "zig-out" ++ std.fs.path.sep_str ++ "htmlout" ++ std.fs.path.sep_str;
-const emccOutputFile = "index.html";
+const emccOutputFile = "astroids.js";
 pub fn emscriptenRunStep(b: *std.Build) !*std.Build.Step.Run {
     // Find emrun.
     if (b.sysroot == null) {
@@ -228,7 +228,7 @@ pub fn linkWithEmscripten(
         "-O3",
         "--emrun",
         "--no-entry",
-        "-sEXPORTED_FUNCTIONS=['_malloc','_free','_main','_updateWasmResolution','_updateWasmLocale','_set_js_key']",
+        "-sEXPORTED_FUNCTIONS=['_malloc','_free','_main','_updateWasmResolution','_updateWasmLocale','_set_js_key','_wizer_initialize']",
         "-sEXPORTED_RUNTIME_METHODS=allocateUTF8,UTF8ToString",
         "--js-library=src/Zig-JS_Bridge.js",
         "-sWASM=1",
@@ -237,6 +237,13 @@ pub fn linkWithEmscripten(
         "-sTOTAL_MEMORY=32MB",
         "-sABORTING_MALLOC=0",
         "-sASSERTIONS",
+        "-sVerbose=1",
+        "-sOFFSCREENCANVAS_SUPPORT=1",
+        "-sWASMFS=1",
+        "-MINIMAL_RUNTIME=2",
+        //"-sMINIMAL_RUNTIME_STREAMING_WASM_INSTANTIATION=1",
+        "-sMALLOC=emmalloc",
+        //"-sMAIN_MODULE=1",
     });
     return emcc_command;
 }

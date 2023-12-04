@@ -199,6 +199,23 @@ pub const Shared = struct {
         }
     };
 
+    pub inline fn init() !void {
+        for (std.enums.values(Locale.Locales)) |locale| {
+            _ = try Localelizer.get(locale, Alloc.allocator);
+        }
+
+        for (std.enums.values(Shared.View.Views)) |view| {
+            var v = Shared.View.ViewLocator.Build(view);
+            v.init();
+        }
+
+        raylib.setConfigFlags(
+            @enumFromInt( //@intFromEnum(raylib.ConfigFlags.flag_window_always_run) +
+                @intFromEnum(raylib.ConfigFlags.flag_msaa_4x_hint) +
+                @intFromEnum(raylib.ConfigFlags.flag_window_resizable)),
+        );
+    }
+
     pub inline fn deinit() void {
         // GeneralPurposeAllocator
         defer _ = Alloc.gp.deinit();
@@ -213,3 +230,10 @@ pub const Shared = struct {
         _ = Settings.loaded_settings.?.save(Alloc.allocator);
     }
 };
+
+export fn wizer_initialize() void {
+    // Put init code here but can't use IO...
+    Shared.init() catch {
+        @panic("Error durring init");
+    };
+}

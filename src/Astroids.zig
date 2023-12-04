@@ -4,8 +4,12 @@ const raylib = @import("raylib");
 const Shared = @import("Shared.zig").Shared;
 
 pub inline fn main() void {
-    // Cleanup code
+    // On WASM we pre-init using Wizer
+    if (builtin.target.os.tag != .wasi) Shared.init() catch {
+        @panic("Error durring init");
+    };
     defer Shared.deinit();
+
     const settings = Shared.Settings.GetSettings();
 
     // Set logging level

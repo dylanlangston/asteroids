@@ -41,6 +41,12 @@ jobs:
         with:
           # Working directory to specify subfolder in which dependencies are defined
           working-directory: "${{ github.workspace }}/src/astroids-website"
+      - name: Install Wizer
+        uses: baptiste0928/cargo-install@v2.2.0
+        with:
+          crate: wizer
+          # Enable all features - https://docs.rs/crate/wizer/latest/features
+          features: structopt,env_logger,wasmprinter
       - name: Zig Cache
         uses: Hanaasagi/zig-action-cache@v1.1.5
         with:
@@ -49,10 +55,15 @@ jobs:
         run: |
           cd ${{ github.workspace }}
           zig build -Dtarget=wasm32-emscripten -Doptimize=ReleaseFast
+      - name: Wizer Pre-Init 
+        run: |
+          cd ${{ github.workspace }}/src/astroids-website
+          wizer ./static/astroids.wasm --init-func wizer_initialize -o ./static/astroids-initialized.wasm 
       - name: Binaryen Optimize
         run: |
           cd ${{ github.workspace }}/src/astroids-website
-          npm exec --package=binaryen -c 'wasm-opt ./static/astroids.wasm -all --post-emscripten --low-memory-unused -tnh --converge -Oz --flatten --rereloop -Oz -Oz -o ./static/astroids.wasm'
+          npm exec --package=binaryen -c 'wasm-opt ./static/astroids-initialized.wasm -all --post-emscripten --low-memory-unused -tnh --converge -Oz --flatten --rereloop -Oz -Oz -o ./static/astroids.wasm'
+          rm ./static/astroids.wasm
       - name: Build Svelte
         run: |
           cd ${{ github.workspace }}/src/astroids-website

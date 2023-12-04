@@ -134,7 +134,7 @@ pub fn copyWASMRunStep(b: *std.Build, dependsOn: *std.Build.Step, cwd_path: []co
             cwd_path,
             "zig-out",
             "htmlout",
-            "index.js",
+            "astroids.js",
         }),
         b.pathJoin(&[_][]const u8{
             cwd_path,
@@ -150,7 +150,7 @@ pub fn copyWASMRunStep(b: *std.Build, dependsOn: *std.Build.Step, cwd_path: []co
             cwd_path,
             "zig-out",
             "htmlout",
-            "index.wasm",
+            "astroids.wasm",
         }),
         b.pathJoin(&[_][]const u8{
             cwd_path,
