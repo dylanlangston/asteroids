@@ -117,14 +117,10 @@ export class Module {
         globalThis.console.error(text);
     }
     
-    public canvas: HTMLCanvasElement = (() => {
+    public get canvas(): HTMLCanvasElement {
         const e = <HTMLCanvasElement>document.getElementById("canvas");
-        e?.addEventListener("webglcontextlost", (e => {
-            alert("WebGL context lost. You will need to reload the page.");
-            e.preventDefault();
-        }), !1);
         return e;
-    })();
+    }
 
     public setStatus(e: string): void {
         Module.setStatus(e);

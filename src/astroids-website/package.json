@@ -35,6 +35,8 @@
 	},
 	"type": "module",
 	"dependencies": {
-		"browser-dtector": "^4.1.0"
+		"@rollup/plugin-json": "^6.0.1",
+		"browser-dtector": "^4.1.0",
+		"svelte-i18n": "^4.0.0"
 	}
 }

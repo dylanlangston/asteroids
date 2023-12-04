@@ -1,0 +1,20 @@
+{
+    "page": {
+        "Starting": "Démarrage en cours...",
+        "Downloading": "Téléchargement en cours...",
+        "View_Source": "Voir le code source",
+        "Fullscreen": "Plein écran",
+        "Exit_Fullscreen": "Quitter le plein écran",
+        "Rotate": "Rotation !",
+        "Resize": "Redimensionner !",
+        "Exception": "Exception générée, consultez la console JavaScript.\nRechargez la page pour réessayer."
+    },
+    "controls": {
+        "Pause": "Pause",
+        "Up": "Haut",
+        "Down": "Bas",
+        "Left": "Gauche",
+        "Right": "Droite",
+        "A": "A"
+    }
+}

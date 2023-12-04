@@ -1,3 +1,11 @@
+import {
+    _,
+    getLocaleFromNavigator,
+    isLoading,
+    register,
+    init,
+    locale
+} from "svelte-i18n";
 
 export enum Locales {
     unknown = 0,
@@ -31,6 +39,19 @@ class LocaleGroup {
 }
 
 export class Localizer {
+    private static _ = new Localizer();
+
+    constructor() {
+        register("en", () => import("../locales/en.json"));
+        register("es", () => import("../locales/es.json"));
+        register("fr", () => import("../locales/fr.json"));
+        
+        init({
+            fallbackLocale: "en",
+            initialLocale: getLocaleFromNavigator()
+        });
+    }
+
     public static GetLocale(): Locales {
         const allLocales = Object.entries(Locales).map((_, locale) => new LocaleGroup(locale));
         const sortedLocales = allLocales.filter(l => l.Index > -1).sort((a, b) => a.Index - b.Index);

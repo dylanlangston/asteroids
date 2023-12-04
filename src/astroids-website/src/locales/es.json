@@ -1,0 +1,20 @@
+{
+    "page": {
+        "Starting": "Iniciando...",
+        "Downloading": "Descargando...",
+        "View_Source": "Ver código fuente",
+        "Fullscreen": "Pantalla completa",
+        "Exit_Fullscreen": "Salir de pantalla completa",
+        "Rotate": "¡Rotar!",
+        "Resize": "¡Cambiar tamaño!",
+        "Exception": "Excepción lanzada, consulte la consola de JavaScript.\nRecargue la página para intentarlo de nuevo."
+    },
+    "controls": {
+        "Pause": "Pausa",
+        "Up": "Arriba",
+        "Down": "Abajo",
+        "Left": "Izquierda",
+        "Right": "Derecha",
+        "A": "A"
+    }
+}

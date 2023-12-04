@@ -1,6 +1,7 @@
 <script lang="ts">
     import { Button } from "$lib/gameController";
     import { onMount} from "svelte";
+    import { _ } from "svelte-i18n";
 
 
     export let handleButtonPressed = (button: Button) => {
@@ -156,10 +157,10 @@
   on:pointercancel={e => deselectDpad()}
   on:lostpointercapture={e => deselectDpad()}
   class="absolute bottom-10 left-4 z-10 m-auto p-1 grid grid-cols-3 grid-rows-3 w-fit h-fit items-center justify-items-center bg-slate-50/[.5] rounded-full select-none touch-none">
-    <button id="up" title="Up" class="row-start-1 col-start-2 bg-black/[.5] rounded-t-lg text-black" value={Button.Up}><i class="arrow up"></button>
-    <button id="left" title="Left" class="row-start-2 col-start-1 bg-black/[.5] rounded-l-lg text-black" value={Button.Left}><i class="arrow left"></button>
-    <button id="down" title="Down" class="row-start-3 col-start-2 bg-black/[.5] rounded-b-lg text-black" value={Button.Down}><i class="arrow down"></button>
-    <button id="right" title="Right" class="row-start-2 col-start-3 bg-black/[.5] rounded-r-lg text-black" value={Button.Right}><i class="arrow right"></button>
+    <button id="up" title="{$_('controls.Up')}" class="row-start-1 col-start-2 bg-black/[.5] rounded-t-lg text-black" value={Button.Up}><i class="arrow up"></button>
+    <button id="left" title="{$_('controls.Left')}" class="row-start-2 col-start-1 bg-black/[.5] rounded-l-lg text-black" value={Button.Left}><i class="arrow left"></button>
+    <button id="down" title="{$_('controls.Down')}" class="row-start-3 col-start-2 bg-black/[.5] rounded-b-lg text-black" value={Button.Down}><i class="arrow down"></button>
+    <button id="right" title="{$_('controls.Right')}" class="row-start-2 col-start-3 bg-black/[.5] rounded-r-lg text-black" value={Button.Right}><i class="arrow right"></button>
     <div class="row-start-2 col-start-2 w-full h-full bg-black/[.5]"></div>
     <button id="up-left" class="corner row-start-1 col-start-1 rounded-lg bg-transparent" value={Button.Up_Left}></button>
     <button id="up-right" class="corner row-start-1 col-start-3 rounded-lg bg-transparent" value={Button.Up_Right}></button>
@@ -168,24 +169,24 @@
   </div>
 
   <div class="absolute bottom-20 right-4 z-10 bg-slate-50/[.5] rounded-full p-1 w-fit h-fit m-auto select-none">
-      <button id="a" title="A" class="bg-black/[.5] rounded-full w-24 h-24 p-0 font-bold text-black" 
+      <button id="a" title="{$_('controls.A')}" class="bg-black/[.5] rounded-full w-24 h-24 p-0 font-bold text-black" 
         value={Button.A}
         on:pointerdown={e => touchDown(e)}
         on:pointerup={e => setTimeout(() => touchUp(e))}
         on:pointerleave={e => setTimeout(() => touchUp(e))}
         on:pointercancel={e => setTimeout(() => touchUp(e))}
         on:lostpointercapture={e => setTimeout(() => touchUp(e))}
-      >A</button>
+      >{$_('controls.A')}</button>
   </div>
 
   <div class="absolute top-4 left-4 z-10 bg-slate-50/[.5] rounded-full p-1 w-fit h-fit select-none">
-      <button id="start" title="Pause" class="bg-black/[.5] rounded-full w-14 h-8 p-0 font-bold text-black" 
+      <button id="start" title="{$_('controls.Pause')}" class="bg-black/[.5] rounded-full w-14 h-8 p-0 font-bold text-black" 
         value={Button.Start}
         on:pointerdown={e => touchDown(e)}
         on:pointerup={e => setTimeout(() => touchUp(e))}
         on:pointerleave={e => setTimeout(() => touchUp(e))}
         on:pointercancel={e => setTimeout(() => touchUp(e))}
         on:lostpointercapture={e => setTimeout(() => touchUp(e))}
-      >Pause</button>
+      >{$_('controls.Pause')}</button>
   </div>
 </div>
