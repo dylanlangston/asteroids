@@ -62,7 +62,7 @@ jobs:
       - name: Binaryen Optimize
         run: |
           cd ${{ github.workspace }}/src/astroids-website
-          npm exec --package=binaryen -c 'wasm-opt ./static/astroids-initialized.wasm -all --post-emscripten --low-memory-unused -tnh --converge -Oz --flatten --rereloop -Oz -Oz -o ./static/astroids.wasm'
+          npm exec --package=binaryen -c 'wasm-opt ./static/astroids-initialized.wasm -all -Oz -o ./static/astroids.wasm'
           rm ./static/astroids.wasm
       - name: Build Svelte
         run: |
