@@ -4,8 +4,10 @@
 
 <p align="center">
   <a href="https://ziglang.org/download"><img alt="Zig" src="https://img.shields.io/badge/Zig-0.11.0-fd9930.svg"></a>
-  <a href="https://github.com/dylanlangston/astroids/actions/workflows/DeployPages.yml"><img alt="Deploy Pages GitHub Workflow" src="https://img.shields.io/github/actions/workflow/status/dylanlangston/astroids/DeployPages.yml?label=Deploy%20Pages"></a>
+  <a href="https://www.raylib.com/"><img alt="Zig" src="https://img.shields.io/badge/raylib-4.6.0--dev-%23FFF.svg"></a>
+  <a href="https://github.com/dylanlangston/astroids/actions/workflows/DeployPages.yml"><img alt="GitHub Workflow CI/CD" src="https://img.shields.io/github/actions/workflow/status/dylanlangston/astroids/DeployPages.yml?label=CI%2FCD"></a>
   <a href="https://github.com/dylanlangston/astroids/blob/main/LICENSE"><img alt="GitHub License" src="https://img.shields.io/github/license/dylanlangston/astroids"></a>
+  <a href="https://github.com/dylanlangston/astroids/releases/latest"><img alt="Latest Build" src="https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fapi.github.com%2Frepos%2Fdylanlangston%2Fastroids%2Freleases&query=%24%5B%3A1%5D.tag_name&label=Latest%20Build&color=%234c1"></a>
   <a href="https://api.github.com/repos/dylanlangston/astroids"><img alt="GitHub repo size" src="https://img.shields.io/github/repo-size/dylanlangston/astroids"></a>
 </p>
 
