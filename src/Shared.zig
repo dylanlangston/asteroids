@@ -164,7 +164,7 @@ pub const Shared = struct {
             if (user_locale == LocalelizerLocales.unknown) return null;
 
             if (locale == null) {
-                locale = Localelizer.get(user_locale, Alloc.allocator) catch return null;
+                locale = Localelizer.get(user_locale);
             }
 
             return locale;
@@ -202,10 +202,6 @@ pub const Shared = struct {
     };
 
     pub inline fn init() !void {
-        for (std.enums.values(Locale.Locales)) |locale| {
-            _ = Localelizer.get(locale, Alloc.allocator) catch undefined;
-        }
-
         for (std.enums.values(Shared.View.Views)) |view| {
             var v = Shared.View.ViewLocator.Build(view);
             v.init();
@@ -221,9 +217,6 @@ pub const Shared = struct {
     pub inline fn deinit() void {
         // GeneralPurposeAllocator
         defer _ = Alloc.gp.deinit();
-
-        // Localelizer
-        defer Localelizer.deinit();
 
         // Settings
         _ = Settings.loaded_settings.?.save(Alloc.allocator);

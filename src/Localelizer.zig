@@ -4,39 +4,18 @@ const Logger = @import("Logger.zig").Logger;
 const Shared = @import("Shared.zig").Shared;
 
 pub const Localelizer = struct {
-    inline fn get_locale_file(locale: Locales) [:0]const u8 {
+    pub inline fn get(locale: Locales) Locale {
         switch (locale) {
             Locales.spanish => {
-                return @embedFile("./Locales/spanish.json");
+                return @import("./Locales/spanish.zig").spanish;
             },
             Locales.french => {
-                return @embedFile("./Locales/french.json");
+                return @import("./Locales/french.zig").french;
             },
             else => {
                 // English as fallback
-                return @embedFile("./Locales/english.json");
+                return @import("./Locales/english.zig").english;
             },
-        }
-    }
-
-    const LocalelizerError = error{ FileNotFound, FileReadError, InvalidFileFormat };
-
-    var loaded_locale: ?std.json.Parsed(Locale) = null;
-    pub inline fn get(locale: Locales, allocator: Allocator) LocalelizerError!Locale {
-        const locale_file = get_locale_file(locale);
-        // Deinit old locale if needed
-        deinit();
-
-        // Parse JSON
-        loaded_locale = std.json.parseFromSlice(Locale, allocator, locale_file, .{}) catch return LocalelizerError.InvalidFileFormat;
-
-        return loaded_locale.?.value;
-    }
-
-    pub inline fn deinit() void {
-        if (loaded_locale != null) {
-            defer loaded_locale.?.deinit();
-            loaded_locale = null;
         }
     }
 };
