@@ -27,6 +27,7 @@ This [Progressive Web App](https://developer.mozilla.org/en-US/docs/Web/Progress
 >
 > Everyone who participates in the jam will be building the classic arcade game: **Asteroids**
 
+<a href="https://dylanlangston.itch.io/astroids">![Play on Itch.io](itch.io-banner.png)</a>
 
 ------
 
