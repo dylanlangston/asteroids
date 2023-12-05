@@ -3,18 +3,15 @@ const std = @import("std");
 const raylib = @import("raylib");
 const Shared = @import("Shared.zig").Shared;
 
-//
 usingnamespace if (builtin.target.os.tag == .wasi) struct {
+    // We need this to fix an issue with wizer https://github.com/WebAssembly/WASI/issues/471
     extern fn __wasm_call_ctors() void;
     export fn wizer_initialize() void {
-        // We need this to fix an issue with wizer https://github.com/WebAssembly/WASI/issues/471
-        __wasm_call_ctors();
-
         Shared.init() catch {
             @panic("Error durring init");
         };
 
-        // Pre-init window
+        // // Pre-init window
         raylib.setExitKey(.key_null);
         raylib.setTargetFPS(60);
     }
@@ -22,9 +19,11 @@ usingnamespace if (builtin.target.os.tag == .wasi) struct {
 
 pub inline fn main() void {
     // On WASM we pre-init using Wizer instead
-    if (builtin.target.os.tag != .wasi) Shared.init() catch {
-        @panic("Error durring init");
-    };
+    if (builtin.target.os.tag != .wasi) {
+        Shared.init() catch {
+            @panic("Error durring init");
+        };
+    }
     defer Shared.deinit();
 
     const settings = Shared.Settings.GetSettings();

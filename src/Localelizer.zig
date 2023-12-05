@@ -6,9 +6,6 @@ const Shared = @import("Shared.zig").Shared;
 pub const Localelizer = struct {
     inline fn get_locale_file(locale: Locales) [:0]const u8 {
         switch (locale) {
-            Locales.english => {
-                return @embedFile("./Locales/english.json");
-            },
             Locales.spanish => {
                 return @embedFile("./Locales/spanish.json");
             },
@@ -39,6 +36,7 @@ pub const Localelizer = struct {
     pub inline fn deinit() void {
         if (loaded_locale != null) {
             defer loaded_locale.?.deinit();
+            loaded_locale = null;
         }
     }
 };

@@ -203,7 +203,7 @@ pub const Shared = struct {
 
     pub inline fn init() !void {
         for (std.enums.values(Locale.Locales)) |locale| {
-            _ = try Localelizer.get(locale, Alloc.allocator);
+            _ = Localelizer.get(locale, Alloc.allocator) catch undefined;
         }
 
         for (std.enums.values(Shared.View.Views)) |view| {
