@@ -2,6 +2,14 @@
 
 # Astroids Game 🪨
 
+<p align="center">
+  <a href="https://ziglang.org/download"><img alt="Zig" src="https://img.shields.io/badge/Zig-0.11.0-fd9930.svg"></a>
+  <a href="https://github.com/dylanlangston/astroids/actions/workflows/DeployPages.yml"><img alt="Deploy Pages GitHub Workflow" src="https://img.shields.io/github/actions/workflow/status/dylanlangston/astroids/DeployPages.yml?label=Deploy%20Pages"></a>
+  <a href="https://github.com/dylanlangston/astroids/blob/main/LICENSE"><img alt="GitHub License" src="https://img.shields.io/github/license/dylanlangston/astroids"></a>
+  <a href="https://api.github.com/repos/dylanlangston/astroids"><img alt="GitHub repo size" src="https://img.shields.io/github/repo-size/dylanlangston/astroids"></a>
+</p>
+
+
 This [Progressive Web App](https://developer.mozilla.org/en-US/docs/Web/Progressive_web_apps) is a submission to the 2023 *Raylib Slo-Jam* event hosted on [itch.io](https://itch.io/), It was created by [@dylanlangston](https://github.com/dylanlangston) using the following:
 - [Zig](https://ziglang.org/)
 - [raylib](https://www.raylib.com/) via [raylib-Zig](https://github.com/Not-Nik/raylib-zig/tree/devel)
