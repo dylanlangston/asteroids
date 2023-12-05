@@ -3,6 +3,7 @@
 # Asteroids Game 🪨
 
 <p align="center">
+  <a href="https://itch.io/jam/raylib-slo-jam"><img alt="Due January 8th 2024 at 3:00 PM EST" src="https://img.shields.io/badge/dynamic/xml?url=https%3A%2F%2Ffree.timeanddate.com%2Fcountdown%2FtatTime%2520left%2520to%2520Event%2520in%2Ftac000%2FtptTime%2520since%2520Event%2520started%2520in%2Ftpc000%2Fmac000%2Fmpc000%2Fiso2024-01-06T20%3A00%3A00&query=%2F%2Ftd%5B%40id%3D%22cd%22%5D&suffix=%20days&label=Deadline%3A"></a>
   <a href="https://ziglang.org/download"><img alt="Zig" src="https://img.shields.io/badge/Zig-0.11.0-fd9930.svg"></a>
   <a href="https://www.raylib.com/"><img alt="Zig" src="https://img.shields.io/badge/raylib-4.6.0--dev-%23FFF.svg"></a>
   <a href="https://github.com/dylanlangston/asteroids/actions/workflows/DeployPages.yml"><img alt="GitHub Workflow CI/CD" src="https://img.shields.io/github/actions/workflow/status/dylanlangston/asteroids/DeployPages.yml?label=CI%2FCD"></a>
@@ -49,8 +50,8 @@ This [Progressive Web App](https://developer.mozilla.org/en-US/docs/Web/Progress
 1. Complete steps to __Clone__ and __Debug Locally__ above first.
 2. Change directories into the `./asteroids` folder. Build the zig portion of the game using command `zig build -Dtarget=wasm32-emscripten`. Alternatively run the **_Build Web_** task in VSCode.
 3. If you haven't already, install NodeJS LTS from [here](https://nodejs.org/en/download) (or your preferred source).
-4. Change directories into the `./asteroids/src/astroid-website` folder. Then install the required node packages using `npm install`.
-5. Build the web version by running the command `npm run build`. You can find the generated static site in the `./asteroids/src/astroid-website/build` folder.
+4. Change directories into the `./asteroids/src/asteroids-website` folder. Then install the required node packages using `npm install`.
+5. Build the web version by running the command `npm run build`. You can find the generated static site in the `./asteroids/src/asteroids-website/build` folder.
 
 ------
 

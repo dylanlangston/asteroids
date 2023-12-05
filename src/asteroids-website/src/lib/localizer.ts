@@ -17,10 +17,11 @@ export enum Locales {
 class LocaleGroup {
     public readonly Locale: Locales;
     public readonly Index: number;
+    public readonly Prefix: string;
     constructor(locale: Locales) {
         this.Locale = locale;
-        const prefix = this.GetLocalePrefix(locale);
-        this.Index = navigator.languages.findIndex(l => l.startsWith(prefix));
+        this.Prefix = this.GetLocalePrefix(locale);
+        this.Index = navigator.languages.findIndex(l => l.startsWith(this.Prefix));
     }
 
     private GetLocalePrefix(locale: Locales): string {
@@ -52,12 +53,23 @@ export class Localizer {
         });
     }
 
-    public static GetLocale(): Locales {
+    private static Locale: LocaleGroup | undefined = undefined;
+    private static LoadLocale(): LocaleGroup | undefined {
         const allLocales = Object.entries(Locales).map((_, locale) => new LocaleGroup(locale));
         const sortedLocales = allLocales.filter(l => l.Index > -1).sort((a, b) => a.Index - b.Index);
-        const match = sortedLocales.at(0);
-        if (match == undefined) return Locales.unknown;
-        return match.Locale;
+        return sortedLocales.at(0);
+    }
+
+    public static GetLocale(): Locales {
+        const locale = Localizer.LoadLocale();
+        if (locale == undefined) return Locales.unknown;
+        return locale.Locale;
+    }
+
+    public static GetLocalePrefix(): string {
+        const locale = Localizer.LoadLocale();
+        if (locale == undefined) return "en";
+        return locale.Prefix;
     }
 }
 

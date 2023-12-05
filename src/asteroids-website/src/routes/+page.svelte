@@ -5,8 +5,9 @@
   import GameController from "./controls.svelte";
 	import { Button } from "$lib/gameController";
   import { _, isLoading} from "svelte-i18n";
+  import { Localizer } from "$lib/localizer"
 
-  const repoUrl: string = "https://github.com/dylanlangston/astroids";
+  const repoUrl: string = "https://github.com/dylanlangston/asteroids";
   function openRepo(): void {
     window.open(repoUrl, '_blank');
   }
@@ -114,6 +115,7 @@
   })();
 
   let isItchZone: boolean = false;
+  $: manifestJson  = "en.manifest.json";
 
   function loadScript(name: string): HTMLScriptElement {
     const script = document.createElement("script");
@@ -126,7 +128,8 @@
   const emscripten: Module = (() => new Module())();
   onMount(() => {
     isItchZone = window.location?.host?.endsWith("itch.zone");
-
+    manifestJson = Localizer.GetLocalePrefix() + ".manifest.json";
+    
     window.onerror = (e: any) => {
       document.getElementById("canvas")!.style.display = 'none';
 
@@ -182,6 +185,13 @@
     transform: scale(1.1);
   }
 </style>
+
+<svelte:head>
+  {#if $isLoading}
+  {:else}
+  <link rel="manifest" href="{manifestJson}" crossorigin="use-credentials" />
+  {/if}
+</svelte:head>
 
 <svelte:window
   on:orientationchange={(e) => UpdateSize(e)} 

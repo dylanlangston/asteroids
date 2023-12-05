@@ -35,12 +35,12 @@ jobs:
         with:
           node-version: "16"
           cache: ${{ steps.detect-package-manager.outputs.manager }}
-          cache-dependency-path: "${{ github.workspace }}/src/astroids-website"
+          cache-dependency-path: "${{ github.workspace }}/src/asteroids-website"
       - name: Install Node Modules
         uses: bahmutov/npm-install@v1.6.0
         with:
           # Working directory to specify subfolder in which dependencies are defined
-          working-directory: "${{ github.workspace }}/src/astroids-website"
+          working-directory: "${{ github.workspace }}/src/asteroids-website"
       - name: Install Wizer
         uses: baptiste0928/cargo-install@v2.2.0
         with:
@@ -57,21 +57,21 @@ jobs:
           zig build -Dtarget=wasm32-emscripten -Doptimize=ReleaseFast
       - name: Wizer Pre-Init 
         run: |
-          cd ${{ github.workspace }}/src/astroids-website
-          wizer ./static/astroids.wasm --init-func wizer_initialize -o ./static/astroids-initialized.wasm 
+          cd ${{ github.workspace }}/src/asteroids-website
+          wizer ./static/asteroids.wasm --init-func wizer_initialize -o ./static/asteroids-initialized.wasm 
       - name: Binaryen Optimize
         run: |
-          cd ${{ github.workspace }}/src/astroids-website
-          npm exec --package=binaryen -c 'wasm-opt ./static/astroids-initialized.wasm -all --post-emscripten --low-memory-unused -tnh --converge -Oz --flatten --rereloop -Oz -Oz -o ./static/astroids.wasm'
-          rm ./static/astroids-initialized.wasm
+          cd ${{ github.workspace }}/src/asteroids-website
+          npm exec --package=binaryen -c 'wasm-opt ./static/asteroids-initialized.wasm -all --post-emscripten --low-memory-unused -tnh --converge -Oz --flatten --rereloop -Oz -Oz -o ./static/asteroids.wasm'
+          rm ./static/asteroids-initialized.wasm
       - name: Build Svelte
         run: |
-          cd ${{ github.workspace }}/src/astroids-website
+          cd ${{ github.workspace }}/src/asteroids-website
           npm run build
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v2
         with:
-          path: '${{ github.workspace }}/src/astroids-website/build'
+          path: '${{ github.workspace }}/src/asteroids-website/build'
 
   deploy:
     needs: build
@@ -97,7 +97,7 @@ jobs:
       uses: actions/download-artifact@v2
       with:
         name: github-pages
-        path: astroids
+        path: asteroids
     - name: Set current datetime
       id: set_datetime
       run: echo "datetime=$(date +"%Y%m%d%H%M%S")" >> "$GITHUB_OUTPUT"
@@ -109,15 +109,15 @@ jobs:
       with:
         tag_name: v${{ steps.set_datetime.outputs.datetime }}
         release_name: Release v${{ steps.set_datetime.outputs.datetime }}
-        body: Astroids Game - Prerelease v${{ steps.set_datetime.outputs.datetime }}
+        body: Asteroids Game - Prerelease v${{ steps.set_datetime.outputs.datetime }}
         draft: false
         prerelease: true
     - name: Create ZIP
       run: |
-        cd ./astroids
-        mkdir ./astroids
-        tar -xvf ./artifact.tar -C ./astroids
-        zip -r ../astroids.zip ./astroids/
+        cd ./asteroids
+        mkdir ./asteroids
+        tar -xvf ./artifact.tar -C ./asteroids
+        zip -r ../asteroids.zip ./asteroids/
     - name: Upload Release Asset
       id: upload-release-asset
       uses: actions/upload-release-asset@v1
@@ -125,13 +125,13 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: ./astroids.zip
-        asset_name: astroids.zip
+        asset_path: ./asteroids.zip
+        asset_name: asteroids.zip
         asset_content_type: application/zip
     - uses: manleydev/butler-publish-itchio-action@master
       env:
         BUTLER_CREDENTIALS: ${{ secrets.ITCHIO_API_KEY }}
         CHANNEL: html
-        ITCH_GAME: astroids
+        ITCH_GAME: asteroids
         ITCH_USER: dylanlangston
-        PACKAGE: ./astroids.zip
+        PACKAGE: ./asteroids.zip

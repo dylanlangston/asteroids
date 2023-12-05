@@ -80,7 +80,7 @@ export class Module {
 
     public instantiateWasm(imports: any, successCallback: any) {
         console.log('instantiateWasm: instantiating asynchronously');
-        fetch("astroids.wasm", { 
+        fetch("asteroids.wasm", { 
             cache: "default",
         })
         .then((response) => response.arrayBuffer())

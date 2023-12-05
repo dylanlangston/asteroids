@@ -12,7 +12,7 @@
                 "<node_internals>/**"
             ],
             "type": "node",
-            "localRoot": "${workspaceFolder}/src/astroids-website",
+            "localRoot": "${workspaceFolder}/src/asteroids-website",
             "preLaunchTask": "Build Web",
         },
         {
@@ -20,7 +20,7 @@
             "request": "custom",
             "name": "Debug",
             "targetCreateCommands": [
-                "target create ${workspaceFolder}/zig-out/bin/Astroids"
+                "target create ${workspaceFolder}/zig-out/bin/Asteroids"
             ],
             "processCreateCommands": [
                 "process launch"
@@ -33,7 +33,7 @@
             "request": "custom",
             "name": "Release",
             "targetCreateCommands": [
-                "target create ${workspaceFolder}/zig-out/bin/Astroids"
+                "target create ${workspaceFolder}/zig-out/bin/Asteroids"
             ],
             "processCreateCommands": [
                 "process launch"

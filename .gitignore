@@ -1,5 +1,5 @@
 zig-cache/
 zig-out/
 /settings.json
-src/astroids-website/static/astroids.wasm
-src/astroids-website/static/emscripten.js
+src/asteroids-website/static/asteroids.wasm
+src/asteroids-website/static/emscripten.js

@@ -28,8 +28,8 @@ pub fn build(b: *std.Build) !void {
 
         const exe_lib = rl.compileForEmscripten(
             b,
-            "Astroids",
-            "src/Astroids.zig",
+            "Asteroids",
+            "src/Asteroids.zig",
             target,
             optimize,
         );
@@ -66,7 +66,7 @@ pub fn build(b: *std.Build) !void {
         b.getInstallStep().dependOn(&link_step.step);
         const run_step = try rl.emscriptenRunStep(b);
         run_step.step.dependOn(&link_step.step);
-        const run_option = b.step("run", "Run Astroids");
+        const run_option = b.step("run", "Run Asteroids");
         run_option.dependOn(&run_step.step);
 
         try copyWASMRunStep(b, &link_step.step, cwd_path);
@@ -74,7 +74,7 @@ pub fn build(b: *std.Build) !void {
         return;
     }
 
-    const exe = b.addExecutable(.{ .name = "Astroids", .root_source_file = .{ .path = "src/Astroids.zig" }, .optimize = optimize, .target = target });
+    const exe = b.addExecutable(.{ .name = "Asteroids", .root_source_file = .{ .path = "src/Asteroids.zig" }, .optimize = optimize, .target = target });
 
     rl.link(b, exe, target, optimize);
     exe.addModule("raylib", raylib);
@@ -82,7 +82,7 @@ pub fn build(b: *std.Build) !void {
     raygui.addTo(b, exe, target, optimize);
 
     const run_cmd = b.addRunArtifact(exe);
-    const run_step = b.step("run", "Run Astroids");
+    const run_step = b.step("run", "Run Asteroids");
     run_step.dependOn(&run_cmd.step);
 
     // // Add locales
@@ -134,12 +134,12 @@ pub fn copyWASMRunStep(b: *std.Build, dependsOn: *std.Build.Step, cwd_path: []co
             cwd_path,
             "zig-out",
             "htmlout",
-            "astroids.js",
+            "asteroids.js",
         }),
         b.pathJoin(&[_][]const u8{
             cwd_path,
             "src",
-            "astroids-website",
+            "asteroids-website",
             "static",
             "emscripten.js",
         }),
@@ -150,14 +150,14 @@ pub fn copyWASMRunStep(b: *std.Build, dependsOn: *std.Build.Step, cwd_path: []co
             cwd_path,
             "zig-out",
             "htmlout",
-            "astroids.wasm",
+            "asteroids.wasm",
         }),
         b.pathJoin(&[_][]const u8{
             cwd_path,
             "src",
-            "astroids-website",
+            "asteroids-website",
             "static",
-            "astroids.wasm",
+            "asteroids.wasm",
         }),
     });
     indexjs_step.step.dependOn(dependsOn);

@@ -121,7 +121,7 @@ pub fn build(b: *std.Build) !void {
 }
 
 const emccOutputDir = "zig-out" ++ std.fs.path.sep_str ++ "htmlout" ++ std.fs.path.sep_str;
-const emccOutputFile = "astroids.js";
+const emccOutputFile = "asteroids.js";
 pub fn emscriptenRunStep(b: *std.Build) !*std.Build.Step.Run {
     // Find emrun.
     if (b.sysroot == null) {

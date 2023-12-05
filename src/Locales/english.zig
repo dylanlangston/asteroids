@@ -2,7 +2,7 @@ const Locale = @import("../Localelizer.zig").Locale;
 
 pub const english = Locale{
     .Dylan_Splash_Text = "DylanLangston Games",
-    .Title = "Astroids",
+    .Title = "Asteroids",
     .Menu_StartGame = "Start Game",
     .Menu_Settings = "Settings",
     .Menu_Quit = "Exit",
