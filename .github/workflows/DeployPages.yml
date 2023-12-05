@@ -133,5 +133,5 @@ jobs:
         BUTLER_CREDENTIALS: ${{ secrets.ITCHIO_API_KEY }}
         CHANNEL: html
         ITCH_GAME: astroids
-        ITCH_USER: "@dylanlangston"
+        ITCH_USER: dylanlangston
         PACKAGE: ./astroids.zip
