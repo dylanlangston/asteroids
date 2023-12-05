@@ -3,8 +3,25 @@ const std = @import("std");
 const raylib = @import("raylib");
 const Shared = @import("Shared.zig").Shared;
 
+//
+usingnamespace if (builtin.target.os.tag == .wasi) struct {
+    extern fn __wasm_call_ctors() void;
+    export fn wizer_initialize() void {
+        // We need this to fix an issue with wizer https://github.com/WebAssembly/WASI/issues/471
+        __wasm_call_ctors();
+
+        Shared.init() catch {
+            @panic("Error durring init");
+        };
+
+        // Pre-init window
+        raylib.setExitKey(.key_null);
+        raylib.setTargetFPS(60);
+    }
+} else struct {};
+
 pub inline fn main() void {
-    // On WASM we pre-init using Wizer
+    // On WASM we pre-init using Wizer instead
     if (builtin.target.os.tag != .wasi) Shared.init() catch {
         @panic("Error durring init");
     };
@@ -21,17 +38,14 @@ pub inline fn main() void {
 
     // Create window
     Shared.Log.Info("Creating Window");
-    raylib.setConfigFlags(
-        @enumFromInt( //@intFromEnum(raylib.ConfigFlags.flag_window_always_run) +
-            @intFromEnum(raylib.ConfigFlags.flag_msaa_4x_hint) +
-            @intFromEnum(raylib.ConfigFlags.flag_window_resizable)),
-    );
     raylib.initWindow(settings.CurrentResolution.Width, settings.CurrentResolution.Height, "Astroids Game!");
     defer raylib.closeWindow();
     raylib.initAudioDevice();
     defer raylib.closeAudioDevice();
-    raylib.setExitKey(.key_null);
-    raylib.setTargetFPS(settings.TargetFPS);
+    if (builtin.target.os.tag != .wasi) {
+        raylib.setExitKey(.key_null);
+        raylib.setTargetFPS(settings.TargetFPS);
+    }
 
     // Default View on startup is the Splash Screen
     var current_view: Shared.View.Views = Shared.View.Views.Raylib_Splash_Screen;

@@ -20,21 +20,27 @@ const Colors = @import("Colors.zig").Colors;
 
 pub const Shared = struct {
     const Alloc = struct {
-        pub var gp: std.heap.GeneralPurposeAllocator(.{}) = GetGPAllocator();
-        inline fn GetGPAllocator() std.heap.GeneralPurposeAllocator(.{}) {
+        pub var gp: std.heap.GeneralPurposeAllocator(.{
+            .enable_memory_limit = true,
+        }) = GetGPAllocator();
+        inline fn GetGPAllocator() std.heap.GeneralPurposeAllocator(.{
+            .enable_memory_limit = true,
+        }) {
             if (builtin.mode == .Debug) {
                 if (builtin.os.tag == .wasi) {
-                    return std.heap.GeneralPurposeAllocator(.{
-                        .safety = true,
-                    }){};
+                    return undefined;
                 }
-                return std.heap.GeneralPurposeAllocator(.{ .safety = true }){};
+                var gpAlloc = std.heap.GeneralPurposeAllocator(.{
+                    .enable_memory_limit = true,
+                }){};
+                // 512mb
+                gpAlloc.setRequestedMemoryLimit(536870912);
+                return gpAlloc;
             }
 
             return undefined;
         }
-        pub var arena: std.heap.ArenaAllocator = std.heap.ArenaAllocator.init(InitAllocator());
-        pub const allocator: std.mem.Allocator = arena.allocator();
+        pub const allocator: std.mem.Allocator = InitAllocator();
         inline fn InitAllocator() std.mem.Allocator {
             if (builtin.os.tag == .wasi) {
                 return std.heap.raw_c_allocator;
@@ -141,10 +147,6 @@ pub const Shared = struct {
             if (original_settings.UserLocale != loaded_settings.?.UserLocale) {
                 _ = Locale.RefreshLocale();
             }
-
-            if (builtin.target.os.tag == .wasi) {
-                SaveNow();
-            }
         }
 
         pub fn SaveNow() void {
@@ -220,9 +222,6 @@ pub const Shared = struct {
         // GeneralPurposeAllocator
         defer _ = Alloc.gp.deinit();
 
-        // Arena Allocator
-        defer Alloc.arena.deinit();
-
         // Localelizer
         defer Localelizer.deinit();
 
@@ -230,10 +229,3 @@ pub const Shared = struct {
         _ = Settings.loaded_settings.?.save(Alloc.allocator);
     }
 };
-
-export fn wizer_initialize() void {
-    // Put init code here but can't use IO...
-    Shared.init() catch {
-        @panic("Error durring init");
-    };
-}

@@ -51,14 +51,22 @@ pub const Settings = struct {
                     Logger.Error_Formatted("Failed to validate settings: {?s}", .{wasm_settings});
                     return default_settings;
                 }
-
-                var settings = std.json.parseFromSlice(Settings, allocator, wasm_settings.?, .{}) catch |er| {
+                var settings = std.json.parseFromSlice(std.json.Value, allocator, wasm_settings.?, .{}) catch |er| {
                     Logger.Error_Formatted("Failed to deserialize settings: {}", .{er});
                     return default_settings;
                 };
                 defer settings.deinit();
 
-                return NormalizeSettings(settings.value);
+                return NormalizeSettings(Settings{
+                    .CurrentResolution = Resolution{
+                        .Width = 1,
+                        .Height = 1,
+                    },
+                    .TargetFPS = 60,
+                    .Debug = if (settings.value.object.contains("Debug")) settings.value.object.get("Debug").?.bool else default_settings.Debug,
+                    .DebugView = if (settings.value.object.contains("DebugView")) @intCast(settings.value.object.get("DebugView").?.integer) else default_settings.DebugView,
+                    .UserLocale = if (settings.value.object.contains("UserLocale")) @enumFromInt(settings.value.object.get("UserLocale").?.integer) else default_settings.UserLocale,
+                });
             }
             return default_settings;
         }
@@ -105,8 +113,8 @@ pub const Settings = struct {
     inline fn NormalizeSettings(settings: Settings) Settings {
         return Settings{
             .CurrentResolution = Resolution{
-                .Width = @max(default_settings.CurrentResolution.Width, settings.CurrentResolution.Width),
-                .Height = @max(default_settings.CurrentResolution.Height, settings.CurrentResolution.Height),
+                .Width = settings.CurrentResolution.Width,
+                .Height = settings.CurrentResolution.Height,
             },
             .TargetFPS = if (settings.TargetFPS == 0) 0 else @max(settings.TargetFPS, 30),
             .Debug = settings.Debug,
@@ -115,11 +123,37 @@ pub const Settings = struct {
         };
     }
 
+    pub fn jsonStringify(self: Settings, out: anytype) !void {
+        try out.beginObject();
+        if (builtin.target.os.tag != .wasi) {
+            try out.objectField("CurrentResolution");
+            try out.beginObject();
+            try out.objectField("Width");
+            try out.write(self.CurrentResolution.Width);
+            try out.objectField("Height");
+            try out.write(self.CurrentResolution.Height);
+            try out.endObject();
+            try out.objectField("TargetFPS");
+            try out.write(self.TargetFPS);
+        }
+        try out.objectField("Debug");
+        try out.write(self.Debug);
+        if (builtin.target.os.tag == .wasi and self.DebugView != null) {
+            try out.objectField("DebugView");
+            try out.write(self.DebugView);
+        }
+        if (builtin.target.os.tag != .wasi) {
+            try out.objectField("UserLocale");
+            try out.write(self.UserLocale);
+        }
+        try out.endObject();
+    }
+
     const settingsFile = "settings.json";
 
     const default_settings = Settings{
         .CurrentResolution = Resolution{ .Width = 1600, .Height = 900 },
-        .TargetFPS = 120,
+        .TargetFPS = 60,
         .Debug = false,
         .DebugView = null,
         .UserLocale = Locales.unknown,

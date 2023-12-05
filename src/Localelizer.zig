@@ -41,23 +41,6 @@ pub const Localelizer = struct {
             defer loaded_locale.?.deinit();
         }
     }
-
-    pub inline fn getDisplayName(locale: Locales) [:0]const u8 {
-        switch (locale) {
-            Locales.english => {
-                return "English (US)";
-            },
-            Locales.spanish => {
-                return "Spanish";
-            },
-            Locales.french => {
-                return "French";
-            },
-            else => {
-                return "Unknown";
-            },
-        }
-    }
 };
 
 pub const Locale = struct {

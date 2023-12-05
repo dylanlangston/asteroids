@@ -3,23 +3,33 @@ const raylib = @import("raylib");
 const Shared = @import("Shared.zig").Shared;
 
 pub const Logger = struct {
+    var lastMessageHash: u32 = undefined;
+    inline fn log(loglevel: raylib.TraceLogLevel, text: [:0]const u8) void {
+        // Check if the hash of the message matches the hash of the last message, prevents spamming the exact same text to console in a loop
+        const newHash = std.hash.crc.Crc32.hash(text);
+        if (lastMessageHash == newHash) return;
+
+        lastMessageHash = newHash;
+        raylib.traceLog(loglevel, text);
+    }
+
     pub inline fn Trace(text: [:0]const u8) void {
-        raylib.traceLog(raylib.TraceLogLevel.log_trace, text);
+        log(raylib.TraceLogLevel.log_trace, text);
     }
     pub inline fn Debug(text: [:0]const u8) void {
-        raylib.traceLog(raylib.TraceLogLevel.log_debug, text);
+        log(raylib.TraceLogLevel.log_debug, text);
     }
     pub inline fn Info(text: [:0]const u8) void {
-        raylib.traceLog(raylib.TraceLogLevel.log_info, text);
+        log(raylib.TraceLogLevel.log_info, text);
     }
     pub inline fn Warning(text: [:0]const u8) void {
-        raylib.traceLog(raylib.TraceLogLevel.log_warning, text);
+        log(raylib.TraceLogLevel.log_warning, text);
     }
     pub inline fn Error(text: [:0]const u8) void {
-        raylib.traceLog(raylib.TraceLogLevel.log_error, text);
+        log(raylib.TraceLogLevel.log_error, text);
     }
     pub inline fn Fatal(text: [:0]const u8) void {
-        raylib.traceLog(raylib.TraceLogLevel.log_fatal, text);
+        log(raylib.TraceLogLevel.log_fatal, text);
     }
 
     pub inline fn Trace_Formatted(comptime format: []const u8, args: anytype) void {
@@ -54,6 +64,6 @@ pub const Logger = struct {
         };
         defer aloc.free(raylib_text);
 
-        raylib.traceLog(level, raylib_text);
+        log(level, raylib_text);
     }
 };

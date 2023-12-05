@@ -91,16 +91,6 @@ export class Module {
         .then((output) => {
             console.log('wasm instantiation succeeded');
             
-            // This is a fix for wizer
-            if (output.instance.exports["wizer_initialize"] == undefined)
-            {
-                try 
-                {
-                    (<any>output.instance.exports["__wasm_call_ctors"])();
-                }
-                catch { }
-            }
-
             successCallback(output.instance);
         }).catch((e) => {
             Module.setStatus('wasm instantiation failed! ' + e);

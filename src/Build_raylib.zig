@@ -241,9 +241,8 @@ pub fn linkWithEmscripten(
         "-sOFFSCREENCANVAS_SUPPORT=1",
         "-sWASMFS=1",
         "-MINIMAL_RUNTIME=2",
-        //"-sMINIMAL_RUNTIME_STREAMING_WASM_INSTANTIATION=1",
+        "-sMINIMAL_RUNTIME_STREAMING_WASM_INSTANTIATION=1",
         "-sMALLOC=emmalloc",
-        //"-sMAIN_MODULE=1",
     });
     return emcc_command;
 }
