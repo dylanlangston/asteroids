@@ -138,7 +138,7 @@ pub const Settings = struct {
         }
         try out.objectField("Debug");
         try out.write(self.Debug);
-        if (builtin.target.os.tag == .wasi and self.DebugView != null) {
+        if (builtin.target.os.tag != .wasi or self.DebugView != null) {
             try out.objectField("DebugView");
             try out.write(self.DebugView);
         }
