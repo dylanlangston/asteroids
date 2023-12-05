@@ -34,8 +34,8 @@ This [Progressive Web App](https://developer.mozilla.org/en-US/docs/Web/Progress
 *This repository includes a [devcontainer.json](.devcontainer/devcontainer.json) to get up and running quickly with a full-featured development environment in the cloud!*[^local-development]
 
 #### Clone
-1. Clone this repository: `git clone https://github.com/dylanlangston/Scale.git`
-2. Change directories into the newly created `./Scale` folder. Then initialize the submodules: `git submodule update --init --recursive`
+1. Clone this repository: `git clone https://github.com/dylanlangston/astroids.git`
+2. Change directories into the newly created `./Astroids` folder. Then initialize the submodules: `git submodule update --init --recursive`
 
 #### Debug Locally:
 1. If you haven't already, install Zig version 0.11.0 using the [instructions here](https://ziglang.org/learn/getting-started/#installing-zig).
