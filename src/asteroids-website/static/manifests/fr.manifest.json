@@ -1,6 +1,6 @@
 {
-    "name": "Asteroids",
-    "short_name": "Asteroids",
+    "name": "Asteroides",
+    "short_name": "Asteroides",
     "theme_color": "#2485a6",
     "background_color": "#754d45",
     "display_override": ["standalone", "window-controls-overlay", "fullscreen"],
@@ -10,26 +10,26 @@
     "start_url": "/",
     "icons": [
       {
-        "src": "favicon.png",
+        "src": "/favicon.png",
         "type": "image/png",
         "sizes": "320x320"
       }
     ],
     "screenshots" : [
       {
-        "src": "banner.png",
+        "src": "/banner.png",
         "sizes": "1000x500",
         "type": "image/png",
         "form_factor": "wide",
-        "label": "Asteroids Game Banner"
+        "label": "Asteroides Bannière de Jeu"
       },
       {
-        "src": "favicon.png",
+        "src": "/favicon.png",
         "sizes": "320x320",
         "type": "image/png",
-        "label": "Asteroids Game Logo"
+        "label": "Asteroides Logo du Jeu"
       }
     ],
-    "description": "Asteroides clone created for raylib Slow-Jam",
+    "description": "Clone d'Asteroides créé pour Raylib Slow-Jam",
     "categories": [ "games", "raylib", "zig"]
 }

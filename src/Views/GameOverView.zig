@@ -91,10 +91,10 @@ pub fn DrawFunction() Shared.View.Views {
         if (vm.BackgroundTexture != null) {
             vm.BackgroundTexture.?.unload();
         }
-        return Shared.View.Views.Menu;
+        return .Menu;
     }
 
-    return Shared.View.Views.Game_Over;
+    return .Game_Over;
 }
 
 pub const GameOverView = Shared.View.View{

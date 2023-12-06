@@ -17,6 +17,8 @@ const Views = @import("ViewLocator.zig").Views;
 const V = @import("./Views/View.zig").View;
 const VM = @import("./ViewModels/ViewModel.zig").ViewModel;
 const Colors = @import("Colors.zig").Colors;
+const Helpers_ = @import("Helpers.zig").Helpers;
+const RndGen = std.rand.DefaultPrng;
 
 pub const Shared = struct {
     const Alloc = struct {
@@ -61,6 +63,15 @@ pub const Shared = struct {
     pub const Input = Inputs;
 
     pub const Color = Colors;
+
+    pub const Helpers = Helpers_;
+
+    pub const Random = GetRandom();
+
+    inline fn GetRandom() std.rand.Random {
+        var rng = RndGen.init(0);
+        return rng.random();
+    }
 
     pub const Font = struct {
         pub const Fonts = AssetManager.Fonts;

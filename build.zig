@@ -140,7 +140,8 @@ pub fn copyWASMRunStep(b: *std.Build, dependsOn: *std.Build.Step, cwd_path: []co
             cwd_path,
             "src",
             "asteroids-website",
-            "static",
+            "src",
+            "lib",
             "emscripten.js",
         }),
     });

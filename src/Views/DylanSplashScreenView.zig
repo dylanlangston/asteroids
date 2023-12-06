@@ -79,10 +79,10 @@ fn DrawFunction() Shared.View.Views {
 
     if (framesCounter >= 260) {
         framesCounter = 0;
-        return Shared.View.Views.Menu;
+        return .Menu;
     }
 
-    return Shared.View.Views.Dylan_Splash_Screen;
+    return .Dylan_Splash_Screen;
 }
 
 pub const DylanSplashScreenView = Shared.View.View{

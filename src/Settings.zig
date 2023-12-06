@@ -103,11 +103,7 @@ pub const Settings = struct {
     }
 
     pub inline fn update(base: Settings, diff: anytype) Settings {
-        var updated = base;
-        inline for (std.meta.fields(@TypeOf(diff))) |f| {
-            @field(updated, f.name) = @field(diff, f.name);
-        }
-        return updated;
+        return Shared.Helpers.UpdateFields(Settings, base, diff);
     }
 
     inline fn NormalizeSettings(settings: Settings) Settings {

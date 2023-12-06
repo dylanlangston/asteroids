@@ -1,11 +1,13 @@
 <script lang="ts">
-  import { Module } from "$lib/emscripten";
+  import { Module, type CustomEmscriptenModule } from "$lib/module";
   import { onMount} from "svelte";
   import { BrowserDetector } from "browser-dtector";
   import GameController from "./controls.svelte";
 	import { Button } from "$lib/gameController";
   import { _, isLoading} from "svelte-i18n";
   import { Localizer } from "$lib/localizer"
+  import emscriptenModuleFactory from "../lib/emscripten";
+	import { Settings } from "$lib/settings";
 
   const repoUrl: string = "https://github.com/dylanlangston/asteroids";
   function openRepo(): void {
@@ -47,15 +49,12 @@
   }
 
   let updateSizeTimeout: number|undefined = undefined;
-  function UpdateSize(e: Event): void {
+  function UpdateSize(e: Event | null): void {
     clearTimeout(updateSizeTimeout);
 
     requestPause();
 
     if (document.fullscreenElement) {
-      return;
-    }
-    if (!emscripten.Initialized) {
       return;
     }
 
@@ -101,10 +100,6 @@
   }
 
   function requestPause(): void {
-    if (!emscripten.Initialized) {
-      return;
-    }
-
     handleButtonPressed(Button.Start);
     setTimeout(() => handleButtonReleased(Button.Start), 500);
   }
@@ -113,55 +108,29 @@
     const detector = new BrowserDetector();
     return detector.parseUserAgent().isMobile;
   })();
-
   let isItchZone: boolean = false;
   $: manifestJson  = "en.manifest.json";
 
-  function loadScript(name: string): HTMLScriptElement {
-    const script = document.createElement("script");
-    script.setAttribute("type", "text/javascript");
-    script.setAttribute("src", name);
-    document.head.append(script);
-    return script;
-  }
-
-  const emscripten: Module = (() => new Module())();
-  onMount(() => {
+  let emscripten: CustomEmscriptenModule;
+  onMount(async () => {
     isItchZone = window.location?.host?.endsWith("itch.zone");
     manifestJson = Localizer.GetLocalePrefix() + ".manifest.json";
     
     window.onerror = (e: any) => {
       document.getElementById("canvas")!.style.display = 'none';
-
       Module.setStatus($_('page.Exception'));
-      emscripten.setStatus = (e: any) => {
+      Module.setStatus = (e: any) => {
         e && console.error("[post-exception status] " + e);
       }
     };
 
-    function clickCanvasEvent(event: any): void {
-      const f = () => {
-        window.Module.canvas.click();
-        window.removeEventListener(event, f);
-      };
-      window.addEventListener(event, f);
-    }
-
-    if (!isMobile) {
-      clickCanvasEvent("keydown");
-      clickCanvasEvent("pointerdown");
-    }
-
-    if (Module.updateSettingsFromQueryString())
+    if (Settings.updateFromQueryString())
     {
       window.location.search = "";
     }
     else {
-      window.Module = emscripten;
-      const script = loadScript("emscripten.js");
-      script.onload = (e) => {
-        emscripten.setStatus($_('page.Downloading'));
-      };
+      emscripten = await (<EmscriptenModuleFactory<CustomEmscriptenModule>>emscriptenModuleFactory)(new Module());
+      UpdateSize(null);
     }
   })
 </script>
@@ -189,7 +158,7 @@
 <svelte:head>
   {#if $isLoading}
   {:else}
-  <link rel="manifest" href="{manifestJson}" crossorigin="use-credentials" />
+  <link rel="manifest" href="manifests/{manifestJson}" crossorigin="use-credentials" />
   {/if}
 </svelte:head>
 

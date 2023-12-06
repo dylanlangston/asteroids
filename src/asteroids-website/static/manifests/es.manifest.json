@@ -10,21 +10,21 @@
     "start_url": "/",
     "icons": [
       {
-        "src": "favicon.png",
+        "src": "/favicon.png",
         "type": "image/png",
         "sizes": "320x320"
       }
     ],
     "screenshots" : [
       {
-        "src": "banner.png",
+        "src": "/banner.png",
         "sizes": "1000x500",
         "type": "image/png",
         "form_factor": "wide",
         "label": "Asteroides Bandera del Juego"
       },
       {
-        "src": "favicon.png",
+        "src": "/favicon.png",
         "sizes": "320x320",
         "type": "image/png",
         "label": "Asteroides Logotipo del Juego"

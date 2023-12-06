@@ -134,22 +134,22 @@ pub fn DrawFunction() Shared.View.Views {
         }
     }
 
-    return Shared.View.Views.Menu;
+    return .Menu;
 }
 
 inline fn GetSelection() Shared.View.Views {
     switch (vm.selection) {
         Selection.Start => {
-            return Shared.View.Views.Menu;
+            return .Asteroids;
         },
         Selection.Settings => {
-            return Shared.View.Views.Settings;
+            return .Settings;
         },
         Selection.Quit => {
-            return Shared.View.Views.Quit;
+            return .Quit;
         },
         else => {
-            return Shared.View.Views.Menu;
+            return .Menu;
         },
     }
 }

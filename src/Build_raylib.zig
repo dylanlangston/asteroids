@@ -243,6 +243,9 @@ pub fn linkWithEmscripten(
         "-MINIMAL_RUNTIME=2",
         "-sMINIMAL_RUNTIME_STREAMING_WASM_INSTANTIATION=1",
         "-sMALLOC=emmalloc",
+        "-sMODULARIZE",
+        "-sEXPORT_NAME=emscriptenModuleFactory",
+        "-sEXPORT_ES6",
     });
     return emcc_command;
 }
