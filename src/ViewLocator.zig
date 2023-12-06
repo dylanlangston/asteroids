@@ -14,6 +14,9 @@ pub const ViewLocator = struct {
             Views.Paused => {
                 return @import("./Views/PausedView.zig").PausedView;
             },
+            Views.Asteroids => {
+                return @import("./Views/AsteroidsView.zig").AsteroidsView;
+            },
             Views.Menu => {
                 return @import("./Views/MenuView.zig").MenuView;
             },
@@ -48,6 +51,7 @@ pub const Views = enum {
     Raylib_Splash_Screen,
     Dylan_Splash_Screen,
     Menu,
+    Asteroids,
     Paused,
     Settings,
     Game_Over,
