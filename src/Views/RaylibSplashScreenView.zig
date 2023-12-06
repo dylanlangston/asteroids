@@ -1,15 +1,13 @@
 const std = @import("std");
 const Shared = @import("../Shared.zig").Shared;
 const View = @import("View.zig").View;
-const Views = Shared.View.Views;
-const ViewModel = Shared.View.ViewModel;
 const raylib = @import("raylib");
 const SplashScreenViewModel = @import("../ViewModels/RaylibSplashScreenViewModel.zig").RaylibSplashScreenViewModel;
 
 const logo_color = raylib.Color.orange;
 const vm = SplashScreenViewModel.GetVM();
 
-inline fn DrawSplashScreen() Views {
+inline fn DrawSplashScreen() Shared.View.Views {
     var screen_color = raylib.Color.white;
     if (vm.alpha < 1.0) {
         screen_color = raylib.Color.black.brightness(vm.alpha);
@@ -144,11 +142,11 @@ inline fn DrawSplashScreen() Views {
             );
         },
         States.Exit => {
-            return Views.Dylan_Splash_Screen;
+            return .Dylan_Splash_Screen;
         },
     }
 
-    return Views.Raylib_Splash_Screen;
+    return .Raylib_Splash_Screen;
 }
 
 const lines = struct {
@@ -225,9 +223,9 @@ const lines = struct {
     }
 };
 
-fn DrawFunction() Views {
+fn DrawFunction() Shared.View.Views {
     if (Shared.Settings.GetSettings().Debug) {
-        return Views.Menu;
+        return .Menu;
     }
 
     return DrawSplashScreen();
