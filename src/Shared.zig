@@ -66,7 +66,12 @@ pub const Shared = struct {
 
     pub const Helpers = Helpers_;
 
-    pub const Random = RndGen.init(0).random();
+    pub const Random = GetRandom();
+
+    inline fn GetRandom() std.rand.Random {
+        var rng = RndGen.init(0);
+        return rng.random();
+    }
 
     pub const Font = struct {
         pub const Fonts = AssetManager.Fonts;
