@@ -6,6 +6,7 @@ const Shared = @import("../Shared.zig").Shared;
 const AsteroidsViewModel = @import("../ViewModels/AsteroidsViewModel.zig").AsteroidsViewModel;
 
 // Original Sauce 😋: https://github.com/raysan5/raylib-games/blob/master/classics/src/asteroids.c
+// TODO: This code still needs ot be split into a ViewModel and updated to scale based on the current screenSize.
 
 const vm: type = AsteroidsViewModel.GetVM();
 
