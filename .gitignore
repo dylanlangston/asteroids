@@ -2,4 +2,4 @@ zig-cache/
 zig-out/
 /settings.json
 src/asteroids-website/static/asteroids.wasm
-src/asteroids-website/static/emscripten.js
+src/asteroids-website/src/lib/emscripten.js
