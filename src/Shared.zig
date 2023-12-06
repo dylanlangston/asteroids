@@ -66,7 +66,7 @@ pub const Shared = struct {
 
     pub const Helpers = Helpers_;
 
-    pub const Random = RndGen.random();
+    pub const Random = RndGen.init(0).random();
 
     pub const Font = struct {
         pub const Fonts = AssetManager.Fonts;

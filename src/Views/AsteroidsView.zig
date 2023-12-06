@@ -48,7 +48,7 @@ const Meteor = struct {
 var gameOver = false;
 var victory = false;
 
-var screenSize = Shared.Helpers.GetCurrentScreenSize();
+var screenSize: raylib.Rectangle = undefined;
 
 var shipHeight: f32 = 0;
 var player: Player = undefined;
@@ -63,6 +63,8 @@ var destroyedMeteorsCount: i32 = 0;
 
 // Initialize game variables
 inline fn init() void {
+    screenSize = Shared.Helpers.GetCurrentScreenSize();
+
     var posx: f32 = undefined;
     var posy: f32 = undefined;
     var velx: f32 = undefined;
@@ -100,19 +102,22 @@ inline fn init() void {
     destroyedMeteorsCount = 0;
 
     // Initialization shoot
-    for (shoot) |single_shoot| {
-        single_shoot.position = raylib.Vector2.init(
-            0,
-            0,
-        );
-        single_shoot.speed = raylib.Vector2.init(
-            0,
-            0,
-        );
-        single_shoot.radius = 2;
-        single_shoot.active = false;
-        single_shoot.lifeSpawn = 0;
-        single_shoot.color = Shared.Color.Tone.Light;
+    for (0..PLAYER_MAX_SHOOTS) |i| {
+        shoot[i] = Shoot{
+            .position = raylib.Vector2.init(
+                0,
+                0,
+            ),
+            .speed = raylib.Vector2.init(
+                0,
+                0,
+            ),
+            .radius = 2,
+            .rotation = shoot[i].rotation,
+            .active = false,
+            .lifeSpawn = 0,
+            .color = Shared.Color.Tone.Light,
+        };
     }
 
     // Initialization Big Meteor
@@ -527,7 +532,7 @@ inline fn UpdateFunction() void {
 }
 
 var isInit = false;
-inline fn DrawFunction() Shared.View.Views {
+fn DrawFunction() Shared.View.Views {
     if (!isInit) {
         init();
         isInit = true;
