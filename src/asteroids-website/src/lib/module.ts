@@ -8,6 +8,9 @@ export interface ICustomModule {
     _updateWasmLocale?: (locale: number) => void;
     _set_js_key?: (location: number, down: boolean) => void;
 
+    forcedAspectRatio: number;
+    elementPointerLock: boolean;
+
     arguments: string[];
     onRuntimeInitialized: { (): void };
 
@@ -25,6 +28,9 @@ export class Module implements ICustomModule {
     _updateWasmResolution?: (width: number, height: number) => void;
     _updateWasmLocale?: (locale: number) => void;
     _set_js_key?: (location: number, down: boolean) => void;
+
+    forcedAspectRatio: number = 16 / 9;
+    elementPointerLock: boolean = false;
 
     public onRuntimeInitialized(): void {        
         document.getElementById("controls")?.classList.remove("hidden");
