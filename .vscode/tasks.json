@@ -44,7 +44,7 @@
         {
             "label": "Build Web",
             "type": "shell",
-            "command": "zig build -Dtarget=wasm32-emscripten -Doptimize=ReleaseFast",
+            "command": "zig build -Dtarget=wasm32-emscripten -Doptimize=ReleaseFast -- DebugWASM",
             "problemMatcher": [],
             "group": {
                 "kind": "build",
