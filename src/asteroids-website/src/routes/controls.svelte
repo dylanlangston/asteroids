@@ -1,6 +1,5 @@
 <script lang="ts">
     import { Button } from "$lib/gameController";
-    import { onMount} from "svelte";
     import { _ } from "svelte-i18n";
 
 
@@ -57,15 +56,6 @@
         handleButtonReleased(<any>(<HTMLButtonElement>n).value);
       });
     }
-
-    onMount(() => {
-      const dpadElement = document.querySelector("#dpad");
-      const clickCanvas = () => {
-        window.Module.canvas.click();
-        dpadElement?.removeEventListener("pointerdown", clickCanvas);
-      };
-      dpadElement?.addEventListener("pointerdown", clickCanvas);
-    });
 </script>
 
 <style global lang="postcss">
