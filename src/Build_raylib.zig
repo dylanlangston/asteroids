@@ -217,6 +217,17 @@ pub fn linkWithEmscripten(
         emcc_command.addFileArg(item.getEmittedBin());
         emcc_command.step.dependOn(&item.step);
     }
+    var debugging = "0";
+    var optimize = "-Oz";
+    if (b.args != null) {
+        for (b.args.?) |arg| {
+            if (std.mem.eql(u8, arg, "DebugWASM")) {
+                debugging = "1";
+                optimize = "-00";
+            }
+        }
+    }
+
     // This puts the file in zig-out/htmlout/index.html.
     emcc_command.step.dependOn(&mkdir_command.step);
     emcc_command.addArgs(&[_][]const u8{
@@ -227,18 +238,19 @@ pub fn linkWithEmscripten(
         "-sUSE_GLFW=3",
         "--closure 1",
         "-sASYNCIFY",
-        "-O3",
+        optimize,
         "--emrun",
         "--no-entry",
         "-sEXPORTED_FUNCTIONS=['_malloc','_free','_main','_updateWasmResolution','_updateWasmLocale','_set_js_key','_wizer_initialize']",
         "-sEXPORTED_RUNTIME_METHODS=allocateUTF8,UTF8ToString",
         "--js-library=src/Zig-JS_Bridge.js",
         "-sWASM=1",
+        "-sUSE_WEBGPU=1",
         "-sALLOW_MEMORY_GROWTH=1",
         "-sWASM_MEM_MAX=512MB",
         "-sTOTAL_MEMORY=32MB",
-        "-sABORTING_MALLOC=0",
-        "-sASSERTIONS",
+        "-sABORTING_MALLOC=" ++ debugging,
+        "-sASSERTIONS=" ++ debugging,
         "-sVerbose=1",
         "-sOFFSCREENCANVAS_SUPPORT=1",
         "-sWASMFS=1",
