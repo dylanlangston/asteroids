@@ -222,8 +222,10 @@ pub fn linkWithEmscripten(
     emcc_command.addArgs(&[_][]const u8{
         "-o",
         emccOutputDir ++ emccOutputFile,
+        "-sENVIRONMENT='web'",
         "-sFULL-ES3=1",
         "-sUSE_GLFW=3",
+        "--closure 1",
         "-sASYNCIFY",
         "-O3",
         "--emrun",
