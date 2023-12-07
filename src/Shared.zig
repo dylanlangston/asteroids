@@ -66,12 +66,17 @@ pub const Shared = struct {
 
     pub const Helpers = Helpers_;
 
-    pub const Random = GetRandom();
-
-    inline fn GetRandom() std.rand.Random {
-        var rng = RndGen.init(0);
-        return rng.random();
-    }
+    pub const Random = struct {
+        var random: std.rand.Random = undefined;
+        pub inline fn init() void {
+            const now: u64 = @intCast(std.time.microTimestamp());
+            var rng = RndGen.init(now);
+            random = rng.random();
+        }
+        pub inline fn Get() std.rand.Random {
+            return random;
+        }
+    };
 
     pub const Font = struct {
         pub const Fonts = AssetManager.Fonts;

@@ -24,6 +24,7 @@ pub inline fn main() void {
             @panic("Error durring init");
         };
     }
+    Shared.Random.init();
     defer Shared.deinit();
 
     const settings = Shared.Settings.GetSettings();
