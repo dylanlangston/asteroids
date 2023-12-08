@@ -129,7 +129,7 @@ jobs:
         body: Asteroids Game - Prerelease v${{ steps.set_datetime.outputs.datetime }}
         prerelease: true
         draft: false
-        commit: ${{ github.event.head_commit }}
+        commit: ${{ github.head_ref }}
         tag: v${{ steps.set_datetime.outputs.datetime }}
         token: ${{ secrets.GITHUB_TOKEN }}
     - uses: manleydev/butler-publish-itchio-action@master
