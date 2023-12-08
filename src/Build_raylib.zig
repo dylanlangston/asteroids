@@ -218,7 +218,7 @@ pub fn linkWithEmscripten(
         emcc_command.step.dependOn(&item.step);
     }
     var debugging = "0";
-    var optimize = "-Oz";
+    var optimize = "-O2";
     if (b.args != null) {
         for (b.args.?) |arg| {
             if (std.mem.eql(u8, arg, "DebugWASM")) {
@@ -251,7 +251,7 @@ pub fn linkWithEmscripten(
         "-sTOTAL_MEMORY=32MB",
         "-sABORTING_MALLOC=" ++ debugging,
         "-sASSERTIONS=" ++ debugging,
-        "-sVerbose=1",
+        "-sVerbose=" ++ debugging,
         "-sOFFSCREENCANVAS_SUPPORT=1",
         "-sWASMFS=1",
         "-MINIMAL_RUNTIME=2",
