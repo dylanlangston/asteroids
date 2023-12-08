@@ -128,8 +128,10 @@ jobs:
         artifactContentType: application/zip
         body: Asteroids Game - Prerelease v${{ steps.set_datetime.outputs.datetime }}
         prerelease: true
-        deaft: false
-        toke: ${{ secrets.GITHUB_TOKEN }}
+        draft: false
+        commit: ${{ github.event.head_commit }}
+        tag: v${{ steps.set_datetime.outputs.datetime }}
+        token: ${{ secrets.GITHUB_TOKEN }}
     - uses: manleydev/butler-publish-itchio-action@master
       env:
         BUTLER_CREDENTIALS: ${{ secrets.ITCHIO_API_KEY }}
