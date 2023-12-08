@@ -11,7 +11,6 @@ export interface ICustomModule {
     forcedAspectRatio: number;
     elementPointerLock: boolean;
 
-    arguments: string[];
     onRuntimeInitialized: { (): void };
 
     print(str: string): void;
@@ -42,16 +41,12 @@ export class Module implements ICustomModule {
         }
     }
 
-    public arguments: string[] = [
-        "./this.program"
-    ];
-
     public instantiateWasm(
         imports: WebAssembly.Imports, 
         successCallback: (module: WebAssembly.Instance) => void): WebAssembly.Exports 
         {
         console.log('instantiateWasm: instantiating asynchronously');
-        fetch("asteroids.wasm", { 
+        fetch("src/import/asteroids.wasm", { 
             cache: "default",
         })
         .then((response) => response.arrayBuffer())
@@ -65,7 +60,7 @@ export class Module implements ICustomModule {
         }).catch((e) => {
             Module.setStatus('wasm instantiation failed! ' + e);
         });
-        return {}; // Compiling asynchronously, no exports.
+        return {};
       }
 
     public print(t: string): void {
