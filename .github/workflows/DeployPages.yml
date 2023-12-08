@@ -72,12 +72,12 @@ jobs:
       - name: Wizer Pre-Init 
         run: |
           cd ${{ github.workspace }}/src/asteroids-website
-          wizer ./static/asteroids.wasm --init-func wizer_initialize -o ./static/asteroids-initialized.wasm 
+          wizer ./src/import/asteroids.wasm --init-func wizer_initialize -o ./src/import/asteroids-initialized.wasm 
       - name: Binaryen Optimize
         run: |
           cd ${{ github.workspace }}/src/asteroids-website
-          npm exec --package=binaryen -c 'wasm-opt ./static/asteroids-initialized.wasm -all --post-emscripten --low-memory-unused -tnh --converge -Oz --flatten --rereloop -Oz -Oz -o ./static/asteroids.wasm'
-          rm ./static/asteroids-initialized.wasm
+          npm exec --package=binaryen -c 'wasm-opt ./src/import/asteroids-initialized.wasm -all --post-emscripten --low-memory-unused -tnh --converge -Oz --flatten --rereloop -Oz -Oz -o ./src/import/asteroids.wasm'
+          rm ./src/import/asteroids-initialized.wasm
       - name: Build Svelte
         run: |
           cd ${{ github.workspace }}/src/asteroids-website
