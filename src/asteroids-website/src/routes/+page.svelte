@@ -152,6 +152,7 @@
 
 <svelte:head>
   {#if $isLoading}
+  <link rel="manifest" href="manifests/{manifestJson}" crossorigin="use-credentials" />
   {:else}
   <link rel="manifest" href="manifests/{manifestJson}" crossorigin="use-credentials" />
   {/if}
@@ -165,7 +166,7 @@
 {#if $isLoading}
   <div class="absolute flex top-0 bottom-0 left-0 right-0 items-center justify-center pointer-events-none -z-50">
     <div id="status-container" class="rounded-lg bg-slate-50 shadow-xl p-8 m-8">
-      <div class="emscripten select-none text-center text-2xl lg:text-6xl font-bold" id="status" contenteditable="true"><div class="jsonly">Starting...</div><noscript>Please enable Javascript to play.</noscript></div>
+      <div class="emscripten select-none text-center text-2xl lg:text-6xl font-bold" id="status"><div class="jsonly">Starting...</div><noscript>Please enable Javascript to play.</noscript></div>
     </div>
   </div>
 {:else}
@@ -192,7 +193,7 @@
     </div>
     <div class="absolute flex top-0 bottom-0 left-0 right-0 items-center justify-center pointer-events-none -z-50">
       <div id="status-container" class="rounded-lg bg-slate-50 shadow-xl p-8 m-8">
-        <div class="emscripten select-none text-center text-2xl lg:text-6xl font-bold" id="status" contenteditable="true">{$_('page.Starting')}</div>
+        <div class="emscripten select-none text-center text-2xl lg:text-6xl font-bold" id="status">{$_('page.Starting')}</div>
       </div>
     </div>
   </div>
