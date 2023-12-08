@@ -18,38 +18,27 @@
   function toggleFullScreen(): void {
     const elem = document.documentElement;
     if (!document.fullscreenElement) {
-      const resolution = fitInto16x9AspectRatio(window.screen.width, window.screen.height - 1);
-      const updateWasmResolution = emscripten._updateWasmResolution;
-      if (updateWasmResolution)
-      {
-        updateWasmResolution(resolution.width, resolution.height);
-        emscripten.canvas.style.width = resolution.width + "px !important";
-        emscripten.canvas.style.height = resolution.height + "px !important";
-      }
-      const timeout = isMobile ? 100 : 10;
-      setTimeout(() => {
-        elem.requestFullscreen({ navigationUI: "show" }).then(() => {
-
-        }).catch((err) => {
-          alert(
-            `Error attempting to enable fullscreen mode: ${err.message} (${err.name})`,
-            );
-          UpdateSize(<any>null);
-        });
-      }, timeout);
-      is_fullscreen = true;
+      UpdateSize(<any>null, {width: window.screen.width, height: window.screen.height});
+      elem.requestFullscreen({ navigationUI: "hide" }).then(() => {
+        if (emscripten?.canvas) {
+          emscripten.canvas.style.width = emscripten.canvas.width + "px !important";
+          emscripten.canvas.style.height = emscripten.canvas.height + "px !important";
+        }
+        is_fullscreen = true;
+      }).catch((err) => {
+        alert(`Error attempting to enable fullscreen mode: ${err.message} (${err.name})`);
+      });
     } else {
       document.exitFullscreen().then(() => {
-        UpdateSize(<any>null);
+        is_fullscreen = false;
       });
-      is_fullscreen = false;
     }
 
-    emscripten.canvas.focus();
+    emscripten?.canvas.focus();
   }
 
   let updateSizeTimeout: number|undefined = undefined;
-  function UpdateSize(e: Event | null): void {
+  function UpdateSize(e: Event | null, override: { width: number, height: number } | undefined = undefined): void {
     clearTimeout(updateSizeTimeout);
 
     requestPause();
@@ -59,15 +48,19 @@
     }
 
     const updateSize = (): void => {
-      const updateWasmResolution = emscripten._updateWasmResolution;
+      const updateWasmResolution = emscripten?._updateWasmResolution;
       if (updateWasmResolution)
       {
-        const resolution = fitInto16x9AspectRatio(window.innerWidth, (window.innerHeight));
+        const resolution = fitInto16x9AspectRatio(override?.width ?? window.innerWidth, override?.height ?? window.innerHeight);
         updateWasmResolution(resolution.width, resolution.height);
       }
     };
-
-    updateSizeTimeout = setTimeout(updateSize, 10);
+    
+    // Update now if override is supplied
+    if (override) updateSize();
+    else {
+      updateSizeTimeout = setTimeout(updateSize, 10);
+    }
   }
 
   function fitInto16x9AspectRatio(originalWidth: number, originalHeight: number): { width: number; height: number } {
@@ -84,7 +77,7 @@
   }
 
   function handleButtonPressed(b: Button): void {
-    const js_key_pressed = emscripten._set_js_key;
+    const js_key_pressed = emscripten?._set_js_key;
     if (js_key_pressed)
     {
       js_key_pressed(b, true);
@@ -92,7 +85,7 @@
   }
 
   function handleButtonReleased(b: Button): void {
-    const js_key_released = emscripten._set_js_key;
+    const js_key_released = emscripten?._set_js_key;
     if (js_key_released)
     {
       js_key_released(b, false);
@@ -101,7 +94,7 @@
 
   function requestPause(): void {
     handleButtonPressed(Button.Start);
-    setTimeout(() => handleButtonReleased(Button.Start), 500);
+    setTimeout(() => handleButtonReleased(Button.Start), 100);
   }
 
   const isMobile: boolean = (() => {
@@ -109,11 +102,13 @@
     return detector.parseUserAgent().isMobile;
   })();
   let isItchZone: boolean = false;
+  let fullscreenEnabled: boolean = true;
   $: manifestJson  = "en.manifest.json";
 
-  let emscripten: CustomEmscriptenModule;
+  let emscripten: CustomEmscriptenModule | undefined;
   onMount(async () => {
     isItchZone = window.location?.host?.endsWith("itch.zone");
+    fullscreenEnabled = document.fullscreenEnabled;
     manifestJson = Localizer.GetLocalePrefix() + ".manifest.json";
     
     window.onerror = (e: any) => {
@@ -181,7 +176,7 @@
           <GameController handleButtonPressed={b => handleButtonPressed(b) } handleButtonReleased={ b => handleButtonReleased(b) }></GameController>
         </div>
       {/if}
-      {#if !(isItchZone && isMobile)}
+      {#if !(isItchZone && isMobile && fullscreenEnabled)}
         <button type="button" title={is_fullscreen ? $_('page.Exit_Fullscreen') : $_('page.Fullscreen')} class="absolute right-0 z-50 rounded-lg bg-slate-50/[.5] p-2 m-2" on:click={() => toggleFullScreen()}>
           <svg viewBox="0 0 100 100" fill="rgba(0,0,0,0.5)" class="w-6 h-6 lg:w-8 lg:h-8"><path d="M3.563-.004a3.573 3.573 0 0 0-3.527 4.09l-.004-.02v28.141c0 1.973 1.602 3.57 3.57 3.57s3.57-1.598 3.57-3.57V12.218v.004l22.461 22.461a3.571 3.571 0 0 0 6.093-2.527c0-.988-.398-1.879-1.047-2.523L12.218 7.172h19.989c1.973 0 3.57-1.602 3.57-3.57s-1.598-3.57-3.57-3.57H4.035a3.008 3.008 0 0 0-.473-.035zM96.333 0l-.398.035.02-.004h-28.16a3.569 3.569 0 0 0-3.57 3.57 3.569 3.569 0 0 0 3.57 3.57h19.989L65.323 29.632a3.555 3.555 0 0 0-1.047 2.523 3.571 3.571 0 0 0 6.093 2.527L92.83 12.221v19.985a3.569 3.569 0 0 0 3.57 3.57 3.569 3.569 0 0 0 3.57-3.57V4.034v.004a3.569 3.569 0 0 0-3.539-4.043l-.105.004zM3.548 64.23A3.573 3.573 0 0 0 .029 67.8v28.626-.004l.016.305-.004-.016.004.059v-.012l.039.289-.004-.023.023.121-.004-.023c.074.348.191.656.34.938l-.008-.02.055.098-.008-.02.148.242-.008-.012.055.082-.008-.012c.199.285.43.531.688.742l.008.008.031.027.004.004c.582.461 1.32.742 2.121.762h.004l.078.004h28.61a3.569 3.569 0 0 0 3.57-3.57 3.569 3.569 0 0 0-3.57-3.57H12.224l22.461-22.461a3.569 3.569 0 0 0-2.492-6.125l-.105.004h.008a3.562 3.562 0 0 0-2.453 1.074L7.182 87.778V67.793a3.571 3.571 0 0 0-3.57-3.57h-.055.004zm92.805 0a3.573 3.573 0 0 0-3.519 3.57v19.993-.004L70.373 65.328a3.553 3.553 0 0 0-2.559-1.082h-.004a3.573 3.573 0 0 0-3.566 3.57c0 1.004.414 1.91 1.082 2.555l22.461 22.461H67.802a3.57 3.57 0 1 0 0 7.14h28.606c.375 0 .742-.059 1.082-.168l-.023.008.027-.012-.02.008.352-.129-.023.008.039-.02-.02.008.32-.156-.02.008.023-.016-.008.008c.184-.102.34-.207.488-.32l-.008.008.137-.113-.008.004.223-.211.008-.008c.156-.164.301-.34.422-.535l.008-.016-.008.016.008-.02.164-.285.008-.02-.008.016.008-.02c.098-.188.184-.406.246-.633l.008-.023-.004.008.008-.023a3.44 3.44 0 0 0 .121-.852v-.004l.004-.078V67.804a3.569 3.569 0 0 0-3.57-3.57h-.055.004z"></path></svg>
         </button>
