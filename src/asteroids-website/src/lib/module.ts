@@ -12,6 +12,7 @@ export interface ICustomModule {
     elementPointerLock: boolean;
 
     onRuntimeInitialized: { (): void };
+    wasmBinary: ArrayBuffer;
 
     print(str: string): void;
     printErr(str: string): void;
@@ -30,6 +31,20 @@ export class Module implements ICustomModule {
 
     forcedAspectRatio: number = 16 / 9;
     elementPointerLock: boolean = false;
+    wasmBinary: ArrayBuffer;
+
+    private constructor(wasmBinary: ArrayBuffer) {
+        this.wasmBinary = wasmBinary;
+    }
+
+    private static wasmBinaryFile: string = new URL('../import/asteroids.wasm', import.meta.url).href;
+    public static async Init(): Promise<Module> {
+        const wasmFile = await fetch(this.wasmBinaryFile, { 
+            cache: "default",
+        });
+        console.log('wasm download finished');
+        return new Module(await wasmFile.arrayBuffer());
+    }
 
     public onRuntimeInitialized(): void {        
         document.getElementById("controls")?.classList.remove("hidden");
@@ -44,16 +59,8 @@ export class Module implements ICustomModule {
     public instantiateWasm(
         imports: WebAssembly.Imports, 
         successCallback: (module: WebAssembly.Instance) => void): WebAssembly.Exports 
-        {
-        console.log('instantiateWasm: instantiating asynchronously');
-        fetch("src/import/asteroids.wasm", { 
-            cache: "default",
-        })
-        .then((response) => response.arrayBuffer())
-        .then((bytes) => {
-            console.log('wasm download finished, begin instantiating');
-            return WebAssembly.instantiate(new Uint8Array(bytes), imports);
-        })
+    {
+        WebAssembly.instantiate(new Uint8Array(this.wasmBinary), imports)
         .then((output) => {
             console.log('wasm instantiation succeeded');
             successCallback(output.instance);
@@ -61,7 +68,7 @@ export class Module implements ICustomModule {
             Module.setStatus('wasm instantiation failed! ' + e);
         });
         return {};
-      }
+    }
 
     public print(t: string): void {
         console.log(t);

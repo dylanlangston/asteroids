@@ -106,7 +106,7 @@
   $: manifestJson  = "en.manifest.json";
 
   let emscripten: CustomEmscriptenModule | undefined;
-  onMount(async () => {
+  onMount(() => {
     isItchZone = window.location?.host?.endsWith("itch.zone");
     fullscreenEnabled = document.fullscreenEnabled;
     manifestJson = Localizer.GetLocalePrefix() + ".manifest.json";
@@ -124,8 +124,10 @@
       window.location.search = "";
     }
     else {
-      emscripten = await (<EmscriptenModuleFactory<CustomEmscriptenModule>>emscriptenModuleFactory)(new Module());
-      UpdateSize(null);
+      Module.Init().then(async (mod) => {
+        emscripten = await (<EmscriptenModuleFactory<CustomEmscriptenModule>>emscriptenModuleFactory)(mod);
+        UpdateSize(null);
+      });
     }
   })
 </script>
