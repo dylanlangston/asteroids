@@ -1,6 +1,5 @@
 <script>
     import { page } from '$app/stores'
-	import { error } from '@sveltejs/kit';
 </script>
 
 <style lang="postcss">
@@ -18,10 +17,10 @@
           <hr class="h-0.5 lg:h-1 bg-black rounded-lg"/>
           <div class="text-xl lg:text-3xl font-normal text-left px-4 pt-2">
             {#if $page?.status}
-              <p><a class="italic">Status:</a> {$page?.status}</p>
+              <p><i class="italic">Status:</i> {$page?.status}</p>
             {/if}
             {#if $page?.error?.message}
-              <p><a class="italic">Error Message:</a> {$page?.error?.message}</p>
+              <p><i class="italic">Error Message:</i> {$page?.error?.message}</p>
             {/if}
           </div>
         {/if}
