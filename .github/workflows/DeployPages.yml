@@ -29,12 +29,11 @@ jobs:
         uses: goto-bus-stop/setup-zig@v2.1.1
         with:
           version: 0.11.0
-          cache: ${{ steps.detect-package-manager.outputs.manager }}
       - name: Setup Node
         uses: actions/setup-node@v3
         with:
           node-version: "16"
-          cache: ${{ steps.detect-package-manager.outputs.manager }}
+          cache: 'npm'
           cache-dependency-path: "${{ github.workspace }}/src/asteroids-website"
       - name: Install Node Modules
         uses: bahmutov/npm-install@v1.6.0
