@@ -119,6 +119,7 @@ jobs:
       run: |
         cd ./asteroids
         mkdir ./asteroids
+        tar -xvf ./artifact.tar -C ./asteroids
         zip -r ../asteroids-v${{ steps.set_datetime.outputs.datetime }}.zip ./asteroids/
     - name: Create Release
       id: create_release
