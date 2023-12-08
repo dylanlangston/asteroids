@@ -108,44 +108,32 @@ jobs:
       contents: write
     steps:
     - name: Download artifact
-      uses: actions/download-artifact@v2
+      uses: actions/download-artifact@v2.1.1
       with:
         name: github-pages
         path: asteroids
     - name: Set current datetime
       id: set_datetime
       run: echo "datetime=$(date +"%Y%m%d%H%M%S")" >> "$GITHUB_OUTPUT"
-    - name: Create Release
-      id: create_release
-      uses: actions/create-release@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        tag_name: v${{ steps.set_datetime.outputs.datetime }}
-        release_name: Release v${{ steps.set_datetime.outputs.datetime }}
-        body: Asteroids Game - Prerelease v${{ steps.set_datetime.outputs.datetime }}
-        draft: false
-        prerelease: true
     - name: Create ZIP
       run: |
         cd ./asteroids
         mkdir ./asteroids
-        tar -xvf ./artifact.tar -C ./asteroids
-        zip -r ../asteroids.zip ./asteroids/
-    - name: Upload Release Asset
-      id: upload-release-asset
-      uses: actions/upload-release-asset@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        zip -r ../asteroids-v${{ steps.set_datetime.outputs.datetime }}.zip ./asteroids/
+    - name: Create Release
+      id: create_release
+      uses: ncipollo/release-action@v1
       with:
-        upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: ./asteroids.zip
-        asset_name: asteroids.zip
-        asset_content_type: application/zip
+        artifacts: "./asteroids-v${{ steps.set_datetime.outputs.datetime }}.zip"
+        artifactContentType: application/zip
+        body: Asteroids Game - Prerelease v${{ steps.set_datetime.outputs.datetime }}
+        prerelease: true
+        deaft: false
+        toke: ${{ secrets.GITHUB_TOKEN }}
     - uses: manleydev/butler-publish-itchio-action@master
       env:
         BUTLER_CREDENTIALS: ${{ secrets.ITCHIO_API_KEY }}
         CHANNEL: html
         ITCH_GAME: asteroids
         ITCH_USER: dylanlangston
-        PACKAGE: ./asteroids.zip
+        PACKAGE: ./asteroids-v${{ steps.set_datetime.outputs.datetime }}.zip
