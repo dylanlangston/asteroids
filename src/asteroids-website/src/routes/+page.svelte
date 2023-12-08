@@ -6,7 +6,7 @@
 	import { Button } from "$lib/gameController";
   import { _, isLoading} from "svelte-i18n";
   import { Localizer } from "$lib/localizer"
-  import emscriptenModuleFactory from "../lib/emscripten";
+  import emscriptenModuleFactory from "../import/emscripten";
 	import { Settings } from "$lib/settings";
 
   const repoUrl: string = "https://github.com/dylanlangston/asteroids";
