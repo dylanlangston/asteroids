@@ -107,6 +107,7 @@
 
   let emscripten: CustomEmscriptenModule | undefined;
   onMount(async () => {
+    Module.setStatus(Localizer.GetLocalInitText());
     isItchZone = window.location?.host?.endsWith("itch.zone");
     fullscreenEnabled = document.fullscreenEnabled;
     manifestJson = Localizer.GetLocalePrefix() + ".manifest.json";

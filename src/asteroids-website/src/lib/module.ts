@@ -96,10 +96,7 @@ export class Module implements ICustomModule {
         Module.setStatus(e);
     }
 
-    public static readonly statusMessage = writable("⏳", () => {
-        this.statusMessage.set(Localizer.GetLocalInitText());
-        return () => {};
-    });
+    public static readonly statusMessage = writable("⏳");
     public static setStatus(e: string): void {
         // "Running..." is from emscripten.js and isn't localized so just return"
         if (e == "Running...")

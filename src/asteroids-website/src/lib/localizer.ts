@@ -82,11 +82,11 @@ export class Localizer {
             case Locales.english:
             case Locales.unknown:
             default:
-                return "Starting...";
-            case Locales.french:
-                return "Démarrage en cours...";
+                return "Starting... ⌛";
             case Locales.spanish:
-                return "Iniciando...";
+                return "Iniciando... ⌛";
+            case Locales.french:
+                return "Démarrage en cours... ⌛";
         }
     }
 }
