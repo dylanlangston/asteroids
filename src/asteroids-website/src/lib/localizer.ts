@@ -55,9 +55,13 @@ export class Localizer {
 
     private static Locale: LocaleGroup | undefined = undefined;
     private static LoadLocale(): LocaleGroup | undefined {
-        const allLocales = Object.entries(Locales).map((_, locale) => new LocaleGroup(locale));
-        const sortedLocales = allLocales.filter(l => l.Index > -1).sort((a, b) => a.Index - b.Index);
-        return sortedLocales.at(0);
+        if (Localizer.Locale == undefined)
+        {
+            const allLocales = Object.entries(Locales).map((_, locale) => new LocaleGroup(locale));
+            const sortedLocales = allLocales.filter(l => l.Index > -1).sort((a, b) => a.Index - b.Index);
+            Localizer.Locale = sortedLocales.at(0);
+        }
+        return Localizer.Locale;
     }
 
     public static GetLocale(): Locales {
@@ -70,6 +74,20 @@ export class Localizer {
         const locale = Localizer.LoadLocale();
         if (locale == undefined) return "en";
         return locale.Prefix;
+    }
+
+    public static GetLocalInitText(): string {
+        const locale = Localizer.LoadLocale();
+        switch (locale?.Locale) {
+            case Locales.english:
+            case Locales.unknown:
+            default:
+                return "Starting...";
+            case Locales.french:
+                return "Démarrage en cours...";
+            case Locales.spanish:
+                return "Iniciando...";
+        }
     }
 }
 

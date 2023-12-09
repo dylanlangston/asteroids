@@ -1,10 +1,10 @@
 <script lang="ts">
   import { Module, type CustomEmscriptenModule } from "$lib/module";
-  import { onMount} from "svelte";
+  import { onMount, onDestroy } from "svelte";
   import { BrowserDetector } from "browser-dtector";
   import GameController from "./controls.svelte";
 	import { Button } from "$lib/gameController";
-  import { _, isLoading} from "svelte-i18n";
+  import { _, isLoading, waitLocale } from "svelte-i18n";
   import { Localizer } from "$lib/localizer"
   import emscriptenModuleFactory from "../import/emscripten";
 	import { Settings } from "$lib/settings";
@@ -106,10 +106,11 @@
   $: manifestJson  = "en.manifest.json";
 
   let emscripten: CustomEmscriptenModule | undefined;
-  onMount(() => {
+  onMount(async () => {
     isItchZone = window.location?.host?.endsWith("itch.zone");
     fullscreenEnabled = document.fullscreenEnabled;
     manifestJson = Localizer.GetLocalePrefix() + ".manifest.json";
+    Module.statusMessage.subscribe(s => status = s);
     
     window.onerror = (e: any) => {
       document.getElementById("canvas")!.style.display = 'none';
@@ -124,12 +125,19 @@
       window.location.search = "";
     }
     else {
-      Module.Init().then(async (mod) => {
+      await waitLocale();
+      Module.Init($_('page.Downloading')).then(async (mod) => {
         emscripten = await (<EmscriptenModuleFactory<CustomEmscriptenModule>>emscriptenModuleFactory)(mod);
         UpdateSize(null);
       });
     }
   })
+
+  let status: string = "⏳";
+  const unsubscribeStatus = Module.statusMessage.subscribe(s => status = s);
+  onDestroy(() => {
+    unsubscribeStatus();
+  });
 </script>
 
 <style lang="postcss">
@@ -163,12 +171,15 @@
 <svelte:window
   on:orientationchange={(e) => UpdateSize(e)} 
   on:resize={(e) => UpdateSize(e)} 
-  on:blur={(e) => requestPause()} />
+  on:blur={(e) => requestPause()}/>
 
 {#if $isLoading}
   <div class="absolute flex top-0 bottom-0 left-0 right-0 items-center justify-center pointer-events-none -z-50">
     <div id="status-container" class="rounded-lg bg-slate-50 shadow-xl p-8 m-8">
-      <div class="emscripten select-none text-center text-2xl lg:text-6xl font-bold" id="status"><div class="jsonly">Starting...</div><noscript>Please enable Javascript to play.</noscript></div>
+      <div class="emscripten select-none text-center text-2xl lg:text-6xl font-bold" id="status">
+        {status}
+        <noscript>Please enable Javascript to play.</noscript>
+      </div>
     </div>
   </div>
 {:else}
@@ -195,7 +206,9 @@
     </div>
     <div class="absolute flex top-0 bottom-0 left-0 right-0 items-center justify-center pointer-events-none -z-50">
       <div id="status-container" class="rounded-lg bg-slate-50 shadow-xl p-8 m-8">
-        <div class="emscripten select-none text-center text-2xl lg:text-6xl font-bold" id="status">{$_('page.Starting')}</div>
+        <div class="emscripten select-none text-center text-2xl lg:text-6xl font-bold" id="status">
+          {status}
+        </div>
       </div>
     </div>
   </div>

@@ -1,4 +1,5 @@
 import { Localizer } from "./localizer"
+import { writable, get } from 'svelte/store';
 
 export interface CustomEmscriptenModule extends Module, EmscriptenModule {}
 
@@ -10,6 +11,8 @@ export interface ICustomModule {
 
     forcedAspectRatio: number;
     elementPointerLock: boolean;
+    statusMessage: string;
+    setStatus(e: string): void;
 
     onRuntimeInitialized: { (): void };
     wasmBinary: ArrayBuffer;
@@ -38,7 +41,8 @@ export class Module implements ICustomModule {
     }
 
     private static wasmBinaryFile: string = new URL('../import/asteroids.wasm', import.meta.url).href;
-    public static async Init(): Promise<Module> {
+    public static async Init(message: string): Promise<Module> {
+        this.setStatus(message);
         const wasmFile = await fetch(this.wasmBinaryFile, { 
             cache: "default",
         });
@@ -65,7 +69,8 @@ export class Module implements ICustomModule {
             console.log('wasm instantiation succeeded');
             successCallback(output.instance);
         }).catch((e) => {
-            Module.setStatus('wasm instantiation failed! ' + e);
+            console.log('wasm instantiation failed! ' + e);
+            this.setStatus('wasm instantiation failed! ' + e);
         });
         return {};
     }
@@ -84,13 +89,24 @@ export class Module implements ICustomModule {
         return e;
     }
 
+    public get statusMessage(): string {
+        return get(Module.statusMessage);
+    }
     public setStatus(e: string): void {
         Module.setStatus(e);
     }
+
+    public static readonly statusMessage = writable("⏳", () => {
+        this.statusMessage.set(Localizer.GetLocalInitText());
+        return () => {};
+    });
     public static setStatus(e: string): void {
-        const statusElement = <HTMLElement>document.getElementById("status");
-        const statusContainerElement = document.getElementById("status-container");
-        statusContainerElement!.hidden = (e.length == 0 || e == null || e == undefined);
-        statusElement.innerText = e;
+        // "Running..." is from emscripten.js and isn't localized so just return"
+        if (e == "Running...")
+        {
+            return;
+        }
+        Module.statusMessage.set(e);
+        console.log(e);
     }
 }

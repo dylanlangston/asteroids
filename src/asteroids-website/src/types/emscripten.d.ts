@@ -34,8 +34,8 @@ interface EmscriptenModule {
     filePackagePrefixURL: string;
     wasmBinary: ArrayBuffer;
 
-    forcedAspectRatio: number?;
-    elementPointerLock: boolean?;
+    forcedAspectRatio: number;
+    elementPointerLock: boolean;
 
     destroy(object: object): void;
     getPreloadedPackage(remotePackageName: string, remotePackageSize: number): ArrayBuffer;
