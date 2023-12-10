@@ -16,81 +16,24 @@ fn DrawFunction() Shared.View.Views {
     vm.Update();
 
     // Draw spaceship
-    const v1 = raylib.Vector2.init(
-        vm.player.position.x + @sin(std.math.degreesToRadians(f32, vm.player.rotation)) * (vm.shipHeight),
-        vm.player.position.y - @cos(std.math.degreesToRadians(f32, vm.player.rotation)) * (vm.shipHeight),
-    );
-    const v2 = raylib.Vector2.init(
-        vm.player.position.x - @cos(std.math.degreesToRadians(f32, vm.player.rotation)) * (vm.PLAYER_BASE_SIZE / 2),
-        vm.player.position.y - @sin(std.math.degreesToRadians(f32, vm.player.rotation)) * (vm.PLAYER_BASE_SIZE / 2),
-    );
-    const v3 = raylib.Vector2.init(
-        vm.player.position.x + @cos(std.math.degreesToRadians(f32, vm.player.rotation)) * (vm.PLAYER_BASE_SIZE / 2),
-        vm.player.position.y + @sin(std.math.degreesToRadians(f32, vm.player.rotation)) * (vm.PLAYER_BASE_SIZE / 2),
-    );
-    raylib.drawTriangle(
-        v1,
-        v2,
-        v3,
-        vm.player.color,
-    );
+    vm.player.Draw(vm.shipHeight, vm.PLAYER_BASE_SIZE);
 
     // Draw meteors
     for (0..vm.MAX_BIG_METEORS) |i| {
-        if (vm.bigMeteors[i].active) {
-            raylib.drawCircleV(
-                vm.bigMeteors[i].position,
-                vm.bigMeteors[i].radius,
-                vm.bigMeteors[i].color,
-            );
-        } else raylib.drawCircleV(
-            vm.bigMeteors[i].position,
-            vm.bigMeteors[i].radius,
-            raylib.Color.fade(vm.bigMeteors[i].color, 0.3),
-        );
+        vm.bigMeteors[i].Draw();
     }
 
     for (0..vm.MAX_MEDIUM_METEORS) |i| {
-        if (vm.mediumMeteors[i].active) {
-            raylib.drawCircleV(
-                vm.mediumMeteors[i].position,
-                vm.mediumMeteors[i].radius,
-                vm.mediumMeteors[i].color,
-            );
-        } else {
-            raylib.drawCircleV(
-                vm.mediumMeteors[i].position,
-                vm.mediumMeteors[i].radius,
-                raylib.Color.fade(vm.mediumMeteors[i].color, 0.3),
-            );
-        }
+        vm.mediumMeteors[i].Draw();
     }
 
     for (0..vm.MAX_SMALL_METEORS) |i| {
-        if (vm.smallMeteors[i].active) {
-            raylib.drawCircleV(
-                vm.smallMeteors[i].position,
-                vm.smallMeteors[i].radius,
-                vm.smallMeteors[i].color,
-            );
-        } else {
-            raylib.drawCircleV(
-                vm.smallMeteors[i].position,
-                vm.smallMeteors[i].radius,
-                raylib.Color.fade(vm.smallMeteors[i].color, 0.3),
-            );
-        }
+        vm.smallMeteors[i].Draw();
     }
 
     // Draw shoot
     for (0..vm.PLAYER_MAX_SHOOTS) |i| {
-        if (vm.shoot[i].active) {
-            raylib.drawCircleV(
-                vm.shoot[i].position,
-                vm.shoot[i].radius,
-                vm.shoot[i].color,
-            );
-        }
+        vm.shoot[i].Draw();
     }
 
     if (vm.victory) Shared.Helpers.DrawTextCentered(

@@ -2,6 +2,7 @@ const std = @import("std");
 const Shared = @import("../Shared.zig").Shared;
 const raylib = @import("raylib");
 const Meteor = @import("../Models/Meteor.zig").Meteor;
+const MeteorSprite = @import("../Models/Meteor.zig").MeteorSprite;
 const Player = @import("../Models/Player.zig").Player;
 const Shoot = @import("../Models/Shoot.zig").Shoot;
 
@@ -13,6 +14,7 @@ pub const AsteroidsViewModel = Shared.View.ViewModel.Create(
         pub const PLAYER_MAX_SHOOTS: i32 = 10;
 
         const METEORS_SPEED = 2;
+        const ANIMATION_SPEED_MOD = 15;
 
         pub const MAX_BIG_METEORS = 4;
         pub const MAX_MEDIUM_METEORS = MAX_BIG_METEORS * 2;
@@ -152,8 +154,10 @@ pub const AsteroidsViewModel = Shared.View.ViewModel.Create(
                         vely,
                     ),
                     .radius = 40,
+                    .rotation = Shared.Random.Get().float(f32),
                     .active = true,
                     .color = Shared.Color.Blue.Base,
+                    .frame = 0,
                 };
             }
 
@@ -169,8 +173,10 @@ pub const AsteroidsViewModel = Shared.View.ViewModel.Create(
                         0,
                     ),
                     .radius = 20,
+                    .rotation = Shared.Random.Get().float(f32),
                     .active = false,
                     .color = Shared.Color.Blue.Base,
+                    .frame = 0,
                 };
             }
 
@@ -186,8 +192,10 @@ pub const AsteroidsViewModel = Shared.View.ViewModel.Create(
                         0,
                     ),
                     .radius = 10,
+                    .rotation = Shared.Random.Get().float(f32),
                     .active = false,
                     .color = Shared.Color.Blue.Base,
+                    .frame = 0,
                 };
             }
 
@@ -368,6 +376,8 @@ pub const AsteroidsViewModel = Shared.View.ViewModel.Create(
             // Meteors logic: big meteors
             for (0..MAX_BIG_METEORS) |i| {
                 if (bigMeteors[i].active) {
+                    bigMeteors[i].frame = 0;
+
                     // Movement
                     bigMeteors[i].position.x += bigMeteors[i].speed.x;
                     bigMeteors[i].position.y += bigMeteors[i].speed.y;
@@ -383,12 +393,16 @@ pub const AsteroidsViewModel = Shared.View.ViewModel.Create(
                     } else if (bigMeteors[i].position.y < 0 - bigMeteors[i].radius) {
                         bigMeteors[i].position.y = screenSize.height + bigMeteors[i].radius;
                     }
+                } else if (bigMeteors[i].frame < MeteorSprite.Frames - 1) {
+                    bigMeteors[i].frame += raylib.getFrameTime() * ANIMATION_SPEED_MOD;
                 }
             }
 
             // Meteors logic: medium meteors
             for (0..MAX_MEDIUM_METEORS) |i| {
                 if (mediumMeteors[i].active) {
+                    mediumMeteors[i].frame = 0;
+
                     // Movement
                     mediumMeteors[i].position.x += mediumMeteors[i].speed.x;
                     mediumMeteors[i].position.y += mediumMeteors[i].speed.y;
@@ -404,12 +418,16 @@ pub const AsteroidsViewModel = Shared.View.ViewModel.Create(
                     } else if (mediumMeteors[i].position.y < 0 - mediumMeteors[i].radius) {
                         mediumMeteors[i].position.y = screenSize.height + mediumMeteors[i].radius;
                     }
+                } else if (mediumMeteors[i].frame < MeteorSprite.Frames - 1) {
+                    mediumMeteors[i].frame += raylib.getFrameTime() * ANIMATION_SPEED_MOD;
                 }
             }
 
             // Meteors logic: small meteors
             for (0..MAX_SMALL_METEORS) |i| {
                 if (smallMeteors[i].active) {
+                    smallMeteors[i].frame = 0;
+
                     // Movement
                     smallMeteors[i].position.x += smallMeteors[i].speed.x;
                     smallMeteors[i].position.y += smallMeteors[i].speed.y;
@@ -425,6 +443,8 @@ pub const AsteroidsViewModel = Shared.View.ViewModel.Create(
                     } else if (smallMeteors[i].position.y < 0 - smallMeteors[i].radius) {
                         smallMeteors[i].position.y = screenSize.height + smallMeteors[i].radius;
                     }
+                } else if (smallMeteors[i].frame < MeteorSprite.Frames - 1) {
+                    smallMeteors[i].frame += raylib.getFrameTime() * ANIMATION_SPEED_MOD;
                 }
             }
 
