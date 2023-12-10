@@ -135,6 +135,9 @@
 							if (d.webaudio.state === runningState) window.miniaudio?.untrack_device_by_index(i);
 							if (window.miniaudio?.devices.length == 0) {
 								muted = false;
+								window.miniaudio?.unlock_event_types.forEach((e) =>
+									document.removeEventListener(<any>e, window.miniaudio!.unlock)
+								);
 								delete window.miniaudio;
 							}
 						},
