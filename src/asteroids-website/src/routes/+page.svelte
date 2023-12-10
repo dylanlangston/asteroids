@@ -105,6 +105,15 @@
   let fullscreenEnabled: boolean = true;
   $: manifestJson  = "en.manifest.json";
 
+  const audioContexList: AudioContext[] = [];
+  function enableAudio(): boolean {
+    let enabled = true;
+    audioContexList.forEach((e => {
+      "suspended" == e.state ? (e.resume(), enabled = false) : () => {}
+    }));
+    return enabled;
+  }
+
   let emscripten: CustomEmscriptenModule | undefined;
   onMount(async () => {
     Module.setStatus(Localizer.GetLocalInitText());
@@ -112,6 +121,22 @@
     fullscreenEnabled = document.fullscreenEnabled;
     manifestJson = Localizer.GetLocalePrefix() + ".manifest.json";
     Module.statusMessage.subscribe(s => status = s);
+
+    // Unlock audio context
+    self.AudioContext = new Proxy(self.AudioContext, {
+      construct(t, e) {
+        const n = new t(...e);
+        return audioContexList.push(n), "suspended" == n.state, n
+      }
+    });
+    const b = document.body;
+    const events = ['touchstart','touchend', 'mousedown','keydown'];
+    const toggleAudioEvent = () => { 
+      if (enableAudio()) {
+        events.forEach(e => b.removeEventListener(e, toggleAudioEvent));
+      }
+    };
+    events.forEach(e => b.addEventListener(e, toggleAudioEvent, false));
     
     window.onerror = (e: any) => {
       document.getElementById("canvas")!.style.display = 'none';
