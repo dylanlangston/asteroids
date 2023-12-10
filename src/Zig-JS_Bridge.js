@@ -10,5 +10,8 @@ mergeInto(LibraryManager.library, {
   },
   WASMLoaded: function (ptr) {
     Module._free(ptr);
+  },
+  WASMTimestamp: function() {
+    return Date.now();
   }
 });

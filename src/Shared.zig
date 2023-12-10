@@ -66,10 +66,21 @@ pub const Shared = struct {
 
     pub const Helpers = Helpers_;
 
+    pub const Time = struct {
+        extern fn WASMTimestamp() i64;
+
+        pub inline fn getTimestamp() i64 {
+            if (builtin.os.tag == .wasi) {
+                return WASMTimestamp();
+            }
+            return std.time.milliTimestamp();
+        }
+    };
+
     pub const Random = struct {
         var random: std.rand.Random = undefined;
         pub inline fn init() void {
-            const now: u64 = @intCast(std.time.microTimestamp());
+            const now: u64 = @intCast(Time.getTimestamp());
             var rng = RndGen.init(now);
             random = rng.random();
         }
