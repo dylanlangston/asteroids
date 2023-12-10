@@ -1,7 +1,7 @@
 // Source - https://github.com/DefinitelyTyped/DefinitelyTyped/blob/e0e40a0b36b56c63ac89521ac8e8166ceded68d7/types/emscripten/index.d.ts
 
 declare namespace Emscripten {
-    interface FileSystemType {}
+    interface FileSystemType { }
     type EnvironmentType = "WEB" | "NODE" | "SHELL" | "WORKER";
 
     type JSType = "number" | "string" | "array" | "boolean";
@@ -103,9 +103,9 @@ declare namespace FS {
         node: FSNode;
     }
 
-    interface FSStream {}
-    interface FSNode {}
-    interface ErrnoError {}
+    interface FSStream { }
+    interface FSNode { }
+    interface ErrnoError { }
 
     let ignorePermissions: boolean;
     let trackingDelegate: any;
@@ -237,12 +237,12 @@ declare var IDBFS: Emscripten.FileSystemType;
 
 // https://emscripten.org/docs/porting/connecting_cpp_and_javascript/Interacting-with-code.html
 type StringToType<R extends any> = R extends Emscripten.JSType ? {
-        number: number;
-        string: string;
-        array: number[] | string[] | boolean[] | Uint8Array | Int8Array;
-        boolean: boolean;
-        null: null;
-    }[R]
+    number: number;
+    string: string;
+    array: number[] | string[] | boolean[] | Uint8Array | Int8Array;
+    boolean: boolean;
+    null: null;
+}[R]
     : never;
 
 type ArgsToType<T extends Array<Emscripten.JSType | null>> = Extract<

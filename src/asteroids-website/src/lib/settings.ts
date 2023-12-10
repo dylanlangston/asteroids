@@ -20,8 +20,7 @@ export class Settings {
         const oldSettings = Settings.get();
         if (window.location.search.length == 0) return false;
 
-        try
-        {
+        try {
             Module.setStatus("Updating Settings...");
             const settings = JSON.parse(oldSettings);
             const settingsKeys = Object.keys(settings);
@@ -34,19 +33,19 @@ export class Settings {
                     return v;
                 }
             };
-    
+
             Array.from(urlParams)
                 .map(e => { return { key: e[0], value: e[1] } })
                 .filter((e) => settingsKeys.includes(e.key))
                 .forEach((e) => {
                     settings[e.key] = getValue(e.value);
                 });
-    
+
             const newSettings = JSON.stringify(settings);
             window.localStorage.setItem("settings", newSettings);
             return true;
         }
-        catch 
+        catch
         {
             return false;
         }

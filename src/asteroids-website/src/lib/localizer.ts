@@ -1,10 +1,8 @@
 import {
     _,
     getLocaleFromNavigator,
-    isLoading,
     register,
     init,
-    locale
 } from "svelte-i18n";
 
 export enum Locales {
@@ -25,8 +23,7 @@ class LocaleGroup {
     }
 
     private GetLocalePrefix(locale: Locales): string {
-        switch (locale) 
-        {
+        switch (locale) {
             case Locales.english:
                 return "en";
             case Locales.spanish:
@@ -46,7 +43,7 @@ export class Localizer {
         register("en", () => import("../locales/en.json"));
         register("es", () => import("../locales/es.json"));
         register("fr", () => import("../locales/fr.json"));
-        
+
         init({
             fallbackLocale: "en",
             initialLocale: getLocaleFromNavigator()
@@ -55,8 +52,7 @@ export class Localizer {
 
     private static Locale: LocaleGroup | undefined = undefined;
     private static LoadLocale(): LocaleGroup | undefined {
-        if (Localizer.Locale == undefined)
-        {
+        if (Localizer.Locale == undefined) {
             const allLocales = Object.entries(Locales).map((_, locale) => new LocaleGroup(locale));
             const sortedLocales = allLocales.filter(l => l.Index > -1).sort((a, b) => a.Index - b.Index);
             Localizer.Locale = sortedLocales.at(0);
@@ -74,20 +70,6 @@ export class Localizer {
         const locale = Localizer.LoadLocale();
         if (locale == undefined) return "en";
         return locale.Prefix;
-    }
-
-    public static GetLocalInitText(): string {
-        const locale = Localizer.LoadLocale();
-        switch (locale?.Locale) {
-            case Locales.english:
-            case Locales.unknown:
-            default:
-                return "Starting... ⌛";
-            case Locales.spanish:
-                return "Iniciando... ⌛";
-            case Locales.french:
-                return "Démarrage en cours... ⌛";
-        }
     }
 }
 

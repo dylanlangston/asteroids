@@ -1,3 +1,5 @@
+import type { MiniAudio } from "./types/miniaudio";
+
 // See https://kit.svelte.dev/docs/types#app
 // for information about these interfaces
 declare global {
@@ -7,7 +9,8 @@ declare global {
 		// interface PageData {}
 		// interface Platform {}
 	}
-	declare interface Window {
+	interface Window extends Window {
 		Settings: Settings;
+		miniaudio: MiniAudio | undefined = undefined;
 	}
 }

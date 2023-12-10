@@ -1,7 +1,7 @@
 import { Localizer } from "./localizer"
 import { writable, get } from 'svelte/store';
 
-export interface CustomEmscriptenModule extends Module, EmscriptenModule {}
+export interface CustomEmscriptenModule extends Module, EmscriptenModule { }
 
 export interface ICustomModule {
     requestFullscreen?: (lockPointer: boolean, resizeCanvas: boolean) => void;
@@ -43,35 +43,33 @@ export class Module implements ICustomModule {
     private static wasmBinaryFile: string = new URL('../import/asteroids.wasm', import.meta.url).href;
     public static async Init(message: string): Promise<Module> {
         this.setStatus(message);
-        const wasmFile = await fetch(this.wasmBinaryFile, { 
+        const wasmFile = await fetch(this.wasmBinaryFile, {
             cache: "default",
         });
         console.log('wasm download finished');
         return new Module(await wasmFile.arrayBuffer());
     }
 
-    public onRuntimeInitialized(): void {        
+    public onRuntimeInitialized(): void {
         document.getElementById("controls")?.classList.remove("hidden");
 
         // Set Locale
-        if (this._updateWasmLocale)
-        {
+        if (this._updateWasmLocale) {
             this._updateWasmLocale(Localizer.GetLocale());
         }
     }
 
     public instantiateWasm(
-        imports: WebAssembly.Imports, 
-        successCallback: (module: WebAssembly.Instance) => void): WebAssembly.Exports 
-    {
+        imports: WebAssembly.Imports,
+        successCallback: (module: WebAssembly.Instance) => void): WebAssembly.Exports {
         WebAssembly.instantiate(new Uint8Array(this.wasmBinary), imports)
-        .then((output) => {
-            console.log('wasm instantiation succeeded');
-            successCallback(output.instance);
-        }).catch((e) => {
-            console.log('wasm instantiation failed! ' + e);
-            this.setStatus('wasm instantiation failed! ' + e);
-        });
+            .then((output) => {
+                console.log('wasm instantiation succeeded');
+                successCallback(output.instance);
+            }).catch((e) => {
+                console.log('wasm instantiation failed! ' + e);
+                this.setStatus('wasm instantiation failed! ' + e);
+            });
         return {};
     }
 
@@ -83,11 +81,12 @@ export class Module implements ICustomModule {
         text = Array.prototype.slice.call(arguments).join(' ');
         globalThis.console.error(text);
     }
-    
-    public get canvas(): HTMLCanvasElement {
-        const e = <HTMLCanvasElement>document.getElementById("canvas");
-        return e;
-    }
+
+    public canvas: HTMLCanvasElement = (() => {
+        const c = document.createElement('canvas');
+        c.classList.add("rounded-lg");
+        return c;
+    })();
 
     public get statusMessage(): string {
         return get(Module.statusMessage);
@@ -99,8 +98,7 @@ export class Module implements ICustomModule {
     public static readonly statusMessage = writable("⏳");
     public static setStatus(e: string): void {
         // "Running..." is from emscripten.js and isn't localized so just return"
-        if (e == "Running...")
-        {
+        if (e == "Running...") {
             return;
         }
         Module.statusMessage.set(e);
