@@ -5,6 +5,7 @@ const raylib = @import("raylib");
 pub const GameOverViewModel = Shared.View.ViewModel.Create(
     struct {
         pub var BackgroundTexture: ?raylib.Texture = null;
+        pub var startTime: i64 = 0;
 
         pub inline fn GameOver() void {
             raylib.endDrawing();
@@ -15,6 +16,7 @@ pub const GameOverViewModel = Shared.View.ViewModel.Create(
                 BackgroundTexture.?,
                 @intFromEnum(raylib.TextureFilter.texture_filter_trilinear),
             );
+            startTime = Shared.Time.getTimestamp();
         }
     },
     .{},
