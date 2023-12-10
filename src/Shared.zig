@@ -19,6 +19,7 @@ const VM = @import("./ViewModels/ViewModel.zig").ViewModel;
 const Colors = @import("Colors.zig").Colors;
 const Helpers_ = @import("Helpers.zig").Helpers;
 const RndGen = std.rand.DefaultPrng;
+const Sprites = @import("Sprite.zig").Sprite;
 
 pub const Shared = struct {
     const Alloc = struct {
@@ -110,6 +111,8 @@ pub const Shared = struct {
             };
         }
     };
+
+    pub const Sprite = Sprites;
 
     pub const Sound = struct {
         pub const Sounds = AssetManager.Sounds;
