@@ -12,6 +12,7 @@ pub const AssetManager = struct {
 
     pub const Textures = enum {
         Unknown,
+        Meteor,
     };
 
     pub const Sounds = enum {
@@ -30,6 +31,9 @@ pub const AssetManager = struct {
         switch (key) {
             Textures.Unknown => {
                 return AssetManagerErrors.NotFound;
+            },
+            .Meteor => {
+                return RawAsset.init(".png", @embedFile("./Textures/Yellow Meteor.png"));
             },
         }
     }
