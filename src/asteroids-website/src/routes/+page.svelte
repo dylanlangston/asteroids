@@ -265,7 +265,7 @@
 			{#if muted}
 				<div
 					in:fly
-					class="absolute select-none animate-ping mt-2 opacity-80 mh-auto text-center right-0 left-0 text-2xl lg:text-5xl lg:m-5"
+					class="absolute opacity-75 select-none animate-pingSlow mt-2 opacity-80 mh-auto text-center right-0 left-0 text-2xl lg:text-5xl lg:m-5"
 				>
 					🔇
 				</div>

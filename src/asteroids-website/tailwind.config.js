@@ -17,7 +17,11 @@ export default {
       'red-mid': '#c24b6e',
       'red-dark': '#a73169',
     },
-    extend: {},
+    extend: {
+      animation: {
+        'pingSlow': 'ping 1.5s ease-in-out infinite',
+      }
+    },
   },
   plugins: [],
 }
