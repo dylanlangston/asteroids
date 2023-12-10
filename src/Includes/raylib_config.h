@@ -142,7 +142,7 @@
 // Module: rtextures - Configuration Flags
 //------------------------------------------------------------------------------------
 // Select the desired fileformats to be supported for image data loading
-//#define SUPPORT_FILEFORMAT_PNG          1
+#define SUPPORT_FILEFORMAT_PNG          1
 //#define SUPPORT_FILEFORMAT_BMP          1
 //#define SUPPORT_FILEFORMAT_TGA          1
 //#define SUPPORT_FILEFORMAT_JPG          1
@@ -175,7 +175,7 @@
 #define SUPPORT_DEFAULT_FONT            1
 // Selected desired font fileformats to be supported for loading
 //#define SUPPORT_FILEFORMAT_FNT          1
-//#define SUPPORT_FILEFORMAT_TTF          1
+#define SUPPORT_FILEFORMAT_TTF          1
 
 // Support text management functions
 // If not defined, still some functions are supported: TextLength(), TextFormat()
@@ -217,7 +217,7 @@
 //------------------------------------------------------------------------------------
 // Desired audio fileformats to be supported for loading
 //#define SUPPORT_FILEFORMAT_WAV          1
-//#define SUPPORT_FILEFORMAT_OGG          1
+#define SUPPORT_FILEFORMAT_OGG          1
 //#define SUPPORT_FILEFORMAT_MP3          1
 //#define SUPPORT_FILEFORMAT_QOA          1
 //#define SUPPORT_FILEFORMAT_FLAC         1
