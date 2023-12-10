@@ -138,9 +138,6 @@
 								window.miniaudio?.unlock_event_types.forEach((e) =>
 									document.removeEventListener(<any>e, window.miniaudio!.unlock)
 								);
-								window.miniaudio.unlock = () => {
-									delete window.miniaudio;
-								};
 							}
 						},
 						{
