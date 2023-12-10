@@ -21,6 +21,7 @@ pub const AssetManager = struct {
 
     pub const Musics = enum {
         Unknown,
+        test_,
     };
 
     pub const Fonts = enum {
@@ -33,7 +34,7 @@ pub const AssetManager = struct {
                 return AssetManagerErrors.NotFound;
             },
             .Meteor => {
-                return RawAsset.init(".png", @embedFile("./Textures/Yellow Meteor.png"));
+                return RawAsset.init("./Textures/Yellow Meteor.png");
             },
         }
     }
@@ -50,6 +51,9 @@ pub const AssetManager = struct {
         switch (key) {
             Musics.Unknown => {
                 return AssetManagerErrors.NotFound;
+            },
+            .test_ => {
+                return RawAsset.init("./Music/test.ogg");
             },
         }
     }
@@ -168,12 +172,11 @@ pub const AssetManager = struct {
         Bytes: [:0]const u8,
 
         pub fn init(
-            fileType: [:0]const u8,
-            bytes: [:0]const u8,
+            comptime file: [:0]const u8,
         ) RawAsset {
             return RawAsset{
-                .FileType = fileType,
-                .Bytes = bytes,
+                .FileType = file[file.len - 4 .. file.len],
+                .Bytes = @embedFile(file),
             };
         }
     };

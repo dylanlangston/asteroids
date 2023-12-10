@@ -74,7 +74,7 @@ export class Module implements ICustomModule {
     }
 
     public print(t: string): void {
-        console.log(t);
+        globalThis.console.log(t);
     };
 
     public printErr(text: string): void {
@@ -84,7 +84,11 @@ export class Module implements ICustomModule {
 
     public canvas: HTMLCanvasElement = (() => {
         const c = document.createElement('canvas');
-        c.classList.add("rounded-lg");
+        setTimeout(() => {
+            c.addEventListener("contextmenu", (e) => e.preventDefault());
+            c.classList.add("rounded-lg");
+        });
+
         return c;
     })();
 

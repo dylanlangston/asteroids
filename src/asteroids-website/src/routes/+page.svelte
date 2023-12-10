@@ -5,7 +5,7 @@
 	import GameController from './controls.svelte';
 	import StatusContainer from './status-container.svelte';
 	import { Button } from '$lib/gameController';
-	import { _, isLoading, waitLocale } from 'svelte-i18n';
+	import { _, isLoading, time, waitLocale } from 'svelte-i18n';
 	import { Localizer } from '$lib/localizer';
 	import emscriptenModuleFactory from '../import/emscripten';
 	import { Settings } from '$lib/settings';
@@ -109,36 +109,48 @@
 		setTimeout(() => handleButtonReleased(Button.Start), 100);
 	}
 
-	function unlockAudio() {
-		// Unlock audio
-		['touchstart', 'touchend', 'mousedown', 'keydown'].forEach((e) =>
-			document.body.addEventListener(
-				e,
-				() => {
-					window.miniaudio?.unlock();
-				},
-				{
-					once: true
-				}
-			)
-		);
-		// Remove miniaudio object from window after unlocked
-		window.miniaudio?.devices.forEach((d, i) =>
-			d.webaudio.addEventListener(
-				'statechange',
-				(e) => {
-					if (d.webaudio.state === 'running') window.miniaudio?.untrack_device_by_index(i);
-					if (window.miniaudio?.devices.length == 0) {
-						muted = false;
-						delete window.miniaudio;
-					}
-				},
-				{
-					once: true
-				}
-			)
-		);
-		muted = true;
+	function unlockAudio(timeout: number = 100) {
+		const func = () => {
+			const runningState = 'running';
+			muted = window.miniaudio?.devices.some((d) => d.webaudio.state != runningState) ?? false;
+
+			if (muted) {
+				// Unlock audio
+				['touchstart', 'touchend', 'mousedown', 'keydown'].forEach((e) =>
+					document.body.addEventListener(
+						e,
+						() => {
+							window.miniaudio?.unlock();
+						},
+						{
+							once: true
+						}
+					)
+				);
+				// Remove miniaudio object from window after unlocked
+				window.miniaudio?.devices.forEach((d, i) =>
+					d.webaudio.addEventListener(
+						'statechange',
+						(e) => {
+							if (d.webaudio.state === runningState) window.miniaudio?.untrack_device_by_index(i);
+							if (window.miniaudio?.devices.length == 0) {
+								unlockAudio(0);
+							}
+						},
+						{
+							once: true
+						}
+					)
+				);
+			} else {
+				muted = false;
+				delete window.miniaudio;
+			}
+		};
+		if (timeout <= 0) {
+			func();
+		}
+		setTimeout(func, timeout);
 	}
 
 	const isMobile: boolean = (() => {
@@ -163,7 +175,9 @@
 		} else {
 			await waitLocale();
 			const module = await Module.Init($_('page.Downloading'));
-			emscripten = await (<EmscriptenModuleFactory<CustomEmscriptenModule>>emscriptenModuleFactory)(module);
+			emscripten = await (<EmscriptenModuleFactory<CustomEmscriptenModule>>emscriptenModuleFactory)(
+				module
+			);
 			await tick();
 			unlockAudio();
 			UpdateSize(null);

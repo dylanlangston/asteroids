@@ -10,6 +10,8 @@ const vm: type = MenuViewModel.GetVM();
 pub fn DrawFunction() Shared.View.Views {
     raylib.clearBackground(Shared.Color.Gray.Base);
 
+    Shared.Music.Play(.test_);
+
     const locale = Shared.Locale.GetLocale().?;
     const font = Shared.Font.Get(.Unknown);
 
