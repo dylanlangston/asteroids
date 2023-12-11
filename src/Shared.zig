@@ -20,6 +20,7 @@ const Colors = @import("Colors.zig").Colors;
 const Helpers_ = @import("Helpers.zig").Helpers;
 const RndGen = std.rand.DefaultPrng;
 const Sprites = @import("Sprite.zig").Sprite;
+const CameraController = @import("Camera.zig").Camera;
 
 pub const Shared = struct {
     const Alloc = struct {
@@ -58,6 +59,8 @@ pub const Shared = struct {
     pub inline fn GetAllocator() std.mem.Allocator {
         return Alloc.allocator;
     }
+
+    pub const Camera = CameraController;
 
     pub const Log = Logger;
 

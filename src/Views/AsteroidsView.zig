@@ -40,8 +40,8 @@ fn DrawFunction() Shared.View.Views {
         "VICTORY",
         Shared.Color.Blue.Light,
         40,
-        vm.screenSize.width,
-        vm.screenSize.height / 2,
+        vm.screenSize.x,
+        vm.screenSize.y / 2,
     );
 
     if (Shared.Input.Start_Pressed()) {
@@ -55,7 +55,12 @@ fn DrawFunction() Shared.View.Views {
     return .Asteroids;
 }
 
+fn DrawWithCamera() Shared.View.Views {
+    const camera = Shared.Camera.initScaledCamera(vm.screenSize);
+    return camera.Draw(Shared.View.Views, &DrawFunction);
+}
+
 pub const AsteroidsView = Shared.View.View{
-    .DrawRoutine = &DrawFunction,
+    .DrawRoutine = &DrawWithCamera,
     .VM = &AsteroidsViewModel,
 };

@@ -24,7 +24,7 @@ pub const AsteroidsViewModel = Shared.View.ViewModel.Create(
         pub var gameOver = false;
         pub var victory = false;
 
-        pub var screenSize: raylib.Rectangle = undefined;
+        pub const screenSize: raylib.Vector2 = raylib.Vector2.init(1600, 900);
 
         pub var shipHeight: f32 = 0;
 
@@ -40,8 +40,6 @@ pub const AsteroidsViewModel = Shared.View.ViewModel.Create(
 
         // Initialize game variables
         pub inline fn init() void {
-            screenSize = Shared.Helpers.GetCurrentScreenSize();
-
             var posx: f32 = undefined;
             var posy: f32 = undefined;
             var velx: f32 = undefined;
@@ -56,8 +54,8 @@ pub const AsteroidsViewModel = Shared.View.ViewModel.Create(
 
             player = Player{
                 .position = raylib.Vector2.init(
-                    screenSize.width / 2,
-                    (screenSize.height - shipHeight) / 2,
+                    screenSize.x / 2,
+                    (screenSize.y - shipHeight) / 2,
                 ),
                 .speed = raylib.Vector2.init(
                     0,
@@ -104,17 +102,17 @@ pub const AsteroidsViewModel = Shared.View.ViewModel.Create(
 
             // Initialization Big Meteor
             for (0..MAX_BIG_METEORS) |i| {
-                posx = Shared.Random.Get().float(f32) * screenSize.width;
+                posx = Shared.Random.Get().float(f32) * screenSize.x;
                 while (true) {
-                    if (posx > screenSize.width / 2 - 150 and posx < screenSize.width / 2 + 150) {
-                        posx = Shared.Random.Get().float(f32) * screenSize.width;
+                    if (posx > screenSize.x / 2 - 150 and posx < screenSize.x / 2 + 150) {
+                        posx = Shared.Random.Get().float(f32) * screenSize.x;
                     } else break;
                 }
 
-                posy = Shared.Random.Get().float(f32) * screenSize.height;
+                posy = Shared.Random.Get().float(f32) * screenSize.y;
                 while (true) {
-                    if (posy > screenSize.height / 2 - 150 and posy < screenSize.height / 2 + 150) {
-                        posy = Shared.Random.Get().float(f32) * screenSize.height;
+                    if (posy > screenSize.y / 2 - 150 and posy < screenSize.y / 2 + 150) {
+                        posy = Shared.Random.Get().float(f32) * screenSize.y;
                     } else break;
                 }
 
@@ -246,15 +244,15 @@ pub const AsteroidsViewModel = Shared.View.ViewModel.Create(
             player.position.y -= (player.speed.y * player.acceleration);
 
             // Collision logic: player vs walls
-            if (player.position.x > screenSize.width + shipHeight) {
+            if (player.position.x > screenSize.x + shipHeight) {
                 player.position.x = -shipHeight;
             } else if (player.position.x < -shipHeight) {
-                player.position.x = screenSize.width + shipHeight;
+                player.position.x = screenSize.x + shipHeight;
             }
-            if (player.position.y > screenSize.height + shipHeight) {
+            if (player.position.y > screenSize.y + shipHeight) {
                 player.position.y = -shipHeight;
             } else if (player.position.y < -shipHeight) {
-                player.position.y = screenSize.height + shipHeight;
+                player.position.y = screenSize.y + shipHeight;
             }
 
             // Player shoot logic
@@ -299,14 +297,14 @@ pub const AsteroidsViewModel = Shared.View.ViewModel.Create(
                     shoot[i].position.y -= shoot[i].speed.y;
 
                     // Collision logic: shoot vs walls
-                    if (shoot[i].position.x > screenSize.width + shoot[i].radius) {
+                    if (shoot[i].position.x > screenSize.x + shoot[i].radius) {
                         shoot[i].active = false;
                         shoot[i].lifeSpawn = 0;
                     } else if (shoot[i].position.x < 0 - shoot[i].radius) {
                         shoot[i].active = false;
                         shoot[i].lifeSpawn = 0;
                     }
-                    if (shoot[i].position.y > screenSize.height + shoot[i].radius) {
+                    if (shoot[i].position.y > screenSize.y + shoot[i].radius) {
                         shoot[i].active = false;
                         shoot[i].lifeSpawn = 0;
                     } else if (shoot[i].position.y < 0 - shoot[i].radius) {
@@ -383,15 +381,15 @@ pub const AsteroidsViewModel = Shared.View.ViewModel.Create(
                     bigMeteors[i].position.y += bigMeteors[i].speed.y;
 
                     // Collision logic: meteor vs wall
-                    if (bigMeteors[i].position.x > screenSize.width + bigMeteors[i].radius) {
+                    if (bigMeteors[i].position.x > screenSize.x + bigMeteors[i].radius) {
                         bigMeteors[i].position.x = -(bigMeteors[i].radius);
                     } else if (bigMeteors[i].position.x < 0 - bigMeteors[i].radius) {
-                        bigMeteors[i].position.x = screenSize.width + bigMeteors[i].radius;
+                        bigMeteors[i].position.x = screenSize.x + bigMeteors[i].radius;
                     }
-                    if (bigMeteors[i].position.y > screenSize.height + bigMeteors[i].radius) {
+                    if (bigMeteors[i].position.y > screenSize.y + bigMeteors[i].radius) {
                         bigMeteors[i].position.y = -(bigMeteors[i].radius);
                     } else if (bigMeteors[i].position.y < 0 - bigMeteors[i].radius) {
-                        bigMeteors[i].position.y = screenSize.height + bigMeteors[i].radius;
+                        bigMeteors[i].position.y = screenSize.y + bigMeteors[i].radius;
                     }
                 } else if (bigMeteors[i].frame < MeteorSprite.Frames - 1) {
                     bigMeteors[i].frame += raylib.getFrameTime() * ANIMATION_SPEED_MOD;
@@ -408,15 +406,15 @@ pub const AsteroidsViewModel = Shared.View.ViewModel.Create(
                     mediumMeteors[i].position.y += mediumMeteors[i].speed.y;
 
                     // Collision logic: meteor vs wall
-                    if (mediumMeteors[i].position.x > screenSize.width + mediumMeteors[i].radius) {
+                    if (mediumMeteors[i].position.x > screenSize.x + mediumMeteors[i].radius) {
                         mediumMeteors[i].position.x = -(mediumMeteors[i].radius);
                     } else if (mediumMeteors[i].position.x < 0 - mediumMeteors[i].radius) {
-                        mediumMeteors[i].position.x = screenSize.width + mediumMeteors[i].radius;
+                        mediumMeteors[i].position.x = screenSize.x + mediumMeteors[i].radius;
                     }
-                    if (mediumMeteors[i].position.y > screenSize.height + mediumMeteors[i].radius) {
+                    if (mediumMeteors[i].position.y > screenSize.y + mediumMeteors[i].radius) {
                         mediumMeteors[i].position.y = -(mediumMeteors[i].radius);
                     } else if (mediumMeteors[i].position.y < 0 - mediumMeteors[i].radius) {
-                        mediumMeteors[i].position.y = screenSize.height + mediumMeteors[i].radius;
+                        mediumMeteors[i].position.y = screenSize.y + mediumMeteors[i].radius;
                     }
                 } else if (mediumMeteors[i].frame < MeteorSprite.Frames - 1) {
                     mediumMeteors[i].frame += raylib.getFrameTime() * ANIMATION_SPEED_MOD;
@@ -433,15 +431,15 @@ pub const AsteroidsViewModel = Shared.View.ViewModel.Create(
                     smallMeteors[i].position.y += smallMeteors[i].speed.y;
 
                     // Collision logic: meteor vs wall
-                    if (smallMeteors[i].position.x > screenSize.width + smallMeteors[i].radius) {
+                    if (smallMeteors[i].position.x > screenSize.x + smallMeteors[i].radius) {
                         smallMeteors[i].position.x = -(smallMeteors[i].radius);
                     } else if (smallMeteors[i].position.x < 0 - smallMeteors[i].radius) {
-                        smallMeteors[i].position.x = screenSize.width + smallMeteors[i].radius;
+                        smallMeteors[i].position.x = screenSize.x + smallMeteors[i].radius;
                     }
-                    if (smallMeteors[i].position.y > screenSize.height + smallMeteors[i].radius) {
+                    if (smallMeteors[i].position.y > screenSize.y + smallMeteors[i].radius) {
                         smallMeteors[i].position.y = -(smallMeteors[i].radius);
                     } else if (smallMeteors[i].position.y < 0 - smallMeteors[i].radius) {
-                        smallMeteors[i].position.y = screenSize.height + smallMeteors[i].radius;
+                        smallMeteors[i].position.y = screenSize.y + smallMeteors[i].radius;
                     }
                 } else if (smallMeteors[i].frame < MeteorSprite.Frames - 1) {
                     smallMeteors[i].frame += raylib.getFrameTime() * ANIMATION_SPEED_MOD;
