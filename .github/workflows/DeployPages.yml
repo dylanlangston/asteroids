@@ -128,7 +128,7 @@ jobs:
         artifacts: "./asteroids-v${{ steps.set_datetime.outputs.datetime }}.zip"
         artifactContentType: application/zip
         body: |
-          Asteroids Game - Prerelease v${{ steps.set_datetime.outputs.datetime }}
+          **Asteroids Game - _Prerelease v${{ steps.set_datetime.outputs.datetime }}_**
           ${{ github.event.head_commit.message }}
         prerelease: true
         draft: false
@@ -139,6 +139,7 @@ jobs:
       env:
         BUTLER_CREDENTIALS: ${{ secrets.ITCHIO_API_KEY }}
         CHANNEL: html
+        VERSION: v${{ steps.set_datetime.outputs.datetime }}
         ITCH_GAME: asteroids
         ITCH_USER: dylanlangston
         PACKAGE: ./asteroids-v${{ steps.set_datetime.outputs.datetime }}.zip
