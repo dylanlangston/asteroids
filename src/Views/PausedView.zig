@@ -164,6 +164,7 @@ inline fn GetSelection() Shared.View.Views {
 }
 
 pub const PausedView = Shared.View.View{
+    .Key = .Paused,
     .DrawRoutine = &DrawFunction,
     .VM = &PausedViewModel,
 };

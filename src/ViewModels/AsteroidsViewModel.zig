@@ -98,8 +98,6 @@ pub const AsteroidsViewModel = Shared.View.ViewModel.Create(
                 };
             }
 
-            Shared.Log.Info("About to call random...");
-
             // Initialization Big Meteor
             for (0..MAX_BIG_METEORS) |i| {
                 posx = Shared.Random.Get().float(f32) * screenSize.x;

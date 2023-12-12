@@ -3,33 +3,25 @@ const BaseViewModel = @import("./ViewModels/ViewModel.zig").ViewModel;
 const BaseView = @import("./Views/View.zig").View;
 
 pub const ViewLocator = struct {
+    const AllViews = [_]BaseView{
+        @import("./Views/RaylibSplashScreenView.zig").RaylibSplashScreenView,
+        @import("./Views/DylanSplashScreenView.zig").DylanSplashScreenView,
+        @import("./Views/PausedView.zig").PausedView,
+        @import("./Views/AsteroidsView.zig").AsteroidsView,
+        @import("./Views/MenuView.zig").MenuView,
+        @import("./Views/SettingsView.zig").SettingsView,
+        @import("./Views/GameOverView.zig").GameOverView,
+    };
+
     inline fn GetView(view: Views) BaseView {
-        switch (view) {
-            Views.Raylib_Splash_Screen => {
-                return @import("./Views/RaylibSplashScreenView.zig").RaylibSplashScreenView;
-            },
-            Views.Dylan_Splash_Screen => {
-                return @import("./Views/DylanSplashScreenView.zig").DylanSplashScreenView;
-            },
-            Views.Paused => {
-                return @import("./Views/PausedView.zig").PausedView;
-            },
-            Views.Asteroids => {
-                return @import("./Views/AsteroidsView.zig").AsteroidsView;
-            },
-            Views.Menu => {
-                return @import("./Views/MenuView.zig").MenuView;
-            },
-            Views.Settings => {
-                return @import("./Views/SettingsView.zig").SettingsView;
-            },
-            Views.Game_Over => {
-                return @import("./Views/GameOverView.zig").GameOverView;
-            },
-            else => {
-                return BaseView{ .DrawRoutine = DrawQuit };
-            },
+        inline for (AllViews) |v| {
+            if (v.Key == view) return v;
         }
+
+        return BaseView{
+            .Key = .Quit,
+            .DrawRoutine = DrawQuit,
+        };
     }
 
     fn DrawQuit() Views {

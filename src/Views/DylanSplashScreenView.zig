@@ -12,7 +12,7 @@ fn DrawFunction() Shared.View.Views {
     raylib.clearBackground(Shared.Color.Tone.Dark);
 
     const text = Shared.Locale.GetLocale().?.Dylan_Splash_Text;
-    const font = Shared.Font.Get(.Unknown);
+    const font = Shared.Font.Get(.TwoLines);
     const screenWidth: f32 = @floatFromInt(raylib.getScreenWidth());
     const screenHeight: f32 = @floatFromInt(raylib.getScreenHeight());
     const fontSize: f32 = screenWidth / 25;
@@ -86,6 +86,7 @@ fn DrawFunction() Shared.View.Views {
 }
 
 pub const DylanSplashScreenView = Shared.View.View{
+    .Key = .Dylan_Splash_Screen,
     .DrawRoutine = DrawFunction,
     .VM = &DylanSplashScreenViewModel,
 };

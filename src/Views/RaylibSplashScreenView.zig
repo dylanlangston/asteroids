@@ -240,6 +240,7 @@ pub const States = enum {
 };
 
 pub const RaylibSplashScreenView = View{
+    .Key = .Raylib_Splash_Screen,
     .DrawRoutine = DrawFunction,
     .VM = &SplashScreenViewModel,
 };

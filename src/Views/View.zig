@@ -4,21 +4,24 @@ const Views = @import("../ViewLocator.zig").Views;
 const Shared = @import("../Shared.zig").Shared;
 
 pub const View = struct {
+    Key: Views,
     DrawRoutine: *const fn () Views,
     VM: *const ViewModel = undefined,
 
-    // Initialize View Model if needed
-    var isInitialized = false;
+    var initializedViews: std.EnumSet(Views) = std.EnumSet(Views).initEmpty();
+
     pub inline fn init(self: View) void {
-        if (isInitialized == false and @intFromPtr(self.VM) != 0 and @intFromPtr(self.VM.*.Init) != 0) {
+        if (!initializedViews.contains(self.Key) and @intFromPtr(self.VM) != 0 and @intFromPtr(self.VM.*.Init) != 0) {
             self.VM.*.Init();
-            isInitialized = true;
+            initializedViews.insert(self.Key);
         }
     }
     pub inline fn deinit(self: View) void {
-        if (@intFromPtr(self.VM) != 0 and @intFromPtr(self.VM.*.DeInit) != 0 and (isInitialized == true or @intFromPtr(self.VM.*.Init) == 0)) {
+        if (@intFromPtr(self.VM) != 0 and @intFromPtr(self.VM.*.DeInit) != 0) {
             self.VM.*.DeInit();
-            isInitialized = false;
+        }
+        if (initializedViews.contains(self.Key) == true) {
+            initializedViews.remove(self.Key);
         }
     }
     pub inline fn shouldBypassDeinit(self: View) bool {

@@ -102,6 +102,7 @@ pub fn DrawFunction() Shared.View.Views {
 }
 
 pub const GameOverView = Shared.View.View{
+    .Key = .Game_Over,
     .DrawRoutine = &DrawFunction,
     .VM = &GameOverViewModel,
 };

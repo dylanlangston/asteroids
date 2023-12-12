@@ -14,5 +14,6 @@ pub fn DrawFunction() Shared.View.Views {
 }
 
 pub const SettingsView = Shared.View.View{
+    .Key = .Settings,
     .DrawRoutine = &DrawFunction,
 };

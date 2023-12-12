@@ -18,15 +18,8 @@ pub fn DrawFunction() Shared.View.Views {
     const title = locale.Title;
     const screenWidth = raylib.getScreenWidth();
     const screenHeight = raylib.getScreenHeight();
-    const screenHeightF: f32 = @floatFromInt(screenHeight);
     const fontSize = @divFloor(screenWidth, 20);
     const startY = @divFloor(screenHeight, 4);
-
-    const scroll_speed: f32 = 20 * raylib.getFrameTime();
-    vm.offset_y += scroll_speed;
-    if (vm.offset_y > screenHeightF) {
-        vm.offset_y -= screenHeightF;
-    }
 
     const foregroundColor = Shared.Color.Blue.Base;
     const backgroundColor = Shared.Color.Blue.Light.alpha(0.75);
@@ -157,6 +150,7 @@ inline fn GetSelection() Shared.View.Views {
 }
 
 pub const MenuView = Shared.View.View{
+    .Key = .Menu,
     .DrawRoutine = DrawFunction,
     .VM = &MenuViewModel,
 };

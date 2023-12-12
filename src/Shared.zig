@@ -235,10 +235,8 @@ pub const Shared = struct {
     };
 
     pub inline fn init() !void {
-        for (std.enums.values(Shared.View.Views)) |view| {
-            var v = Shared.View.ViewLocator.Build(view);
-            v.init();
-        }
+        const menu = Shared.View.ViewLocator.Build(.Menu);
+        menu.init();
 
         raylib.setConfigFlags(
             @enumFromInt( //@intFromEnum(raylib.ConfigFlags.flag_window_always_run) +

@@ -61,6 +61,7 @@ fn DrawWithCamera() Shared.View.Views {
 }
 
 pub const AsteroidsView = Shared.View.View{
+    .Key = .Asteroids,
     .DrawRoutine = &DrawWithCamera,
     .VM = &AsteroidsViewModel,
 };
