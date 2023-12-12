@@ -26,6 +26,7 @@ pub const AssetManager = struct {
 
     pub const Fonts = enum {
         Unknown,
+        TwoLines,
     };
 
     inline fn GetTextureAsset(key: Textures) AssetManagerErrors!RawAsset {
@@ -62,6 +63,9 @@ pub const AssetManager = struct {
         switch (key) {
             Fonts.Unknown => {
                 return AssetManagerErrors.NotFound;
+            },
+            .TwoLines => {
+                return RawAsset.init("./Fonts/2Lines.ttf");
             },
         }
     }
