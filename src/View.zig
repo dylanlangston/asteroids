@@ -1,7 +1,7 @@
 const std = @import("std");
-const ViewModel = @import("../ViewModels/ViewModel.zig").ViewModel;
-const Views = @import("../ViewLocator.zig").Views;
-const Shared = @import("../Shared.zig").Shared;
+const ViewModel = @import("./ViewModels/ViewModel.zig").ViewModel;
+const Views = @import("./ViewLocator.zig").Views;
+const Shared = @import("./Shared.zig").Shared;
 
 pub const View = struct {
     Key: Views,

@@ -45,14 +45,14 @@ fn DrawFunction() Shared.View.Views {
     );
 
     if (Shared.Input.Start_Pressed()) {
-        return Shared.View.Pause(.Asteroids);
+        return Shared.View.Pause(.AsteroidsView);
     }
 
     if (vm.gameOver) {
         return Shared.View.GameOver();
     }
 
-    return .Asteroids;
+    return .AsteroidsView;
 }
 
 fn DrawWithCamera() Shared.View.Views {
@@ -61,7 +61,7 @@ fn DrawWithCamera() Shared.View.Views {
 }
 
 pub const AsteroidsView = Shared.View.View{
-    .Key = .Asteroids,
+    .Key = .AsteroidsView,
     .DrawRoutine = &DrawWithCamera,
     .VM = &AsteroidsViewModel,
 };

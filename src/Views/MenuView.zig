@@ -10,7 +10,7 @@ const vm: type = MenuViewModel.GetVM();
 pub fn DrawFunction() Shared.View.Views {
     raylib.clearBackground(Shared.Color.Gray.Base);
 
-    Shared.Music.Play(.test_);
+    Shared.Music.Play(.Test);
 
     const locale = Shared.Locale.GetLocale().?;
     const font = Shared.Font.Get(.Unknown);
@@ -129,28 +129,28 @@ pub fn DrawFunction() Shared.View.Views {
         }
     }
 
-    return .Menu;
+    return .MenuView;
 }
 
 inline fn GetSelection() Shared.View.Views {
     switch (vm.selection) {
         Selection.Start => {
-            return .Asteroids;
+            return .AsteroidsView;
         },
         Selection.Settings => {
-            return .Settings;
+            return .SettingsView;
         },
         Selection.Quit => {
-            return .Quit;
+            return .Unknown;
         },
         else => {
-            return .Menu;
+            return .MenuView;
         },
     }
 }
 
 pub const MenuView = Shared.View.View{
-    .Key = .Menu,
+    .Key = .MenuView,
     .DrawRoutine = DrawFunction,
     .VM = &MenuViewModel,
 };

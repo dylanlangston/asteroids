@@ -1,7 +1,7 @@
 const builtin = @import("builtin");
 const std = @import("std");
 const raylib = @import("raylib");
-const BaseView = @import("./Views/View.zig").View;
+const BaseView = @import("./View.zig").View;
 const SettingsManager = @import("Settings.zig").Settings;
 const LocalelizerLocale = @import("Localelizer.zig").Locale;
 const LocalelizerLocales = @import("Localelizer.zig").Locales;
@@ -14,7 +14,7 @@ const GameOverViewModel = @import("./ViewModels/GameOverViewModel.zig").GameOver
 const GameplayIntroViewModel = @import("./ViewModels/GameplayIntroViewModel.zig").GameplayIntroViewModel;
 const vl = @import("ViewLocator.zig");
 const Views = @import("ViewLocator.zig").Views;
-const V = @import("./Views/View.zig").View;
+const V = @import("./View.zig").View;
 const VM = @import("./ViewModels/ViewModel.zig").ViewModel;
 const Colors = @import("Colors.zig").Colors;
 const Helpers_ = @import("Helpers.zig").Helpers;
@@ -224,18 +224,18 @@ pub const Shared = struct {
         pub inline fn Pause(view: vl.Views) vl.Views {
             const paused_vm = PausedViewModel.GetVM();
             paused_vm.PauseView(view);
-            return vl.Views.Paused;
+            return vl.Views.PausedView;
         }
 
         pub inline fn GameOver() vl.Views {
             const gameover_vm = GameOverViewModel.GetVM();
             gameover_vm.GameOver();
-            return vl.Views.Game_Over;
+            return vl.Views.GameOverView;
         }
     };
 
     pub inline fn init() !void {
-        const menu = Shared.View.ViewLocator.Build(.Menu);
+        const menu = Shared.View.ViewLocator.Build(.MenuView);
         menu.init();
 
         raylib.setConfigFlags(

@@ -48,7 +48,7 @@ pub inline fn main() void {
     }
 
     // Default View on startup is the Splash Screen
-    var current_view: Shared.View.Views = Shared.View.Views.Raylib_Splash_Screen;
+    var current_view: Shared.View.Views = Shared.View.Views.RaylibSplashScreenView;
 
     // If DebugView is configure use that instead
     if (settings.Debug and settings.DebugView != null) {
@@ -109,7 +109,7 @@ pub inline fn main() void {
         }
 
         // Quit main loop
-        if (new_view == Shared.View.Views.Quit) break;
+        if (new_view == Shared.View.Views.Unknown) break;
     }
 }
 

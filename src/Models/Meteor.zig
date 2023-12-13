@@ -2,7 +2,7 @@ const std = @import("std");
 const raylib = @import("raylib");
 const Shared = @import("../Shared.zig").Shared;
 
-pub const MeteorSprite = Shared.Sprite.init(5, .Meteor);
+pub const MeteorSprite = Shared.Sprite.init(5, .Yellow_Meteor);
 
 pub const Meteor = struct {
     position: raylib.Vector2,

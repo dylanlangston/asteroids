@@ -145,7 +145,7 @@ inline fn addAssets(
     c: *std.build.Step.Compile,
 ) !void {
     // Views
-    try addSrcFilesArrayOptions(
+    try embedFiles(
         "Views",
         "Views",
         &[_][]const u8{
@@ -156,7 +156,7 @@ inline fn addAssets(
     );
 
     // Music
-    try addSrcFilesArrayOptions(
+    try embedFiles(
         "Music",
         "music_assets",
         &[_][]const u8{
@@ -166,8 +166,19 @@ inline fn addAssets(
         c,
     );
 
+    // Music
+    try embedFiles(
+        "Sounds",
+        "sound_assets",
+        &[_][]const u8{
+            ".ogg",
+        },
+        b,
+        c,
+    );
+
     // Fonts
-    try addSrcFilesArrayOptions(
+    try embedFiles(
         "Fonts",
         "font_assets",
         &[_][]const u8{
@@ -178,7 +189,7 @@ inline fn addAssets(
     );
 
     // Textures
-    try addSrcFilesArrayOptions(
+    try embedFiles(
         "Textures",
         "texture_assets",
         &[_][]const u8{
@@ -189,14 +200,91 @@ inline fn addAssets(
     );
 }
 
-inline fn addSrcFilesArrayOptions(
+inline fn importFiles(
     comptime path: [:0]const u8,
     comptime module_name: [:0]const u8,
     comptime allowed_exts: []const []const u8,
     b: *std.Build,
     c: *std.build.Step.Compile,
 ) !void {
-    var options = b.addOptions();
+    const files_step = b.addWriteFiles();
+
+    var deps = std.ArrayList(std.build.ModuleDependency).init(b.allocator);
+    var enumNames = std.ArrayList([]const u8).init(b.allocator);
+    var sources = std.ArrayList([]const u8).init(b.allocator);
+    {
+        const cwd = std.fs.cwd();
+        var dir = try cwd.openIterableDir(b.pathJoin(&[_][]const u8{
+            "src", path,
+        }), .{
+            .access_sub_paths = true,
+        });
+        var walker = try dir.walk(b.allocator);
+        defer walker.deinit();
+        while (try walker.next()) |entry| {
+            const ext = std.fs.path.extension(entry.basename);
+            const include_file = for (allowed_exts) |e| {
+                if (std.mem.eql(u8, ext, e))
+                    break true;
+            } else false;
+            if (include_file) {
+                const file_mod = b.createModule(.{ .source_file = .{
+                    .path = b.dupe(try std.fmt.allocPrint(b.allocator, ".{s}{s}", .{
+                        std.fs.path.sep_str,
+                        b.pathJoin(&[_][]const u8{ "src", path, entry.path }),
+                    })),
+                } });
+                const extension = std.fs.path.extension(entry.basename);
+                var name = b.dupe(entry.basename[0 .. entry.basename.len - extension.len]);
+                std.mem.replaceScalar(
+                    u8,
+                    name,
+                    ' ',
+                    '_',
+                );
+                try enumNames.append(name);
+                try deps.append(std.build.ModuleDependency{
+                    .name = name,
+                    .module = file_mod,
+                });
+
+                c.addModule(name, file_mod);
+                try sources.append(name);
+            }
+        }
+    }
+
+    const file_name = module_name ++ ".zig";
+    const format =
+        \\pub const {s} = struct {{
+        \\  pub const enums = enum {{ {s}, Unknown }};
+        \\  pub const imports = [_][]const type {{ @import("{s}"), }};
+        \\}};
+    ;
+
+    const string = try std.fmt.allocPrint(b.allocator, format, .{
+        module_name,
+        try std.mem.join(b.allocator, ", ", enumNames.items),
+        try std.mem.join(b.allocator, "\"), @import(\"", sources.items),
+    });
+
+    const file = files_step.add(file_name, string);
+
+    const module = b.addModule(module_name, .{
+        .source_file = file,
+        .dependencies = deps.items,
+    });
+    c.step.dependOn(&files_step.step);
+    c.addModule(module_name, module);
+}
+
+inline fn embedFiles(
+    comptime path: [:0]const u8,
+    comptime module_name: [:0]const u8,
+    comptime allowed_exts: []const []const u8,
+    b: *std.Build,
+    c: *std.build.Step.Compile,
+) !void {
     var enumNames = std.ArrayList([]const u8).init(b.allocator);
     var sources = std.ArrayList([]const u8).init(b.allocator);
     {
@@ -219,36 +307,40 @@ inline fn addSrcFilesArrayOptions(
                     b.pathJoin(&[_][]const u8{ path, entry.path }),
                 })));
                 const extension = std.fs.path.extension(entry.basename);
-                try enumNames.append(b.dupe(entry.basename[0 .. entry.basename.len - extension.len]));
+                var name = b.dupe(entry.basename[0 .. entry.basename.len - extension.len]);
+                std.mem.replaceScalar(
+                    u8,
+                    name,
+                    ' ',
+                    '_',
+                );
+                try enumNames.append(name);
             }
         }
     }
 
-    const enumModuleName = try std.fmt.allocPrint(b.allocator, "{s}_enums", .{module_name});
-    const enumFileName = try std.fmt.allocPrint(b.allocator, "{s}.zig", .{enumModuleName});
-    const enumStringFormat =
-        \\pub const {s}_enums = struct {{
-        \\  pub const enums = enum {{ {s} }};
+    const file_name = module_name ++ ".zig";
+    const format =
+        \\pub const {s} = struct {{
+        \\  pub const enums = enum {{ Unknown, {s} }};
+        \\  pub const files = [_][]const u8 {{ "{s}" }};
         \\}};
     ;
 
-    const enumString = try std.fmt.allocPrint(b.allocator, enumStringFormat, .{
+    const string = try std.fmt.allocPrint(b.allocator, format, .{
         module_name,
         try std.mem.join(b.allocator, ", ", enumNames.items),
+        try std.mem.join(b.allocator, "\", \"", sources.items),
     });
 
-    //std.debug.print(enumStringFormat, .{});
+    const files_step = b.addWriteFiles();
+    const file = files_step.add(file_name, string);
 
-    const enums_files_step = b.addWriteFiles();
-    const enums_file = enums_files_step.add(enumFileName, enumString);
-    const enumModule = b.addModule(enumModuleName, .{
-        .source_file = enums_file,
+    const module = b.addModule(module_name, .{
+        .source_file = file.dupe(b),
     });
-
-    options.addOption([]const []const u8, "files", sources.items);
-    c.step.dependOn(&enums_files_step.step);
-    c.addOptions(module_name, options);
-    c.addModule(enumModuleName, enumModule);
+    c.step.dependOn(&files_step.step);
+    c.addModule(module_name, module);
 }
 
 pub fn copyWASMRunStep(b: *std.Build, dependsOn: *std.Build.Step, cwd_path: []const u8) !void {

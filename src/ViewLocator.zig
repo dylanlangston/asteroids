@@ -1,61 +1,59 @@
 const std = @import("std");
 const BaseViewModel = @import("./ViewModels/ViewModel.zig").ViewModel;
-const BaseView = @import("./Views/View.zig").View;
+const BaseView = @import("./View.zig").View;
 const Shared = @import("./Shared.zig").Shared;
-const view_assets = @import("Views_enums").Views_enums;
+const view_assets = @import("Views").Views;
 
 pub const ViewLocator = struct {
-    inline fn LoadViews() []BaseView {
-        comptime {
-            @setEvalBranchQuota(1500);
+    // inline fn LoadViews() std.EnumMap(Views, BaseView) {
+    //     comptime {
+    //         @setEvalBranchQuota(1500);
 
-            var allPossibleViews: [std.enums.values(Views).len]BaseView = undefined;
-            inline for (view_assets, 0..) |file, i| {
-                // Check if the file is a view
-                const folder = std.fs.path.dirname(file);
-                if (folder != null and std.mem.eql(u8, "View", folder.?)) {
-                    const importedFile = @cImport(file);
-                    inline for (std.meta.fields(@TypeOf(importedFile))) |f| {
-                        if (f.type == @TypeOf(BaseView)) {
-                            const view = @field(importedFile, f.name);
-                            var buf: [1024]u8 = undefined;
-                            _ = buf;
-                            if (@hasField(@TypeOf(view), "Key")) {
-                                allPossibleViews[i] = view;
-                            }
-                        }
-                    }
-                }
-            }
-            return &allPossibleViews;
-        }
-    }
-    const AllViews = LoadViews();
-    // const AllViews = [_]BaseView{
-    //     @import("./Views/RaylibSplashScreenView.zig").RaylibSplashScreenView,
-    //     @import("./Views/DylanSplashScreenView.zig").DylanSplashScreenView,
-    //     @import("./Views/PausedView.zig").PausedView,
-    //     @import("./Views/AsteroidsView.zig").AsteroidsView,
-    //     @import("./Views/MenuView.zig").MenuView,
-    //     @import("./Views/SettingsView.zig").SettingsView,
-    //     @import("./Views/GameOverView.zig").GameOverView,
-    // };
+    //         var allPossibleViews = std.EnumMap(Views, BaseView){};
+    //         inline for (view_assets.imports, 0..) |import, i| {
+    //             _ = i;
+    //             // Check if the file is a view
+    //             inline for (std.meta.fields(@TypeOf(import))) |f| {
+    //                 if (f.type == @TypeOf(BaseView)) {
+    //                     const view = @field(import, f.name);
+    //                     var buf: [1024]u8 = undefined;
+    //                     _ = buf;
+    //                     if (@hasField(@TypeOf(view), "Key")) {
+    //                         allPossibleViews.put(view.Key, view);
+    //                     }
+    //                 }
+    //             }
+    //         }
+    //         return allPossibleViews;
+    //     }
+    // }
+    // const AllViews = LoadViews();
+    const AllViews = [_]BaseView{
+        @import("./Views/RaylibSplashScreenView.zig").RaylibSplashScreenView,
+        @import("./Views/DylanSplashScreenView.zig").DylanSplashScreenView,
+        @import("./Views/PausedView.zig").PausedView,
+        @import("./Views/AsteroidsView.zig").AsteroidsView,
+        @import("./Views/MenuView.zig").MenuView,
+        @import("./Views/SettingsView.zig").SettingsView,
+        @import("./Views/GameOverView.zig").GameOverView,
+    };
 
     inline fn GetView(view: Views) BaseView {
         inline for (AllViews) |v| {
-            if (@intFromEnum(v.Key) == @intFromEnum(view)) {
-                return v;
-            }
+            if (v.Key == view) return v;
         }
+        // if (AllViews.contains(view)) {
+        //     return AllViews.get(view).?;
+        // }
 
         return BaseView{
-            .Key = .Quit,
+            .Key = .Unknown,
             .DrawRoutine = DrawQuit,
         };
     }
 
     fn DrawQuit() Views {
-        return Views.Quit;
+        return Views.Unknown;
     }
 
     pub inline fn Build(view: Views) BaseView {
@@ -69,13 +67,4 @@ pub const ViewLocator = struct {
     }
 };
 
-pub const Views = enum {
-    Raylib_Splash_Screen,
-    Dylan_Splash_Screen,
-    Menu,
-    Asteroids,
-    Paused,
-    Settings,
-    Game_Over,
-    Quit,
-};
+pub const Views = view_assets.enums;

@@ -7,13 +7,13 @@ pub fn DrawFunction() Shared.View.Views {
     raylib.clearBackground(Shared.Color.Yellow.Base);
 
     if (Shared.Input.A_Pressed()) {
-        return .Menu;
+        return .MenuView;
     }
 
-    return .Settings;
+    return .SettingsView;
 }
 
 pub const SettingsView = Shared.View.View{
-    .Key = .Settings,
+    .Key = .SettingsView,
     .DrawRoutine = &DrawFunction,
 };
