@@ -33,6 +33,10 @@ pub fn build(b: *std.Build) !void {
             target,
             optimize,
         );
+        try addAssets(
+            b,
+            exe_lib,
+        );
 
         exe_lib.addModule("raylib", raylib);
         exe_lib.addModule("raylib-math", raylib_math);
@@ -74,7 +78,16 @@ pub fn build(b: *std.Build) !void {
         return;
     }
 
-    const exe = b.addExecutable(.{ .name = "Asteroids", .root_source_file = .{ .path = "src/Asteroids.zig" }, .optimize = optimize, .target = target });
+    const exe = b.addExecutable(.{
+        .name = "Asteroids",
+        .root_source_file = .{ .path = "src/Asteroids.zig" },
+        .optimize = optimize,
+        .target = target,
+    });
+    try addAssets(
+        b,
+        exe,
+    );
 
     rl.link(b, exe, target, optimize);
     exe.addModule("raylib", raylib);
@@ -125,6 +138,117 @@ pub fn setupEmscripten(b: *std.build) void {
         "activate",
         "latest",
     });
+}
+
+inline fn addAssets(
+    b: *std.Build,
+    c: *std.build.Step.Compile,
+) !void {
+    // Views
+    try addSrcFilesArrayOptions(
+        "Views",
+        "Views",
+        &[_][]const u8{
+            ".zig",
+        },
+        b,
+        c,
+    );
+
+    // Music
+    try addSrcFilesArrayOptions(
+        "Music",
+        "music_assets",
+        &[_][]const u8{
+            ".ogg",
+        },
+        b,
+        c,
+    );
+
+    // Fonts
+    try addSrcFilesArrayOptions(
+        "Fonts",
+        "font_assets",
+        &[_][]const u8{
+            ".ttf",
+        },
+        b,
+        c,
+    );
+
+    // Textures
+    try addSrcFilesArrayOptions(
+        "Textures",
+        "texture_assets",
+        &[_][]const u8{
+            ".png",
+        },
+        b,
+        c,
+    );
+}
+
+inline fn addSrcFilesArrayOptions(
+    comptime path: [:0]const u8,
+    comptime module_name: [:0]const u8,
+    comptime allowed_exts: []const []const u8,
+    b: *std.Build,
+    c: *std.build.Step.Compile,
+) !void {
+    var options = b.addOptions();
+    var enumNames = std.ArrayList([]const u8).init(b.allocator);
+    var sources = std.ArrayList([]const u8).init(b.allocator);
+    {
+        var dir = try std.fs.cwd().openIterableDir(b.pathJoin(&[_][]const u8{
+            "src", path,
+        }), .{
+            .access_sub_paths = true,
+        });
+        var walker = try dir.walk(b.allocator);
+        defer walker.deinit();
+        while (try walker.next()) |entry| {
+            const ext = std.fs.path.extension(entry.basename);
+            const include_file = for (allowed_exts) |e| {
+                if (std.mem.eql(u8, ext, e))
+                    break true;
+            } else false;
+            if (include_file) {
+                try sources.append(b.dupe(try std.fmt.allocPrint(b.allocator, ".{s}{s}", .{
+                    std.fs.path.sep_str,
+                    b.pathJoin(&[_][]const u8{ path, entry.path }),
+                })));
+                const extension = std.fs.path.extension(entry.basename);
+                try enumNames.append(b.dupe(entry.basename[0 .. entry.basename.len - extension.len]));
+            }
+        }
+    }
+
+    const enumModuleName = try std.fmt.allocPrint(b.allocator, "{s}_enums", .{module_name});
+    const enumFileName = try std.fmt.allocPrint(b.allocator, "{s}.zig", .{enumModuleName});
+    const enumStringFormat =
+        \\pub const {s}_enums = struct {{
+        \\  pub const enums = enum {{ {s} }};
+        \\}};
+    ;
+
+    const enumString = try std.fmt.allocPrint(b.allocator, enumStringFormat, .{
+        module_name,
+        try std.mem.join(b.allocator, ", ", enumNames.items),
+    });
+
+    //std.debug.print(enumStringFormat, .{});
+
+    const enums_files_step = b.addWriteFiles();
+    const enums_file = enums_files_step.add(enumFileName, enumString);
+    const enumModule = b.addModule(enumModuleName, .{
+        .source_file = enums_file,
+    });
+
+    options.addOption([]const []const u8, "files", sources.items);
+    c.step.dependOn(&enums_files_step.step);
+    c.addOptions(module_name, options);
+    c.addModule(enumModuleName, enumModule);
 }
 
 pub fn copyWASMRunStep(b: *std.Build, dependsOn: *std.Build.Step, cwd_path: []const u8) !void {
