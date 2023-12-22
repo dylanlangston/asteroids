@@ -12,6 +12,7 @@ const vm: type = AsteroidsViewModel.GetVM();
 
 fn DrawFunction() Shared.View.Views {
     raylib.clearBackground(Shared.Color.Tone.Dark);
+    raylib.drawRectangleLinesEx(raylib.Rectangle.init(0,0,3200,1800), 5, Shared.Color.Green.Light);
 
     vm.Update();
 
