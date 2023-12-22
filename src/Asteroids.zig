@@ -87,6 +87,9 @@ pub inline fn main() void {
         const new_view = view.DrawRoutine();
         defer current_view = new_view;
 
+        // Draw scan lines
+        Shared.Shader.DrawTexture(.ScanLine, .ScanLines);
+
         if (Shared.Settings.GetSettings().Debug) {
             raylib.drawFPS(10, 10);
         }
