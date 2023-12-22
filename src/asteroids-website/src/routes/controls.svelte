@@ -72,7 +72,7 @@
 		on:pointerleave={(e) => deselectDirection('#angle')}
 		on:pointercancel={(e) => deselectDirection('#angle')}
 		on:lostpointercapture={(e) => deselectDirection('#angle')}
-		class="absolute bottom-2 left-2 z-10 m-auto p-1 grid grid-cols-2 grid-rows-1 w-fit h-fit items-center justify-items-center bg-green-light/[.5] rounded-full select-none touch-none"
+		class="absolute bottom-4 left-4 z-10 m-auto p-1 grid grid-cols-2 grid-rows-1 w-fit h-fit items-center justify-items-center bg-green-light/[.5] rounded-full select-none touch-none"
 	>
 		<button
 			id="right"
@@ -95,7 +95,7 @@
 		on:pointerleave={(e) => deselectDirection('#speed')}
 		on:pointercancel={(e) => deselectDirection('#speed')}
 		on:lostpointercapture={(e) => deselectDirection('#speed')}
-		class="absolute bottom-2 right-2 z-10 m-auto p-1 grid grid-cols-1 grid-rows-2 w-fit h-fit items-center justify-items-center bg-green-light/[.5] rounded-full select-none touch-none"
+		class="absolute bottom-4 right-4 z-10 m-auto p-1 grid grid-cols-1 grid-rows-2 w-fit h-fit items-center justify-items-center bg-green-light/[.5] rounded-full select-none touch-none"
 	>
 		<button
 			id="up"
@@ -112,7 +112,7 @@
 	</div>
 
 	<div
-		class="absolute bottom-4 right-20 z-10 bg-green-light/[.5] rounded-full p-1 w-fit h-fit m-auto select-none"
+		class="absolute bottom-4 right-28 z-10 bg-green-light/[.5] rounded-full p-1 w-fit h-fit m-auto select-none"
 	>
 		<button
 			id="a"
@@ -128,7 +128,7 @@
 	</div>
 
 	<div
-		class="absolute bottom-20 left-2 z-10 bg-green-light/[.5] rounded-full p-1 w-fit h-fit select-none"
+		class="absolute bottom-28 left-4 z-10 bg-green-light/[.5] rounded-full p-1 w-fit h-fit select-none"
 	>
 		<button
 			id="start"
@@ -147,7 +147,7 @@
 <style global lang="postcss">
 	#angle,
 	#speed {
-		--button-size: 3.5rem;
+		--button-size: 5rem;
 	}
 
 	#speed {
