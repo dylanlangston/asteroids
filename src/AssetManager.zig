@@ -1,9 +1,10 @@
 const std = @import("std");
 const raylib = @import("raylib");
+const font_assets = @import("font_assets").font_assets;
 const music_assets = @import("music_assets").music_assets;
 const sound_assets = @import("sound_assets").sound_assets;
 const texture_assets = @import("texture_assets").texture_assets;
-const font_assets = @import("font_assets").font_assets;
+const shader_assets = @import("shader_assets").shader_assets;
 
 pub const AssetManager = struct {
     const AssetManagerErrors = error{
@@ -92,6 +93,24 @@ pub const AssetManager = struct {
             EmbeddedTextures,
             &LoadedTextures,
             LoadTexture,
+        );
+    }
+
+    pub const Shaders = shader_assets.enums;
+    const EmbeddedShaders = RawAsset.Embed(Shaders, shader_assets);
+    var LoadedShaders: std.EnumMap(Shaders, raylib.Shader) = std.EnumMap(Shaders, raylib.Shader){};
+    fn LoadShader(asset: RawAsset) raylib.Shader {
+        const s = raylib.loadShaderFromMemory(null, asset.Bytes);
+        return s;
+    }
+    pub inline fn GetShader(key: Shaders) AssetManagerErrors!raylib.Shader {
+        return RawAsset.Get(
+            Shaders,
+            raylib.Shader,
+            key,
+            EmbeddedShaders,
+            &LoadedShaders,
+            LoadShader,
         );
     }
 

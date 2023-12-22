@@ -26,5 +26,12 @@
         "allowed_exts": [
             ".png"
         ]
+    },
+    {
+        "path": "Shaders",
+        "module_name": "shader_assets",
+        "allowed_exts": [
+            ".fs"
+        ]
     }
 ]

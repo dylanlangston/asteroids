@@ -107,11 +107,55 @@ pub const Shared = struct {
     pub const Texture = struct {
         pub const Textures = AssetManager.Textures;
 
-        pub fn Get(font: AssetManager.Textures) raylib.Texture {
-            return AssetManager.GetTexture(font) catch |err| {
+        pub fn Get(texture: AssetManager.Textures) raylib.Texture {
+            return AssetManager.GetTexture(texture) catch |err| {
                 Logger.Debug_Formatted("Failed to get texture: {}", .{err});
                 return raylib.loadTextureFromImage(raylib.loadImageFromScreen());
             };
+        }
+    };
+
+    pub const Shader = struct {
+        pub const Shaders = AssetManager.Shaders;
+
+        pub fn Get(shader: AssetManager.Shaders) raylib.Shader {
+            return AssetManager.GetShader(shader) catch |err| {
+                Logger.Debug_Formatted("Failed to get shader: {}", .{err});
+                return raylib.loadShaderFromMemory(null, null);
+            };
+        }
+
+        pub fn DrawTexture(texture: AssetManager.Textures, shader: AssetManager.Shaders) void {
+            const loadedShader = Get(shader);
+            loadedShader.activate();
+            defer loadedShader.deactivate();
+            const blankTexture = Texture.Get(texture);
+
+            raylib.drawTexturePro(
+                blankTexture,
+                raylib.Rectangle.init(
+                    0,
+                    0,
+                    @as(f32, @floatFromInt(blankTexture.width)),
+                    @as(f32, @floatFromInt(blankTexture.height)),
+                ),
+                raylib.Rectangle.init(
+                    0,
+                    0,
+                    @as(f32, @floatFromInt(raylib.getScreenWidth())),
+                    @as(f32, @floatFromInt(raylib.getScreenHeight())),
+                ),
+                raylib.Vector2.init(0, 0),
+                0,
+                Shared.Color.Transparent,
+            );
+        }
+
+        pub fn DrawWith(shader: AssetManager.Shaders, comptime T: type, drawFunction: *const fn () T) T {
+            const loadedShader = Get(shader);
+            loadedShader.activate();
+            defer loadedShader.deactivate();
+            return drawFunction();
         }
     };
 
