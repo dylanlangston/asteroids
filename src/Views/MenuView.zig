@@ -23,6 +23,7 @@ pub fn DrawFunction() Shared.View.Views {
 
     const foregroundColor = Shared.Color.Blue.Base;
     const backgroundColor = Shared.Color.Blue.Light.alpha(0.75);
+    _ = backgroundColor;
     const accentColor = Shared.Color.Blue.Dark;
 
     // Title
@@ -70,20 +71,6 @@ pub fn DrawFunction() Shared.View.Views {
         );
 
         const selected_or_not_color = if (select == vm.selection) accentColor else foregroundColor;
-
-        raylib.drawRectangleRounded(
-            vm.Rectangles[index],
-            0.1,
-            10,
-            backgroundColor,
-        );
-        raylib.drawRectangleRoundedLines(
-            vm.Rectangles[index],
-            0.1,
-            10,
-            5,
-            selected_or_not_color,
-        );
 
         const TextSize = raylib.measureTextEx(font, text, @floatFromInt(fontSize), @floatFromInt(font.glyphPadding));
         const fontsizeF: f32 = TextSize.y;

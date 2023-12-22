@@ -213,6 +213,7 @@
 </svelte:head>
 
 <svelte:window
+	on:contextmenu={(e) => e.preventDefault()}
 	on:error={(e) => onError(e)}
 	on:orientationchange={(e) => UpdateSize(e)}
 	on:resize={(e) => UpdateSize(e)}
@@ -262,7 +263,7 @@
 			<button
 				type="button"
 				title={$_('page.View_Source')}
-				class="btn absolute right-0 bottom-0 z-50"
+				class="btn absolute z-50"
 				on:click={() => openRepo()}
 			>
 				<svg viewBox="0 0 16 16" class="w-6 h-6 lg:w-8 lg:h-8">
@@ -311,9 +312,6 @@
 {/if}
 
 <style lang="postcss">
-	.stop-animation {
-		animation-play-state: paused;
-	}
 	#controls > button {
 		transition: transform 0.2s;
 	}

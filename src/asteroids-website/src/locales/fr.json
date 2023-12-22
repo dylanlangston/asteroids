@@ -10,10 +10,10 @@
     },
     "controls": {
         "Pause": "Pause",
-        "Up": "Haut",
-        "Down": "Bas",
+        "Up": "Accélérer",
+        "Down": "Ralentir",
         "Left": "Gauche",
         "Right": "Droite",
-        "A": "A"
+        "A": "Feu"
     }
 }

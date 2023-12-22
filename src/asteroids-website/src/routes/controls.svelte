@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { Button } from '$lib/gameController';
 	import { _ } from 'svelte-i18n';
-	import { fade, blur, fly, slide, scale } from "svelte/transition";
+	import { fade, blur, fly, slide, scale } from 'svelte/transition';
 
 	export let handleButtonPressed = (button: Button) => {
 		console.log('Button Pressed: ' + button);
@@ -36,7 +36,7 @@
 		}
 	}
 
-	function touchMove(e: PointerEvent) {
+	function touchMove(e: PointerEvent, elementId: string) {
 		e.preventDefault();
 
 		const elem = <HTMLButtonElement>document.elementFromPoint(e.clientX, e.clientY);
@@ -48,81 +48,71 @@
 			handleButtonPressed(<any>elem.value);
 		}
 
-		document.querySelectorAll('#dpad > button.down').forEach((n) => {
+		document.querySelectorAll(elementId + ' > button.down').forEach((n) => {
 			if (n == elem) return;
 			n.classList.remove('down');
 			handleButtonReleased(<any>(<HTMLButtonElement>n).value);
 		});
 	}
 
-	function deselectDpad(): void {
-		document.querySelectorAll('#dpad > button.down').forEach((n) => {
+	function deselectDirection(elementId: string): void {
+		document.querySelectorAll(elementId + ' > button.down').forEach((n) => {
 			n.classList.remove('down');
 			handleButtonReleased(<any>(<HTMLButtonElement>n).value);
 		});
 	}
 </script>
 
-<div id="gamepad" in:fade={{ delay: 250, duration: 300, }} out:fade>
+<div id="gamepad" in:fade={{ delay: 250, duration: 300 }} out:fade>
 	<div
-		id="dpad"
-		on:pointermove={(e) => touchMove(e)}
-		on:pointerdown={(e) => touchMove(e)}
-		on:pointerup={(e) => deselectDpad()}
-		on:pointerleave={(e) => deselectDpad()}
-		on:pointercancel={(e) => deselectDpad()}
-		on:lostpointercapture={(e) => deselectDpad()}
-		class="absolute bottom-10 left-4 z-10 m-auto p-1 grid grid-cols-3 grid-rows-3 w-fit h-fit items-center justify-items-center bg-green-light/[.5] rounded-full select-none touch-none"
+		id="angle"
+		on:pointermove={(e) => touchMove(e, '#angle')}
+		on:pointerdown={(e) => touchMove(e, '#angle')}
+		on:pointerup={(e) => deselectDirection('#angle')}
+		on:pointerleave={(e) => deselectDirection('#angle')}
+		on:pointercancel={(e) => deselectDirection('#angle')}
+		on:lostpointercapture={(e) => deselectDirection('#angle')}
+		class="absolute bottom-2 left-2 z-10 m-auto p-1 grid grid-cols-2 grid-rows-1 w-fit h-fit items-center justify-items-center bg-green-light/[.5] rounded-full select-none touch-none"
 	>
 		<button
-			id="up"
-			title={$_('controls.Up')}
-			class="row-start-1 col-start-2 bg-green-dark/[.5] rounded-t-lg text-black"
-			value={Button.Up}><i class="arrow up" /></button
+			id="right"
+			title={$_('controls.Right')}
+			class="row-start-1 col-start-2 bg-green-dark/[.5] rounded-r-full text-black"
+			value={Button.Right}><i class="arrow right" /></button
 		>
 		<button
 			id="left"
 			title={$_('controls.Left')}
-			class="row-start-2 col-start-1 bg-green-dark/[.5] rounded-l-lg text-black"
+			class="row-start-1 col-start-1 bg-green-dark/[.5] rounded-l-full text-black"
 			value={Button.Left}><i class="arrow left" /></button
+		>
+	</div>
+	<div
+		id="speed"
+		on:pointermove={(e) => touchMove(e, '#speed')}
+		on:pointerdown={(e) => touchMove(e, '#speed')}
+		on:pointerup={(e) => deselectDirection('#speed')}
+		on:pointerleave={(e) => deselectDirection('#speed')}
+		on:pointercancel={(e) => deselectDirection('#speed')}
+		on:lostpointercapture={(e) => deselectDirection('#speed')}
+		class="absolute bottom-2 right-2 z-10 m-auto p-1 grid grid-cols-1 grid-rows-2 w-fit h-fit items-center justify-items-center bg-green-light/[.5] rounded-full select-none touch-none"
+	>
+		<button
+			id="up"
+			title={$_('controls.Up')}
+			class="row-start-1 col-start-1 bg-green-dark/[.5] rounded-t-full text-black"
+			value={Button.Up}><i class="arrow up" /></button
 		>
 		<button
 			id="down"
 			title={$_('controls.Down')}
-			class="row-start-3 col-start-2 bg-green-dark/[.5] rounded-b-lg text-black"
+			class="row-start-2 col-start-1 bg-green-dark/[.5] rounded-b-full text-black"
 			value={Button.Down}><i class="arrow down" /></button
 		>
-		<button
-			id="right"
-			title={$_('controls.Right')}
-			class="row-start-2 col-start-3 bg-green-dark/[.5] rounded-r-lg text-black"
-			value={Button.Right}><i class="arrow right" /></button
-		>
-		<div class="row-start-2 col-start-2 w-full h-full bg-green-dark/[.5]" />
-		<button
-			id="up-left"
-			class="corner row-start-1 col-start-1 rounded-lg bg-transparent"
-			value={Button.Up_Left}
-		/>
-		<button
-			id="up-right"
-			class="corner row-start-1 col-start-3 rounded-lg bg-transparent"
-			value={Button.Up_Right}
-		/>
-		<button
-			id="down-left"
-			class="corner row-start-3 col-start-1 rounded-lg bg-transparent"
-			value={Button.Down_Left}
-		/>
-		<button
-			id="down-right"
-			class="corner row-start-3 col-start-3 rounded-lg bg-transparent"
-			value={Button.Down_Right}
-		/>
 	</div>
 
 	<div
-		class="absolute bottom-20 right-4 z-10 bg-green-light/[.5] rounded-full p-1 w-fit h-fit m-auto select-none"
+		class="absolute bottom-4 right-20 z-10 bg-green-light/[.5] rounded-full p-1 w-fit h-fit m-auto select-none"
 	>
 		<button
 			id="a"
@@ -138,7 +128,7 @@
 	</div>
 
 	<div
-		class="absolute top-4 left-4 z-10 bg-green-light/[.5] rounded-full p-1 w-fit h-fit select-none"
+		class="absolute bottom-20 left-2 z-10 bg-green-light/[.5] rounded-full p-1 w-fit h-fit select-none"
 	>
 		<button
 			id="start"
@@ -155,13 +145,23 @@
 </div>
 
 <style global lang="postcss">
-	#dpad {
+	#angle,
+	#speed {
 		--button-size: 3.5rem;
-		height: calc(var(--button-size) * 3 + 0.5rem);
-		width: calc(var(--button-size) * 3 + 0.5rem);
 	}
 
-	#dpad > button {
+	#speed {
+		height: calc(var(--button-size) * 2 + 0.5rem);
+		width: calc(var(--button-size) + 0.5rem);
+	}
+
+	#angle {
+		height: calc(var(--button-size) + 0.5rem);
+		width: calc(var(--button-size) * 2 + 0.5rem);
+	}
+
+	#angle > button,
+	#speed > button {
 		width: var(--button-size);
 		height: var(--button-size);
 		display: flex;
@@ -170,44 +170,11 @@
 		cursor: pointer;
 	}
 
-	#dpad > #up-left.corner {
-		border-left: var(--button-size) solid transparent;
-		border-right: 0rem solid transparent;
-		border-bottom: var(--button-size) solid transparent;
-	}
-
-	#dpad > #up-right.corner {
-		border-left: 0rem solid transparent;
-		border-right: var(--button-size) solid transparent;
-		border-bottom: var(--button-size) solid transparent;
-	}
-
-	#dpad > #down-left.corner {
-		border-left: var(--button-size) solid transparent;
-		border-right: 0rem solid transparent;
-		border-top: var(--button-size) solid transparent;
-	}
-
-	#dpad > #down-right.corner {
-		border-left: 0rem solid transparent;
-		border-right: var(--button-size) solid transparent;
-		border-top: var(--button-size) solid transparent;
-	}
-
-	#dpad > button.down:not(.corner),
+	#angle > button.down,
+	#speed > button.down,
 	#a.down,
 	#start.down {
 		background-color: theme(colors.green-dark);
-	}
-
-	#dpad > #up-left.corner.down,
-	#dpad > #up-right.corner.down {
-		border-bottom: var(--button-size) solid theme(colors.green-dark);
-	}
-
-	#dpad > #down-left.corner.down,
-	#dpad > #down-right.corner.down {
-		border-top: var(--button-size) solid theme(colors.green-dark);
 	}
 
 	.arrow {

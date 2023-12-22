@@ -10,10 +10,10 @@
     },
     "controls": {
         "Pause": "Pausa",
-        "Up": "Arriba",
+        "Up": "Decelerar",
         "Down": "Abajo",
         "Left": "Izquierda",
         "Right": "Derecha",
-        "A": "A"
+        "A": "Feugo"
     }
 }
