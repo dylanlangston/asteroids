@@ -34,8 +34,8 @@ pub const Camera = struct {
 
     pub fn Draw(self: @This(), comptime T: type, drawFunction: *const fn () T) T {
         raylib.beginMode2D(self.camera2D);
-        const result: T = drawFunction();
         defer raylib.endMode2D();
+        const result: T = drawFunction();
         return result;
     }
 };
