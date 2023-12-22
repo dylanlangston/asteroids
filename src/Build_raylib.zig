@@ -241,7 +241,7 @@ pub fn linkWithEmscripten(
         optimize,
         "--emrun",
         "--no-entry",
-        "-sEXPORTED_FUNCTIONS=['_malloc','_free','_main','_updateWasmResolution','_updateWasmLocale','_set_js_key','_wizer_initialize']",
+        "-sEXPORTED_FUNCTIONS=['_malloc','_free','_main','_updateWasmResolution','_updateWasmLocale','_wizer_initialize']",
         "-sEXPORTED_RUNTIME_METHODS=allocateUTF8,UTF8ToString",
         "--js-library=src/Zig-JS_Bridge.js",
         "-sWASM=1",

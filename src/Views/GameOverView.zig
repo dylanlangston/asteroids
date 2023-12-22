@@ -87,8 +87,6 @@ pub fn DrawFunction() Shared.View.Views {
         foregroundColor,
     );
 
-    Shared.Log.Info_Formatted("{}", .{Shared.Time.getTimestamp() - vm.startTime});
-
     if (vm.startTime <= 0 and Shared.Input.A_Pressed()) {
         if (vm.BackgroundTexture != null) {
             vm.BackgroundTexture.?.unload();

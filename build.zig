@@ -140,12 +140,18 @@ pub fn setupEmscripten(b: *std.build) void {
     });
 }
 
+const assetType = struct {
+    path: [:0]const u8,
+    module_name: [:0]const u8,
+    allowed_exts: []const []const u8,
+};
+
 inline fn addAssets(
     b: *std.Build,
     c: *std.build.Step.Compile,
 ) !void {
     // Views
-    try embedFiles(
+    try importViews(
         "Views",
         "Views",
         &[_][]const u8{
@@ -155,52 +161,32 @@ inline fn addAssets(
         c,
     );
 
-    // Music
-    try embedFiles(
-        "Music",
-        "music_assets",
-        &[_][]const u8{
-            ".ogg",
-        },
-        b,
-        c,
-    );
+    // Open assets.json file
+    var settings_file = try std.fs.cwd().openFile("assets.json", .{});
+    defer settings_file.close();
 
-    // Music
-    try embedFiles(
-        "Sounds",
-        "sound_assets",
-        &[_][]const u8{
-            ".ogg",
-        },
-        b,
-        c,
-    );
+    // Read the contents
+    const max_bytes = 10000;
+    const file_buffer = try settings_file.readToEndAlloc(b.allocator, max_bytes);
+    defer b.allocator.free(file_buffer);
 
-    // Fonts
-    try embedFiles(
-        "Fonts",
-        "font_assets",
-        &[_][]const u8{
-            ".ttf",
-        },
-        b,
-        c,
-    );
+    // Parse JSON
+    var assets = try std.json.parseFromSlice([]assetType, b.allocator, file_buffer, .{});
+    defer assets.deinit();
 
-    // Textures
-    try embedFiles(
-        "Textures",
-        "texture_assets",
-        &[_][]const u8{
-            ".png",
-        },
-        b,
-        c,
-    );
+    // Embed Assets
+    for (assets.value) |asset| {
+        try embedFiles(
+            asset.path,
+            asset.module_name,
+            asset.allowed_exts,
+            b,
+            c,
+        );
+    }
 }
 
-inline fn importFiles(
+inline fn importViews(
     comptime path: [:0]const u8,
     comptime module_name: [:0]const u8,
     comptime allowed_exts: []const []const u8,
@@ -209,31 +195,26 @@ inline fn importFiles(
 ) !void {
     const files_step = b.addWriteFiles();
 
-    var deps = std.ArrayList(std.build.ModuleDependency).init(b.allocator);
     var enumNames = std.ArrayList([]const u8).init(b.allocator);
-    var sources = std.ArrayList([]const u8).init(b.allocator);
     {
         const cwd = std.fs.cwd();
-        var dir = try cwd.openIterableDir(b.pathJoin(&[_][]const u8{
+        var dir = cwd.openIterableDir(b.pathJoin(&[_][]const u8{
             "src", path,
         }), .{
             .access_sub_paths = true,
-        });
+        }) catch {
+            @panic("Folder not found: " ++ path);
+        };
         var walker = try dir.walk(b.allocator);
         defer walker.deinit();
         while (try walker.next()) |entry| {
+            if (std.mem.eql(u8, entry.basename, "View.zig")) continue;
             const ext = std.fs.path.extension(entry.basename);
             const include_file = for (allowed_exts) |e| {
                 if (std.mem.eql(u8, ext, e))
                     break true;
             } else false;
             if (include_file) {
-                const file_mod = b.createModule(.{ .source_file = .{
-                    .path = b.dupe(try std.fmt.allocPrint(b.allocator, ".{s}{s}", .{
-                        std.fs.path.sep_str,
-                        b.pathJoin(&[_][]const u8{ "src", path, entry.path }),
-                    })),
-                } });
                 const extension = std.fs.path.extension(entry.basename);
                 var name = b.dupe(entry.basename[0 .. entry.basename.len - extension.len]);
                 std.mem.replaceScalar(
@@ -243,13 +224,6 @@ inline fn importFiles(
                     '_',
                 );
                 try enumNames.append(name);
-                try deps.append(std.build.ModuleDependency{
-                    .name = name,
-                    .module = file_mod,
-                });
-
-                c.addModule(name, file_mod);
-                try sources.append(name);
             }
         }
     }
@@ -258,30 +232,27 @@ inline fn importFiles(
     const format =
         \\pub const {s} = struct {{
         \\  pub const enums = enum {{ {s}, Unknown }};
-        \\  pub const imports = [_][]const type {{ @import("{s}"), }};
         \\}};
     ;
 
     const string = try std.fmt.allocPrint(b.allocator, format, .{
         module_name,
         try std.mem.join(b.allocator, ", ", enumNames.items),
-        try std.mem.join(b.allocator, "\"), @import(\"", sources.items),
     });
 
     const file = files_step.add(file_name, string);
 
     const module = b.addModule(module_name, .{
         .source_file = file,
-        .dependencies = deps.items,
     });
     c.step.dependOn(&files_step.step);
     c.addModule(module_name, module);
 }
 
 inline fn embedFiles(
-    comptime path: [:0]const u8,
-    comptime module_name: [:0]const u8,
-    comptime allowed_exts: []const []const u8,
+    path: [:0]const u8,
+    module_name: [:0]const u8,
+    allowed_exts: []const []const u8,
     b: *std.Build,
     c: *std.build.Step.Compile,
 ) !void {
@@ -319,7 +290,7 @@ inline fn embedFiles(
         }
     }
 
-    const file_name = module_name ++ ".zig";
+    const file_name = try std.mem.concat(b.allocator, u8, &[_][]const u8{ module_name, ".zig" }); // module_name ++ ".zig";
     const format =
         \\pub const {s} = struct {{
         \\  pub const enums = enum {{ Unknown, {s} }};
