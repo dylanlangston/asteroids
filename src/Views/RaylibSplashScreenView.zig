@@ -1,6 +1,5 @@
 const std = @import("std");
 const Shared = @import("../Shared.zig").Shared;
-const View = @import("View.zig").View;
 const raylib = @import("raylib");
 const SplashScreenViewModel = @import("../ViewModels/RaylibSplashScreenViewModel.zig").RaylibSplashScreenViewModel;
 
@@ -142,11 +141,11 @@ inline fn DrawSplashScreen() Shared.View.Views {
             );
         },
         States.Exit => {
-            return .Dylan_Splash_Screen;
+            return .DylanSplashScreenView;
         },
     }
 
-    return .Raylib_Splash_Screen;
+    return .RaylibSplashScreenView;
 }
 
 const lines = struct {
@@ -225,7 +224,7 @@ const lines = struct {
 
 fn DrawFunction() Shared.View.Views {
     if (Shared.Settings.GetSettings().Debug) {
-        return .Menu;
+        return .MenuView;
     }
 
     return DrawSplashScreen();
@@ -239,8 +238,8 @@ pub const States = enum {
     Exit,
 };
 
-pub const RaylibSplashScreenView = View{
-    .Key = .Raylib_Splash_Screen,
+pub const RaylibSplashScreenView = Shared.View.View{
+    .Key = .RaylibSplashScreenView,
     .DrawRoutine = DrawFunction,
     .VM = &SplashScreenViewModel,
 };

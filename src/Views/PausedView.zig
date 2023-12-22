@@ -148,7 +148,7 @@ pub fn DrawFunction() Shared.View.Views {
         return GetSelection();
     }
 
-    return .Paused;
+    return .PausedView;
 }
 
 inline fn GetSelection() Shared.View.Views {
@@ -158,13 +158,13 @@ inline fn GetSelection() Shared.View.Views {
         },
         PauseOptions.Quit => {
             Shared.View.ViewLocator.Destroy(vm.View);
-            return .Menu;
+            return .MenuView;
         },
     }
 }
 
 pub const PausedView = Shared.View.View{
-    .Key = .Paused,
+    .Key = .PausedView,
     .DrawRoutine = &DrawFunction,
     .VM = &PausedViewModel,
 };

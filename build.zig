@@ -33,6 +33,10 @@ pub fn build(b: *std.Build) !void {
             target,
             optimize,
         );
+        try addAssets(
+            b,
+            exe_lib,
+        );
 
         exe_lib.addModule("raylib", raylib);
         exe_lib.addModule("raylib-math", raylib_math);
@@ -74,7 +78,16 @@ pub fn build(b: *std.Build) !void {
         return;
     }
 
-    const exe = b.addExecutable(.{ .name = "Asteroids", .root_source_file = .{ .path = "src/Asteroids.zig" }, .optimize = optimize, .target = target });
+    const exe = b.addExecutable(.{
+        .name = "Asteroids",
+        .root_source_file = .{ .path = "src/Asteroids.zig" },
+        .optimize = optimize,
+        .target = target,
+    });
+    try addAssets(
+        b,
+        exe,
+    );
 
     rl.link(b, exe, target, optimize);
     exe.addModule("raylib", raylib);
@@ -125,6 +138,180 @@ pub fn setupEmscripten(b: *std.build) void {
         "activate",
         "latest",
     });
+}
+
+const assetType = struct {
+    path: [:0]const u8,
+    module_name: [:0]const u8,
+    allowed_exts: []const []const u8,
+};
+
+inline fn addAssets(
+    b: *std.Build,
+    c: *std.build.Step.Compile,
+) !void {
+    // Views
+    try importViews(
+        "Views",
+        "Views",
+        &[_][]const u8{
+            ".zig",
+        },
+        b,
+        c,
+    );
+
+    // Open assets.json file
+    var settings_file = try std.fs.cwd().openFile("assets.json", .{});
+    defer settings_file.close();
+
+    // Read the contents
+    const max_bytes = 10000;
+    const file_buffer = try settings_file.readToEndAlloc(b.allocator, max_bytes);
+    defer b.allocator.free(file_buffer);
+
+    // Parse JSON
+    var assets = try std.json.parseFromSlice([]assetType, b.allocator, file_buffer, .{});
+    defer assets.deinit();
+
+    // Embed Assets
+    for (assets.value) |asset| {
+        try embedFiles(
+            asset.path,
+            asset.module_name,
+            asset.allowed_exts,
+            b,
+            c,
+        );
+    }
+}
+
+inline fn importViews(
+    comptime path: [:0]const u8,
+    comptime module_name: [:0]const u8,
+    comptime allowed_exts: []const []const u8,
+    b: *std.Build,
+    c: *std.build.Step.Compile,
+) !void {
+    const files_step = b.addWriteFiles();
+
+    var enumNames = std.ArrayList([]const u8).init(b.allocator);
+    {
+        const cwd = std.fs.cwd();
+        var dir = cwd.openIterableDir(b.pathJoin(&[_][]const u8{
+            "src", path,
+        }), .{
+            .access_sub_paths = true,
+        }) catch {
+            @panic("Folder not found: " ++ path);
+        };
+        var walker = try dir.walk(b.allocator);
+        defer walker.deinit();
+        while (try walker.next()) |entry| {
+            if (std.mem.eql(u8, entry.basename, "View.zig")) continue;
+            const ext = std.fs.path.extension(entry.basename);
+            const include_file = for (allowed_exts) |e| {
+                if (std.mem.eql(u8, ext, e))
+                    break true;
+            } else false;
+            if (include_file) {
+                const extension = std.fs.path.extension(entry.basename);
+                var name = b.dupe(entry.basename[0 .. entry.basename.len - extension.len]);
+                std.mem.replaceScalar(
+                    u8,
+                    name,
+                    ' ',
+                    '_',
+                );
+                try enumNames.append(name);
+            }
+        }
+    }
+
+    const file_name = module_name ++ ".zig";
+    const format =
+        \\pub const {s} = struct {{
+        \\  pub const enums = enum {{ {s}, Unknown }};
+        \\}};
+    ;
+
+    const string = try std.fmt.allocPrint(b.allocator, format, .{
+        module_name,
+        try std.mem.join(b.allocator, ", ", enumNames.items),
+    });
+
+    const file = files_step.add(file_name, string);
+
+    const module = b.addModule(module_name, .{
+        .source_file = file,
+    });
+    c.step.dependOn(&files_step.step);
+    c.addModule(module_name, module);
+}
+
+inline fn embedFiles(
+    path: [:0]const u8,
+    module_name: [:0]const u8,
+    allowed_exts: []const []const u8,
+    b: *std.Build,
+    c: *std.build.Step.Compile,
+) !void {
+    var enumNames = std.ArrayList([]const u8).init(b.allocator);
+    var sources = std.ArrayList([]const u8).init(b.allocator);
+    {
+        var dir = try std.fs.cwd().openIterableDir(b.pathJoin(&[_][]const u8{
+            "src", path,
+        }), .{
+            .access_sub_paths = true,
+        });
+        var walker = try dir.walk(b.allocator);
+        defer walker.deinit();
+        while (try walker.next()) |entry| {
+            const ext = std.fs.path.extension(entry.basename);
+            const include_file = for (allowed_exts) |e| {
+                if (std.mem.eql(u8, ext, e))
+                    break true;
+            } else false;
+            if (include_file) {
+                try sources.append(b.dupe(try std.fmt.allocPrint(b.allocator, ".{s}{s}", .{
+                    std.fs.path.sep_str,
+                    b.pathJoin(&[_][]const u8{ path, entry.path }),
+                })));
+                const extension = std.fs.path.extension(entry.basename);
+                var name = b.dupe(entry.basename[0 .. entry.basename.len - extension.len]);
+                std.mem.replaceScalar(
+                    u8,
+                    name,
+                    ' ',
+                    '_',
+                );
+                try enumNames.append(name);
+            }
+        }
+    }
+
+    const file_name = try std.mem.concat(b.allocator, u8, &[_][]const u8{ module_name, ".zig" }); // module_name ++ ".zig";
+    const format =
+        \\pub const {s} = struct {{
+        \\  pub const enums = enum {{ Unknown, {s} }};
+        \\  pub const files = [_][]const u8 {{ "{s}" }};
+        \\}};
+    ;
+
+    const string = try std.fmt.allocPrint(b.allocator, format, .{
+        module_name,
+        try std.mem.join(b.allocator, ", ", enumNames.items),
+        try std.mem.join(b.allocator, "\", \"", sources.items),
+    });
+
+    const files_step = b.addWriteFiles();
+    const file = files_step.add(file_name, string);
+
+    const module = b.addModule(module_name, .{
+        .source_file = file.dupe(b),
+    });
+    c.step.dependOn(&files_step.step);
+    c.addModule(module_name, module);
 }
 
 pub fn copyWASMRunStep(b: *std.Build, dependsOn: *std.Build.Step, cwd_path: []const u8) !void {

@@ -1,0 +1,30 @@
+[
+    {
+        "path": "Music",
+        "module_name": "music_assets",
+        "allowed_exts": [
+            ".ogg"
+        ]
+    },
+    {
+        "path": "Sounds",
+        "module_name": "sound_assets",
+        "allowed_exts": [
+            ".ogg"
+        ]
+    },
+    {
+        "path": "Fonts",
+        "module_name": "font_assets",
+        "allowed_exts": [
+            ".ttf"
+        ]
+    },
+    {
+        "path": "Textures",
+        "module_name": "texture_assets",
+        "allowed_exts": [
+            ".png"
+        ]
+    }
+]

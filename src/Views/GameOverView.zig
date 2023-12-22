@@ -87,22 +87,20 @@ pub fn DrawFunction() Shared.View.Views {
         foregroundColor,
     );
 
-    Shared.Log.Info_Formatted("{}", .{Shared.Time.getTimestamp() - vm.startTime});
-
     if (vm.startTime <= 0 and Shared.Input.A_Pressed()) {
         if (vm.BackgroundTexture != null) {
             vm.BackgroundTexture.?.unload();
         }
-        return .Menu;
+        return .MenuView;
     } else if (vm.startTime != 0 and Shared.Time.getTimestamp() - vm.startTime > 500) {
         vm.startTime = 0;
     }
 
-    return .Game_Over;
+    return .GameOverView;
 }
 
 pub const GameOverView = Shared.View.View{
-    .Key = .Game_Over,
+    .Key = .GameOverView,
     .DrawRoutine = &DrawFunction,
     .VM = &GameOverViewModel,
 };

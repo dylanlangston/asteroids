@@ -11,16 +11,18 @@ pub const View = struct {
     var initializedViews: std.EnumSet(Views) = std.EnumSet(Views).initEmpty();
 
     pub inline fn init(self: View) void {
-        if (!initializedViews.contains(self.Key) and @intFromPtr(self.VM) != 0 and @intFromPtr(self.VM.*.Init) != 0) {
-            self.VM.*.Init();
+        if (!initializedViews.contains(self.Key)) {
+            if (@intFromPtr(self.VM) != 0 and self.VM.*.Init != null) {
+                self.VM.*.Init.?();
+            }
             initializedViews.insert(self.Key);
         }
     }
     pub inline fn deinit(self: View) void {
-        if (@intFromPtr(self.VM) != 0 and @intFromPtr(self.VM.*.DeInit) != 0) {
-            self.VM.*.DeInit();
-        }
-        if (initializedViews.contains(self.Key) == true) {
+        if (initializedViews.contains(self.Key)) {
+            if ((@intFromPtr(self.VM) != 0) and self.VM.*.DeInit != null) {
+                self.VM.*.DeInit.?();
+            }
             initializedViews.remove(self.Key);
         }
     }

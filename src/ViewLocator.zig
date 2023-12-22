@@ -1,6 +1,9 @@
 const std = @import("std");
+const builtin = @import("builtin");
 const BaseViewModel = @import("./ViewModels/ViewModel.zig").ViewModel;
 const BaseView = @import("./Views/View.zig").View;
+const Shared = @import("./Shared.zig").Shared;
+const view_assets = @import("Views").Views;
 
 pub const ViewLocator = struct {
     const AllViews = [_]BaseView{
@@ -19,13 +22,13 @@ pub const ViewLocator = struct {
         }
 
         return BaseView{
-            .Key = .Quit,
+            .Key = .Unknown,
             .DrawRoutine = DrawQuit,
         };
     }
 
     fn DrawQuit() Views {
-        return Views.Quit;
+        return Views.Unknown;
     }
 
     pub inline fn Build(view: Views) BaseView {
@@ -39,13 +42,4 @@ pub const ViewLocator = struct {
     }
 };
 
-pub const Views = enum {
-    Raylib_Splash_Screen,
-    Dylan_Splash_Screen,
-    Menu,
-    Asteroids,
-    Paused,
-    Settings,
-    Game_Over,
-    Quit,
-};
+pub const Views = view_assets.enums;

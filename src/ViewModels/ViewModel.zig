@@ -1,8 +1,8 @@
 const std = @import("std");
 
 pub const ViewModel = struct {
-    Init: *const fn () void = undefined,
-    DeInit: *const fn () void = undefined,
+    Init: ?*const fn () void = null,
+    DeInit: ?*const fn () void = null,
     Get: *const fn () void,
     BypassDeinit: *const bool = undefined,
 
@@ -37,7 +37,7 @@ pub const ViewModel = struct {
 };
 
 pub const VMCreationOptions = struct {
-    Init: *const fn () void = undefined,
-    DeInit: *const fn () void = undefined,
+    Init: ?*const fn () void = null,
+    DeInit: ?*const fn () void = null,
     BypassDeinit: bool = false,
 };

@@ -1,165 +1,18 @@
 const std = @import("std");
 const raylib = @import("raylib");
+const music_assets = @import("music_assets").music_assets;
+const sound_assets = @import("sound_assets").sound_assets;
+const texture_assets = @import("texture_assets").texture_assets;
+const font_assets = @import("font_assets").font_assets;
 
 pub const AssetManager = struct {
-    const Assets = enum {
-        Unknown,
-        Font,
-        Music,
-        Sound,
-        Texture,
-    };
-
-    pub const Textures = enum {
-        Unknown,
-        Meteor,
-    };
-
-    pub const Sounds = enum {
-        Unknown,
-    };
-
-    pub const Musics = enum {
-        Unknown,
-        test_,
-    };
-
-    pub const Fonts = enum {
-        Unknown,
-        TwoLines,
-    };
-
-    inline fn GetTextureAsset(key: Textures) AssetManagerErrors!RawAsset {
-        switch (key) {
-            Textures.Unknown => {
-                return AssetManagerErrors.NotFound;
-            },
-            .Meteor => {
-                return RawAsset.init("./Textures/Yellow Meteor.png");
-            },
-        }
-    }
-
-    inline fn GetSoundAsset(key: Sounds) AssetManagerErrors!RawAsset {
-        switch (key) {
-            Sounds.Unknown => {
-                return AssetManagerErrors.NotFound;
-            },
-        }
-    }
-
-    inline fn GetMusicAsset(key: Musics) AssetManagerErrors!RawAsset {
-        switch (key) {
-            Musics.Unknown => {
-                return AssetManagerErrors.NotFound;
-            },
-            .test_ => {
-                return RawAsset.init("./Music/test.ogg");
-            },
-        }
-    }
-
-    inline fn GetFontAsset(key: Fonts) AssetManagerErrors!RawAsset {
-        switch (key) {
-            Fonts.Unknown => {
-                return AssetManagerErrors.NotFound;
-            },
-            .TwoLines => {
-                return RawAsset.init("./Fonts/2Lines.ttf");
-            },
-        }
-    }
-
-    var LoadedFonts: std.EnumMap(Fonts, raylib.Font) = std.EnumMap(Fonts, raylib.Font){};
-    var LoadedTextures: std.EnumMap(Textures, raylib.Texture) = std.EnumMap(Textures, raylib.Texture){};
-    var LoadedSounds: std.EnumMap(Sounds, raylib.Sound) = std.EnumMap(Sounds, raylib.Sound){};
-    var LoadedMusic: std.EnumMap(Musics, raylib.Music) = std.EnumMap(Musics, raylib.Music){};
-
     const AssetManagerErrors = error{
         NotFound,
     };
 
-    pub inline fn GetFont(key: Fonts) AssetManagerErrors!raylib.Font {
-        return Get(Fonts, raylib.Font, Assets.Font, key);
-    }
-    pub inline fn GetTexture(key: Textures) AssetManagerErrors!raylib.Texture {
-        return Get(Textures, raylib.Texture, Assets.Texture, key);
-    }
-    pub inline fn GetMusic(key: Musics) AssetManagerErrors!raylib.Music {
-        return Get(Musics, raylib.Music, Assets.Music, key);
-    }
-    pub inline fn GetSound(key: Sounds) AssetManagerErrors!raylib.Sound {
-        return Get(Sounds, raylib.Sound, Assets.Sound, key);
-    }
-
-    inline fn Get(
-        comptime E: type,
-        comptime T: type,
-        asset: Assets,
-        key: E,
-    ) AssetManagerErrors!T {
-        switch (asset) {
-            Assets.Unknown => {
-                return AssetManagerErrors.NotFound;
-            },
-            Assets.Font => {
-                const f = try GetFontAsset(key);
-                return LoadFromCacheFirst(E, T, &LoadedFonts, key, f, LoadFont);
-            },
-            Assets.Music => {
-                const m = try GetMusicAsset(key);
-                return LoadFromCacheFirst(E, T, &LoadedMusic, key, m, LoadMusic);
-            },
-            Assets.Sound => {
-                const s = try GetSoundAsset(key);
-                return LoadFromCacheFirst(E, T, &LoadedSounds, key, s, LoadSound);
-            },
-            Assets.Texture => {
-                const t = try GetTextureAsset(key);
-                return LoadFromCacheFirst(E, T, &LoadedTextures, key, t, LoadTexture);
-            },
-        }
-    }
-
-    inline fn LoadFromCacheFirst(
-        comptime E: type,
-        comptime T: type,
-        map: *std.EnumMap(E, T),
-        key: E,
-        rawAsset: RawAsset,
-        loadFn: *const fn (rawAsset: RawAsset) T,
-    ) AssetManagerErrors!T {
-        if (map.contains(key)) {
-            return map.get(key).?;
-        }
-
-        const loadedAsset = loadFn(rawAsset);
-        map.put(key, loadedAsset);
-        return loadedAsset;
-    }
-
-    fn LoadTexture(asset: RawAsset) raylib.Texture {
-        const i = raylib.loadImageFromMemory(asset.FileType, asset.Bytes);
-        const t = raylib.loadTextureFromImage(i);
-        raylib.setTextureFilter(
-            t,
-            @intFromEnum(raylib.TextureFilter.texture_filter_trilinear),
-        );
-        return t;
-    }
-
-    fn LoadSound(asset: RawAsset) raylib.Sound {
-        const w = raylib.loadWaveFromMemory(asset.FileType, asset.Bytes);
-        const s = raylib.loadSoundFromWave(w);
-        return s;
-    }
-
-    fn LoadMusic(asset: RawAsset) raylib.Music {
-        const m = raylib.loadMusicStreamFromMemory(asset.FileType, asset.Bytes);
-
-        return m;
-    }
-
+    pub const Fonts = font_assets.enums;
+    const EmbeddedFonts = RawAsset.Embed(Fonts, font_assets);
+    var LoadedFonts: std.EnumMap(Fonts, raylib.Font) = std.EnumMap(Fonts, raylib.Font){};
     fn LoadFont(asset: RawAsset) raylib.Font {
         var fontChars: [95]i32 = .{};
         inline for (0..fontChars.len) |i| fontChars[i] = @as(i32, @intCast(i)) + 32;
@@ -169,6 +22,77 @@ pub const AssetManager = struct {
             @intFromEnum(raylib.TextureFilter.texture_filter_trilinear),
         );
         return f;
+    }
+    pub inline fn GetFont(key: Fonts) AssetManagerErrors!raylib.Font {
+        return RawAsset.Get(
+            Fonts,
+            raylib.Font,
+            key,
+            EmbeddedFonts,
+            &LoadedFonts,
+            LoadFont,
+        );
+    }
+
+    pub const Musics = music_assets.enums;
+    const EmbeddedMusic = RawAsset.Embed(Musics, music_assets);
+    var LoadedMusic: std.EnumMap(Musics, raylib.Music) = std.EnumMap(Musics, raylib.Music){};
+    fn LoadMusic(asset: RawAsset) raylib.Music {
+        const m = raylib.loadMusicStreamFromMemory(asset.FileType, asset.Bytes);
+
+        return m;
+    }
+    pub inline fn GetMusic(key: Musics) AssetManagerErrors!raylib.Music {
+        return RawAsset.Get(
+            Musics,
+            raylib.Music,
+            key,
+            EmbeddedMusic,
+            &LoadedMusic,
+            LoadMusic,
+        );
+    }
+
+    pub const Sounds = sound_assets.enums;
+    const EmbeddedSounds = RawAsset.Embed(Sounds, sound_assets);
+    var LoadedSounds: std.EnumMap(Sounds, raylib.Sound) = std.EnumMap(Sounds, raylib.Sound){};
+    fn LoadSound(asset: RawAsset) raylib.Sound {
+        const w = raylib.loadWaveFromMemory(asset.FileType, asset.Bytes);
+        const s = raylib.loadSoundFromWave(w);
+        return s;
+    }
+    pub inline fn GetSound(key: Sounds) AssetManagerErrors!raylib.Sound {
+        return RawAsset.Get(
+            Sounds,
+            raylib.Sound,
+            key,
+            EmbeddedSounds,
+            &LoadedSounds,
+            LoadSound,
+        );
+    }
+
+    pub const Textures = texture_assets.enums;
+    const EmbeddedTextures = RawAsset.Embed(Textures, texture_assets);
+    var LoadedTextures: std.EnumMap(Textures, raylib.Texture) = std.EnumMap(Textures, raylib.Texture){};
+    fn LoadTexture(asset: RawAsset) raylib.Texture {
+        const i = raylib.loadImageFromMemory(asset.FileType, asset.Bytes);
+        const t = raylib.loadTextureFromImage(i);
+        raylib.setTextureFilter(
+            t,
+            @intFromEnum(raylib.TextureFilter.texture_filter_trilinear),
+        );
+        return t;
+    }
+    pub inline fn GetTexture(key: Textures) AssetManagerErrors!raylib.Texture {
+        return RawAsset.Get(
+            Textures,
+            raylib.Texture,
+            key,
+            EmbeddedTextures,
+            &LoadedTextures,
+            LoadTexture,
+        );
     }
 
     const RawAsset = struct {
@@ -182,6 +106,55 @@ pub const AssetManager = struct {
                 .FileType = file[file.len - 4 .. file.len],
                 .Bytes = @embedFile(file),
             };
+        }
+
+        pub inline fn Embed(
+            comptime T: type,
+            comptime assets: type,
+        ) std.EnumMap(T, RawAsset) {
+            comptime {
+                var allPossibleViews = std.EnumMap(T, RawAsset){};
+                const enums = std.enums.values(T);
+                inline for (assets.files, 0..) |import, i| {
+                    allPossibleViews.put(enums[i + 1], RawAsset.init(import[0..import.len :0]));
+                }
+                return allPossibleViews;
+            }
+        }
+        pub inline fn Get(
+            comptime E: type,
+            comptime T: type,
+            key: E,
+            embedded: std.EnumMap(E, RawAsset),
+            map: *std.EnumMap(E, T),
+            loadFn: *const fn (rawAsset: RawAsset) T,
+        ) AssetManagerErrors!T {
+            const rawAsset = try GetAsset(E, key, embedded);
+            return LoadFromCacheFirst(E, T, map, key, rawAsset, loadFn);
+        }
+
+        inline fn GetAsset(comptime T: type, key: T, store: std.EnumMap(T, RawAsset)) AssetManagerErrors!RawAsset {
+            if (store.contains(key)) {
+                return store.get(key).?;
+            }
+
+            return AssetManagerErrors.NotFound;
+        }
+        inline fn LoadFromCacheFirst(
+            comptime E: type,
+            comptime T: type,
+            map: *std.EnumMap(E, T),
+            key: E,
+            rawAsset: RawAsset,
+            loadFn: *const fn (rawAsset: RawAsset) T,
+        ) AssetManagerErrors!T {
+            if (map.contains(key)) {
+                return map.get(key).?;
+            }
+
+            const loadedAsset = loadFn(rawAsset);
+            map.put(key, loadedAsset);
+            return loadedAsset;
         }
     };
 };

@@ -224,18 +224,18 @@ pub const Shared = struct {
         pub inline fn Pause(view: vl.Views) vl.Views {
             const paused_vm = PausedViewModel.GetVM();
             paused_vm.PauseView(view);
-            return vl.Views.Paused;
+            return vl.Views.PausedView;
         }
 
         pub inline fn GameOver() vl.Views {
             const gameover_vm = GameOverViewModel.GetVM();
             gameover_vm.GameOver();
-            return vl.Views.Game_Over;
+            return vl.Views.GameOverView;
         }
     };
 
     pub inline fn init() !void {
-        const menu = Shared.View.ViewLocator.Build(.Menu);
+        const menu = Shared.View.ViewLocator.Build(.MenuView);
         menu.init();
 
         raylib.setConfigFlags(
