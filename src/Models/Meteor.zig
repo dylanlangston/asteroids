@@ -17,6 +17,8 @@ pub const Meteor = struct {
         const spriteFrame = MeteorSprite.getSpriteFrame(@intFromFloat(self.frame));
         const color: raylib.Color = if (self.active) self.color else raylib.Color.fade(self.color, 0.3);
 
+        if (self.position.x == -100 and self.position.y == -100) return;
+
         raylib.drawTextureNPatch(
             spriteFrame.Texture,
             spriteFrame.NPatchInfo,

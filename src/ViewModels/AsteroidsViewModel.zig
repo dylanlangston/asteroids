@@ -16,7 +16,7 @@ pub const AsteroidsViewModel = Shared.View.ViewModel.Create(
         const METEORS_SPEED = 2;
         const ANIMATION_SPEED_MOD = 15;
 
-        pub const MAX_BIG_METEORS = 4;
+        pub const MAX_BIG_METEORS = 8;
         pub const MAX_MEDIUM_METEORS = MAX_BIG_METEORS * 2;
         pub const MAX_SMALL_METEORS = MAX_MEDIUM_METEORS * 2;
 
@@ -24,7 +24,7 @@ pub const AsteroidsViewModel = Shared.View.ViewModel.Create(
         pub var gameOver = false;
         pub var victory = false;
 
-        pub const screenSize: raylib.Vector2 = raylib.Vector2.init(1600, 900);
+        pub const screenSize: raylib.Vector2 = raylib.Vector2.init(3200, 1800);
 
         pub var shipHeight: f32 = 0;
 

@@ -56,7 +56,11 @@ fn DrawFunction() Shared.View.Views {
 }
 
 fn DrawWithCamera() Shared.View.Views {
-    const camera = Shared.Camera.initScaledCamera(vm.screenSize);
+    const camera = Shared.Camera.initScaledTargetCamera(
+        vm.screenSize,
+        3.5,
+        vm.player.position,
+    );
     return camera.Draw(Shared.View.Views, &DrawFunction);
 }
 
