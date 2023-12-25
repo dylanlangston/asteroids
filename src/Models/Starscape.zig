@@ -4,16 +4,14 @@ const Shared = @import("../Shared.zig").Shared;
 
 pub const Starscape = struct {
     const STAR_COUNT = 500;
-    const MIN_STAR_SIZE: f32 = 0.1;
+    const MIN_STAR_SIZE: f32 = 0.25;
     const MAX_STAR_SIZE: f32 = 2.0;
 
     starTexture: raylib.Texture,
 
     pub fn init(screenSize: raylib.Vector2) Starscape {
-        @setEvalBranchQuota(5000);
-
         var stars: [STAR_COUNT]raylib.Vector3 = undefined;
-        inline for (0..STAR_COUNT) |i| {
+        for (0..STAR_COUNT) |i| {
             stars[i] = raylib.Vector3.init(
                 Shared.Random.Get().float(f32) * screenSize.x,
                 Shared.Random.Get().float(f32) * screenSize.y,
@@ -24,7 +22,7 @@ pub const Starscape = struct {
         {
             raylib.beginTextureMode(renderTexture);
             raylib.clearBackground(Shared.Color.Transparent);
-            inline for (stars) |star| {
+            for (stars) |star| {
                 raylib.drawCircleGradient(
                     @intFromFloat(star.x),
                     @intFromFloat(star.y),

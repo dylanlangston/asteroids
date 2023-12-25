@@ -173,7 +173,7 @@ pub const Shared = struct {
 
         pub inline fn Play(sound: AssetManager.Sounds) void {
             const s = Get(sound);
-            if (s != null and !raylib.isSoundPlaying(s.?)) {
+            if (s != null) {
                 raylib.playSound(s.?);
             }
         }
