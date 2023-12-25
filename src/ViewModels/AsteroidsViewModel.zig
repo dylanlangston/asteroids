@@ -5,15 +5,16 @@ const Meteor = @import("../Models/Meteor.zig").Meteor;
 const MeteorSprite = @import("../Models/Meteor.zig").MeteorSprite;
 const Player = @import("../Models/Player.zig").Player;
 const Shoot = @import("../Models/Shoot.zig").Shoot;
+const Starscape = @import("../Models/Starscape.zig").Starscape;
 
 pub const AsteroidsViewModel = Shared.View.ViewModel.Create(
     struct {
         // Define Constants
         pub const PLAYER_BASE_SIZE: f32 = 20;
-        const PLAYER_SPEED: f32 = 6;
+        const PLAYER_SPEED: f32 = 5;
         pub const PLAYER_MAX_SHOOTS: i32 = 10;
 
-        const METEORS_SPEED = 2;
+        const METEORS_SPEED = 3;
         const ANIMATION_SPEED_MOD = 15;
 
         pub const MAX_BIG_METEORS = 8;
@@ -38,8 +39,12 @@ pub const AsteroidsViewModel = Shared.View.ViewModel.Create(
         var smallMeteorsCount: i32 = 0;
         var destroyedMeteorsCount: i32 = 0;
 
+        pub var starScape: Starscape = undefined;
+
         // Initialize game variables
         pub inline fn init() void {
+            starScape = Starscape.init(screenSize);
+
             var posx: f32 = undefined;
             var posy: f32 = undefined;
             var velx: f32 = undefined;
@@ -64,14 +69,8 @@ pub const AsteroidsViewModel = Shared.View.ViewModel.Create(
                 .acceleration = 0,
                 .rotation = 0,
                 .collider = raylib.Vector3.init(
-                    player.position.x + @sin(std.math.degreesToRadians(
-                        f32,
-                        player.rotation,
-                    )) * (shipHeight / 2.5),
-                    player.position.y - @cos(std.math.degreesToRadians(
-                        f32,
-                        player.rotation,
-                    )) * (shipHeight / 2.5),
+                    player.position.x,
+                    player.position.y,
                     12,
                 ),
                 .color = Shared.Color.Gray.Light,
@@ -199,14 +198,18 @@ pub const AsteroidsViewModel = Shared.View.ViewModel.Create(
             smallMeteorsCount = 0;
         }
 
+        pub inline fn deinit() void {
+            starScape.deinit();
+        }
+
         // Update game (one frame)
         pub inline fn Update() void {
             // Player logic: rotation
             if (Shared.Input.Left_Held()) {
-                player.rotation -= 5;
+                player.rotation -= 2.5;
             }
             if (Shared.Input.Right_Held()) {
-                player.rotation += 5;
+                player.rotation += 2.5;
             }
 
             // Player logic: speed
@@ -224,7 +227,7 @@ pub const AsteroidsViewModel = Shared.View.ViewModel.Create(
                 if (player.acceleration < 1) player.acceleration += 0.04;
             } else {
                 if (player.acceleration > 0) {
-                    player.acceleration -= 0.02;
+                    player.acceleration -= 0.01;
                 } else if (player.acceleration < 0) {
                     player.acceleration = 0;
                 }
@@ -260,11 +263,11 @@ pub const AsteroidsViewModel = Shared.View.ViewModel.Create(
                         shoot[i].position.x = player.position.x + @sin(std.math.degreesToRadians(
                             f32,
                             player.rotation,
-                        )) * shipHeight;
+                        )) * (shipHeight / 2);
                         shoot[i].position.y = player.position.y - @cos(std.math.degreesToRadians(
                             f32,
                             player.rotation,
-                        )) * shipHeight;
+                        )) * (shipHeight / 2);
                         shoot[i].speed.x = 1.5 * @sin(std.math.degreesToRadians(
                             f32,
                             player.rotation,
@@ -275,6 +278,9 @@ pub const AsteroidsViewModel = Shared.View.ViewModel.Create(
                         )) * PLAYER_SPEED;
                         shoot[i].active = true;
                         shoot[i].rotation = player.rotation;
+
+                        Shared.Sound.Play(.pew);
+
                         break;
                     }
                 }
@@ -323,15 +329,17 @@ pub const AsteroidsViewModel = Shared.View.ViewModel.Create(
             }
 
             // Collision logic: player vs meteors
-            player.collider.x = player.position.x + @sin(std.math.degreesToRadians(
-                f32,
-                player.rotation,
-            )) * (shipHeight / 2.5);
-            player.collider.y = player.position.y - @cos(std.math.degreesToRadians(
-                f32,
-                player.rotation,
-            )) * (shipHeight / 2.5);
+            player.collider.x = player.position.x;
+            player.collider.y = player.position.y;
             player.collider.z = 12;
+
+            // Draw collider to check collision logic
+            // raylib.drawCircle(
+            //     @intFromFloat(player.collider.x),
+            //     @intFromFloat(player.collider.y),
+            //     player.collider.z,
+            //     Shared.Color.Red.Dark,
+            // );
 
             for (0..MAX_BIG_METEORS) |i| {
                 if (bigMeteors[i].active and raylib.checkCollisionCircles(
@@ -482,6 +490,9 @@ pub const AsteroidsViewModel = Shared.View.ViewModel.Create(
                             }
                             //bigMeteors[m].position = (Vector2){-100, -100};
                             bigMeteors[m].color = Shared.Color.Red.Base;
+
+                            Shared.Sound.Play(.Explosion);
+
                             break;
                         }
                     }
@@ -520,6 +531,9 @@ pub const AsteroidsViewModel = Shared.View.ViewModel.Create(
                             }
                             //mediumMeteors[m].position = (Vector2){-100, -100};
                             mediumMeteors[m].color = Shared.Color.Green.Base;
+
+                            Shared.Sound.Play(.Explosion);
+
                             break;
                         }
                     }
@@ -537,6 +551,9 @@ pub const AsteroidsViewModel = Shared.View.ViewModel.Create(
                             destroyedMeteorsCount += 1;
                             smallMeteors[m].color = Shared.Color.Yellow.Base;
                             // smallMeteors[m].position = (Vector2){-100, -100};
+
+                            Shared.Sound.Play(.Explosion);
+
                             break;
                         }
                     }
@@ -550,9 +567,14 @@ pub const AsteroidsViewModel = Shared.View.ViewModel.Create(
     },
     .{
         .Init = init,
+        .DeInit = deinit,
     },
 );
 
 fn init() void {
     AsteroidsViewModel.GetVM().init();
+}
+
+fn deinit() void {
+    AsteroidsViewModel.GetVM().deinit();
 }

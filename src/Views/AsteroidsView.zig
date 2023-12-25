@@ -12,7 +12,13 @@ const vm: type = AsteroidsViewModel.GetVM();
 
 fn DrawFunction() Shared.View.Views {
     raylib.clearBackground(Shared.Color.Tone.Dark);
-    raylib.drawRectangleLinesEx(raylib.Rectangle.init(0,0,3200,1800), 5, Shared.Color.Green.Light);
+    raylib.drawRectangleLinesEx(
+        raylib.Rectangle.init(0, 0, vm.screenSize.x, vm.screenSize.y),
+        5,
+        Shared.Color.Green.Light,
+    );
+
+    vm.starScape.Draw(vm.screenSize.x, vm.screenSize.y);
 
     vm.Update();
 
@@ -60,7 +66,10 @@ fn DrawWithCamera() Shared.View.Views {
     const camera = Shared.Camera.initScaledTargetCamera(
         vm.screenSize,
         3.5,
-        vm.player.position,
+        raylib.Vector2.init(
+            vm.player.position.x,
+            vm.player.position.y - vm.shipHeight,
+        ),
     );
     return camera.Draw(Shared.View.Views, &DrawFunction);
 }
