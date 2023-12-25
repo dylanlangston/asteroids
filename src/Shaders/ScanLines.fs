@@ -10,7 +10,7 @@ uniform sampler2D texture0;
 
 // NOTE: Add here your custom variables
 
-float frequency = 240.0;
+float frequency = 120.0;
 
 void main()
 {
