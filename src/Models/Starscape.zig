@@ -60,15 +60,41 @@ pub const Starscape = struct {
                 textHeightF,
             ),
             raylib.Rectangle.init(
-                0,
-                0,
-                screenWidth,
-                screenHeight,
+                -(screenWidth * 0.2),
+                -(screenHeight * 0.2),
+                screenWidth + (screenWidth * 0.4),
+                screenHeight + (screenHeight * 0.4),
             ),
-            raylib.Vector2.init(0, 0),
+            raylib.Vector2.init(
+                0,
+                0,
+            ),
             0,
             Shared.Color.Tone.Base,
         );
+
+        raylib.drawTexturePro(
+            self.starTexture,
+            raylib.Rectangle.init(
+                0,
+                0,
+                textWidthF,
+                textHeightF,
+            ),
+            raylib.Rectangle.init(
+                position.x - (textWidthF / 2),
+                position.y - (textHeightF / 2),
+                textWidthF,
+                textHeightF,
+            ),
+            raylib.Vector2.init(
+                0,
+                0,
+            ),
+            0,
+            Shared.Color.Tone.Base,
+        );
+
         raylib.drawTexturePro(
             self.starTexture,
             raylib.Rectangle.init(
@@ -78,17 +104,44 @@ pub const Starscape = struct {
                 -textHeightF,
             ),
             raylib.Rectangle.init(
-                0,
-                0,
-                screenWidth + 100,
-                screenHeight + 100,
+                position.x - (textWidthF / 2),
+                position.y - (textHeightF / 2),
+                textWidthF + (screenWidth * 0.5),
+                textHeightF + (screenHeight * 0.5),
             ),
             raylib.Vector2.init(
-                (position.x / screenWidth) * 100,
-                (position.y / screenHeight) * 100,
+                (position.x / textWidthF) * (textWidthF * 0.5),
+                (position.y / textHeightF) * (textHeightF * 0.5),
             ),
             0,
             Shared.Color.Red.Light,
         );
+
+        // const paralaxAngles = [_]f32{ 0.2, 0.05 };
+        // var c: u8 = 0;
+        // inline for (paralaxAngles) |angle| {
+        //     c += 1;
+        //     raylib.drawTexturePro(
+        //         self.starTexture,
+        //         raylib.Rectangle.init(
+        //             0,
+        //             0,
+        //             -textWidthF,
+        //             if (c < 2) textHeightF else -textHeightF,
+        //         ),
+        //         raylib.Rectangle.init(
+        //             -(screenWidth * 0.2),
+        //             -(screenHeight * 0.2),
+        //             screenWidth + (screenWidth * 0.4) + (screenWidth * angle),
+        //             screenHeight + (screenHeight * 0.4) + (screenHeight * angle),
+        //         ),
+        //         raylib.Vector2.init(
+        //             if (c < 2) (position.x / screenWidth) * (screenWidth * angle) else (position.x / screenWidth) * (screenWidth * -angle),
+        //             if (c < 2) (position.y / screenHeight) * (screenHeight * angle) else (position.y / screenHeight) * (screenHeight * -angle),
+        //         ),
+        //         0,
+        //         if (c < 2) Shared.Color.Blue.Light else Shared.Color.Red.Light,
+        //     );
+        // }
     }
 };
