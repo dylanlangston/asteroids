@@ -43,14 +43,21 @@ pub const Starscape = struct {
         self.starTexture.unload();
     }
 
-    pub fn Draw(self: @This(), screenWidth: f32, screenHeight: f32) void {
+    pub fn Draw(
+        self: @This(),
+        screenWidth: f32,
+        screenHeight: f32,
+        position: raylib.Vector2,
+    ) void {
+        const textWidthF: f32 = @floatFromInt(self.starTexture.width);
+        const textHeightF: f32 = @floatFromInt(self.starTexture.height);
         raylib.drawTexturePro(
             self.starTexture,
             raylib.Rectangle.init(
                 0,
                 0,
-                @floatFromInt(self.starTexture.width),
-                @floatFromInt(self.starTexture.height),
+                textWidthF,
+                textHeightF,
             ),
             raylib.Rectangle.init(
                 0,
@@ -61,6 +68,27 @@ pub const Starscape = struct {
             raylib.Vector2.init(0, 0),
             0,
             Shared.Color.Tone.Base,
+        );
+        raylib.drawTexturePro(
+            self.starTexture,
+            raylib.Rectangle.init(
+                0,
+                0,
+                -textWidthF,
+                -textHeightF,
+            ),
+            raylib.Rectangle.init(
+                0,
+                0,
+                screenWidth + 100,
+                screenHeight + 100,
+            ),
+            raylib.Vector2.init(
+                (position.x / screenWidth) * 100,
+                (position.y / screenHeight) * 100,
+            ),
+            0,
+            Shared.Color.Red.Light,
         );
     }
 };

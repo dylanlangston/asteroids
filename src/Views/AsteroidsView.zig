@@ -18,7 +18,11 @@ fn DrawFunction() Shared.View.Views {
         Shared.Color.Green.Light,
     );
 
-    vm.starScape.Draw(vm.screenSize.x, vm.screenSize.y);
+    vm.starScape.Draw(
+        vm.screenSize.x,
+        vm.screenSize.y,
+        vm.player.position,
+    );
 
     vm.Update();
 
