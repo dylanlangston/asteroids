@@ -30,21 +30,21 @@ fn DrawFunction() Shared.View.Views {
     vm.player.Draw(vm.shipHeight, vm.PLAYER_BASE_SIZE);
 
     // Draw meteors
-    for (0..vm.MAX_BIG_METEORS) |i| {
-        vm.bigMeteors[i].Draw();
+    inline for (0..vm.MAX_BIG_METEORS) |i| {
+        vm.bigMeteors[i].Draw(vm.player.position);
     }
 
-    for (0..vm.MAX_MEDIUM_METEORS) |i| {
-        vm.mediumMeteors[i].Draw();
+    inline for (0..vm.MAX_MEDIUM_METEORS) |i| {
+        vm.mediumMeteors[i].Draw(vm.player.position);
     }
 
-    for (0..vm.MAX_SMALL_METEORS) |i| {
-        vm.smallMeteors[i].Draw();
+    inline for (0..vm.MAX_SMALL_METEORS) |i| {
+        vm.smallMeteors[i].Draw(vm.player.position);
     }
 
     // Draw shoot
-    for (0..vm.PLAYER_MAX_SHOOTS) |i| {
-        vm.shoot[i].Draw();
+    inline for (0..vm.PLAYER_MAX_SHOOTS) |i| {
+        if (vm.shoot[i].active) vm.shoot[i].Draw();
     }
 
     if (vm.victory) Shared.Helpers.DrawTextCentered(

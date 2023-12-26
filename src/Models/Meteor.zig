@@ -13,11 +13,16 @@ pub const Meteor = struct {
     color: raylib.Color,
     frame: f32,
 
-    pub fn Draw(self: @This()) void {
+    pub fn Draw(self: @This(), shipPosition: raylib.Vector2) void {
+        if (self.position.x == -100 and self.position.y == -100) return;
+
+        const visibleX = self.position.x - shipPosition.x;
+        const visibleY = self.position.y - shipPosition.y;
+        if (visibleX > 900 or visibleX < -900) return;
+        if (visibleY > 450 or visibleY < -450) return;
+
         const spriteFrame = MeteorSprite.getSpriteFrame(@intFromFloat(self.frame));
         const color: raylib.Color = if (self.active) self.color else raylib.Color.fade(self.color, 0.3);
-
-        if (self.position.x == -100 and self.position.y == -100) return;
 
         raylib.drawTextureNPatch(
             spriteFrame.Texture,
