@@ -52,7 +52,21 @@ pub const Meteor = struct {
             self.position.x += self.speed.x;
             self.position.y += self.speed.y;
 
-    pub fn Draw(self: @This(), shipPosition: raylib.Vector2) void {
+            // Collision logic: meteor vs wall
+            if (self.position.x > screenSize.x - self.radius) {
+                self.speed.x = -1 * self.speed.x;
+                self.position.x = screenSize.x - self.radius + self.speed.x;
+            } else if (self.position.x < self.radius) {
+                self.speed.x = -1 * self.speed.x;
+                self.position.x = self.radius + self.speed.x;
+            }
+            if (self.position.y > screenSize.y - self.radius) {
+                self.speed.y = -1 * self.speed.y;
+                self.position.y = screenSize.y - self.radius + self.speed.y;
+            } else if (self.position.y < self.radius) {
+                self.speed.y = -1 * self.speed.y;
+                self.position.y = self.radius + self.speed.y;
+            }
 
             // Check if shot hit
             inline for (0..shoots.len) |i| {
