@@ -1,6 +1,8 @@
 const std = @import("std");
 const raylib = @import("raylib");
 const Shared = @import("../Shared.zig").Shared;
+const Player = @import("./Player.zig").Player;
+const Shoot = @import("./Shoot.zig").Shoot;
 
 pub const MeteorSprite = Shared.Sprite.init(5, .Yellow_Meteor);
 
@@ -13,13 +15,81 @@ pub const Meteor = struct {
     color: raylib.Color,
     frame: f32,
 
+    const ANIMATION_SPEED_MOD = 15;
+
+    pub const MeteorStatusType = enum {
+        shot,
+        collide,
+        default,
+    };
+
+    pub const MeteorStatus = union(MeteorStatusType) {
+        shot: Shoot,
+        collide: bool,
+        default: bool,
+    };
+
+    pub inline fn Update(self: *@This(), player: Player, comptime shoots: []Shoot, screenSize: raylib.Vector2) MeteorStatus {
+        // If Active
+        if (self.active) {
+            // Reset Frame
+            self.frame = 0;
+
+            // Check Collision with player
+            if (raylib.checkCollisionCircles(
+                raylib.Vector2.init(
+                    player.collider.x,
+                    player.collider.y,
+                ),
+                player.collider.z,
+                self.position,
+                self.radius,
+            )) {
+                return MeteorStatus{ .collide = true };
+            }
+
+            // Movement
+            self.position.x += self.speed.x;
+            self.position.y += self.speed.y;
+
     pub fn Draw(self: @This(), shipPosition: raylib.Vector2) void {
+
+            // Check if shot hit
+            inline for (0..shoots.len) |i| {
+                if (shoots[i].active and raylib.checkCollisionCircles(
+                    shoots[i].position,
+                    shoots[i].radius,
+                    self.position,
+                    self.radius,
+                )) {
+                    shoots[i].active = false;
+                    shoots[i].lifeSpawn = 0;
+                    self.active = false;
+
+                    self.color = Shared.Color.Red.Base;
+
+                    Shared.Sound.Play(.Explosion);
+
+                    return MeteorStatus{ .shot = shoots[i] };
+                }
+            }
+        } else if (self.frame < MeteorSprite.Frames - 1) {
+            self.frame += raylib.getFrameTime() * ANIMATION_SPEED_MOD;
+        }
+
+        return MeteorStatus{ .default = true };
+    }
+
+    const screenWidth = 500;
+    const screenHeight = 325;
+
+    pub inline fn Draw(self: @This(), shipPosition: raylib.Vector2) void {
         if (self.position.x == -100 and self.position.y == -100) return;
 
         const visibleX = self.position.x - shipPosition.x;
         const visibleY = self.position.y - shipPosition.y;
-        if (visibleX > 900 or visibleX < -900) return;
-        if (visibleY > 450 or visibleY < -450) return;
+        if (visibleX > screenWidth or visibleX < -screenWidth) return;
+        if (visibleY > screenHeight or visibleY < -screenHeight) return;
 
         const spriteFrame = MeteorSprite.getSpriteFrame(@intFromFloat(self.frame));
         const color: raylib.Color = if (self.active) self.color else raylib.Color.fade(self.color, 0.3);

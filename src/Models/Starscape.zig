@@ -9,7 +9,7 @@ pub const Starscape = struct {
 
     starTexture: raylib.Texture,
 
-    pub fn init(screenSize: raylib.Vector2) Starscape {
+    pub inline fn init(screenSize: raylib.Vector2) Starscape {
         var stars: [STAR_COUNT]raylib.Vector3 = undefined;
         for (0..STAR_COUNT) |i| {
             stars[i] = raylib.Vector3.init(
@@ -39,11 +39,11 @@ pub const Starscape = struct {
         };
     }
 
-    pub fn deinit(self: @This()) void {
+    pub inline fn deinit(self: @This()) void {
         self.starTexture.unload();
     }
 
-    pub fn Draw(
+    pub inline fn Draw(
         self: @This(),
         screenWidth: f32,
         screenHeight: f32,

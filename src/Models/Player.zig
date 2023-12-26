@@ -1,6 +1,7 @@
 const std = @import("std");
 const raylib = @import("raylib");
 const Shared = @import("../Shared.zig").Shared;
+const Shoot = @import("./Shoot.zig").Shoot;
 
 pub const Player = struct {
     position: raylib.Vector2,
@@ -10,7 +11,118 @@ pub const Player = struct {
     collider: raylib.Vector3,
     color: raylib.Color,
 
-    pub fn Draw(self: @This(), shipHeight: f32, base_size: f32) void {
+    const PLAYER_SPEED: f32 = 5;
+
+    pub const PlayerStatusType = enum {
+        collide,
+        default,
+    };
+
+    pub const PlayerStatus = union(PlayerStatusType) {
+        collide: bool,
+        default: bool,
+    };
+
+    pub inline fn Update(self: *@This(), comptime shoots: []Shoot, screenSize: raylib.Vector2, halfShipHeight: f32) PlayerStatus {
+        // Player logic: rotation
+        if (Shared.Input.Left_Held()) {
+            self.rotation -= 2.5;
+        }
+        if (Shared.Input.Right_Held()) {
+            self.rotation += 2.5;
+        }
+
+        // Player logic: speed
+        self.speed.x = @sin(std.math.degreesToRadians(
+            f32,
+            self.rotation,
+        )) * PLAYER_SPEED;
+        self.speed.y = @cos(std.math.degreesToRadians(
+            f32,
+            self.rotation,
+        )) * PLAYER_SPEED;
+
+        // Player logic: acceleration
+        if (Shared.Input.Up_Held()) {
+            if (self.acceleration < 1) self.acceleration += 0.04;
+        } else {
+            if (self.acceleration > 0) {
+                self.acceleration -= 0.01;
+            } else if (self.acceleration < 0) {
+                self.acceleration = 0;
+            }
+        }
+        if (Shared.Input.Down_Held()) {
+            if (self.acceleration > 0) {
+                self.acceleration -= 0.04;
+            } else if (self.acceleration < 0) {
+                self.acceleration = 0;
+            }
+        }
+
+        // Player logic: movement
+        self.position.x += (self.speed.x * self.acceleration);
+        self.position.y -= (self.speed.y * self.acceleration);
+
+        // Collision logic: player vs walls
+        if (self.position.x > screenSize.x - halfShipHeight) {
+            return PlayerStatus{ .collide = true };
+        } else if (self.position.x < halfShipHeight) {
+            return PlayerStatus{ .collide = true };
+        }
+        if (self.position.y > screenSize.y - halfShipHeight) {
+            return PlayerStatus{ .collide = true };
+        } else if (self.position.y < halfShipHeight) {
+            return PlayerStatus{ .collide = true };
+        }
+
+        // Player shoot logic
+        if (Shared.Input.A_Pressed()) {
+            inline for (0..shoots.len) |i| {
+                if (!shoots[i].active) {
+                    shoots[i].position.x = self.position.x + @sin(std.math.degreesToRadians(
+                        f32,
+                        self.rotation,
+                    )) * halfShipHeight;
+                    shoots[i].position.y = self.position.y - @cos(std.math.degreesToRadians(
+                        f32,
+                        self.rotation,
+                    )) * halfShipHeight;
+                    shoots[i].speed.x = 1.5 * @sin(std.math.degreesToRadians(
+                        f32,
+                        self.rotation,
+                    )) * PLAYER_SPEED;
+                    shoots[i].speed.y = 1.5 * @cos(std.math.degreesToRadians(
+                        f32,
+                        self.rotation,
+                    )) * PLAYER_SPEED;
+                    shoots[i].active = true;
+                    shoots[i].rotation = self.rotation;
+
+                    Shared.Sound.Play(.pew);
+
+                    break;
+                }
+            }
+        }
+
+        // Collision logic: player vs meteors
+        self.collider.x = self.position.x;
+        self.collider.y = self.position.y;
+        self.collider.z = 12;
+
+        return PlayerStatus{ .default = true };
+    }
+
+    pub inline fn Draw(self: @This(), shipHeight: f32, base_size: f32) void {
+        //Draw collider to check collision logic
+        // raylib.drawCircle(
+        //     @intFromFloat(self.collider.x),
+        //     @intFromFloat(self.collider.y),
+        //     self.collider.z,
+        //     Shared.Color.Red.Dark,
+        // );
+
         const shipTexture = Shared.Texture.Get(.Ship);
         const shipWidthF = @as(f32, @floatFromInt(shipTexture.width));
         const shipHeightF = @as(f32, @floatFromInt(shipTexture.height));
