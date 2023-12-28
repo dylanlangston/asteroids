@@ -16,7 +16,7 @@ pub const Alien = struct {
     shouldDraw: bool = false,
 
     const ANIMATION_SPEED_MOD = 10;
-    pub const ALIEN_SPEED: f32 = 5;
+    pub const ALIEN_SPEED: f32 = 3;
 
     pub const AlienStatusType = enum {
         shot,
