@@ -1,8 +1,10 @@
 const std = @import("std");
 const raylib = @import("raylib");
+const raylib_math = @import("raylib-math");
 const Shared = @import("../Shared.zig").Shared;
 const Player = @import("./Player.zig").Player;
 const Shoot = @import("./Shoot.zig").Shoot;
+const Alien = @import("./Alien.zig").Alien;
 
 pub const MeteorSprite = Shared.Sprite.init(5, .Yellow_Meteor);
 
@@ -29,7 +31,7 @@ pub const Meteor = struct {
         default: bool,
     };
 
-    pub inline fn Update(self: *@This(), player: Player, comptime shoots: []Shoot, screenSize: raylib.Vector2) MeteorStatus {
+    pub inline fn Update(self: *@This(), player: Player, comptime shoots: []Shoot, comptime aliens: []Alien, comptime alien_shoots: []Shoot, screenSize: raylib.Vector2) MeteorStatus {
         // If Active
         if (self.active) {
             // Reset Frame
@@ -46,6 +48,38 @@ pub const Meteor = struct {
                 self.radius,
             )) {
                 return MeteorStatus{ .collide = true };
+            }
+
+            // Check if alien will collide
+            inline for (0..aliens.len) |i| {
+                if (aliens[i].active and raylib.checkCollisionCircles(
+                    aliens[i].position,
+                    aliens[i].radius,
+                    raylib.Vector2.init(
+                        self.position.x - 10,
+                        self.position.y - 10,
+                    ),
+                    self.radius + 20,
+                )) {
+                    aliens[i].rotation = std.math.radiansToDegrees(f32, raylib_math.vector2LineAngle(aliens[i].position, self.position)) - 90;
+
+                    aliens[i].position.x = aliens[i].position.x + @sin(std.math.degreesToRadians(
+                        f32,
+                        aliens[i].rotation,
+                    )) * aliens[i].radius;
+                    aliens[i].position.y = aliens[i].position.y - @cos(std.math.degreesToRadians(
+                        f32,
+                        aliens[i].rotation,
+                    )) * aliens[i].radius;
+                    aliens[i].speed.x = @sin(std.math.degreesToRadians(
+                        f32,
+                        aliens[i].rotation,
+                    )) * Alien.ALIEN_SPEED;
+                    aliens[i].speed.y = @cos(std.math.degreesToRadians(
+                        f32,
+                        aliens[i].rotation,
+                    )) * Alien.ALIEN_SPEED;
+                }
             }
 
             // Movement
@@ -68,7 +102,7 @@ pub const Meteor = struct {
                 self.position.y = self.radius + self.speed.y;
             }
 
-            // Check if shot hit
+            // Check if player shot hit
             inline for (0..shoots.len) |i| {
                 if (shoots[i].active and raylib.checkCollisionCircles(
                     shoots[i].position,
@@ -85,6 +119,26 @@ pub const Meteor = struct {
                     Shared.Sound.Play(.Explosion);
 
                     return MeteorStatus{ .shot = shoots[i] };
+                }
+            }
+
+            // Check if alien shot hit
+            inline for (0..alien_shoots.len) |i| {
+                if (alien_shoots[i].active and raylib.checkCollisionCircles(
+                    alien_shoots[i].position,
+                    alien_shoots[i].radius,
+                    self.position,
+                    self.radius,
+                )) {
+                    alien_shoots[i].active = false;
+                    alien_shoots[i].lifeSpawn = 0;
+                    self.active = false;
+
+                    self.color = Shared.Color.Red.Base;
+
+                    Shared.Sound.Play(.Explosion);
+
+                    return MeteorStatus{ .shot = alien_shoots[i] };
                 }
             }
         } else if (self.frame < MeteorSprite.Frames - 1) {

@@ -29,6 +29,10 @@ fn DrawFunction() Shared.View.Views {
     // Draw spaceship
     vm.player.Draw(vm.shipHeight, vm.PLAYER_BASE_SIZE);
 
+    inline for (0..vm.MAX_ALIENS) |i| {
+        vm.aliens[i].Draw();
+    }
+
     // Draw meteors
     for (0..vm.MAX_SMALL_METEORS) |i| {
         if (i < vm.MAX_BIG_METEORS) {
@@ -45,6 +49,11 @@ fn DrawFunction() Shared.View.Views {
     // Draw shoot
     inline for (0..vm.PLAYER_MAX_SHOOTS) |i| {
         if (vm.shoot[i].active) vm.shoot[i].Draw();
+    }
+
+    // Draw alien shoot
+    inline for (0..vm.ALIENS_MAX_SHOOTS) |i| {
+        if (vm.alien_shoot[i].active) vm.alien_shoot[i].Draw();
     }
 
     if (vm.victory) Shared.Helpers.DrawTextCentered(

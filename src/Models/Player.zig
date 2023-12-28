@@ -15,15 +15,17 @@ pub const Player = struct {
 
     pub const PlayerStatusType = enum {
         collide,
+        shot,
         default,
     };
 
     pub const PlayerStatus = union(PlayerStatusType) {
         collide: bool,
+        shot: Shoot,
         default: bool,
     };
 
-    pub inline fn Update(self: *@This(), comptime shoots: []Shoot, screenSize: raylib.Vector2, halfShipHeight: f32) PlayerStatus {
+    pub inline fn Update(self: *@This(), comptime shoots: []Shoot, comptime alien_shoots: []Shoot, screenSize: raylib.Vector2, halfShipHeight: f32) PlayerStatus {
         // Player logic: rotation
         if (Shared.Input.Left_Held()) {
             self.rotation -= 2.5;
@@ -110,6 +112,21 @@ pub const Player = struct {
         self.collider.x = self.position.x;
         self.collider.y = self.position.y;
         self.collider.z = 12;
+
+        // Check if alien shot hit
+        inline for (0..alien_shoots.len) |i| {
+            if (alien_shoots[i].active and raylib.checkCollisionCircles(
+                alien_shoots[i].position,
+                alien_shoots[i].radius,
+                self.position,
+                self.collider.z,
+            )) {
+                alien_shoots[i].active = false;
+                alien_shoots[i].lifeSpawn = 0;
+
+                return PlayerStatus{ .shot = alien_shoots[i] };
+            }
+        }
 
         return PlayerStatus{ .default = true };
     }

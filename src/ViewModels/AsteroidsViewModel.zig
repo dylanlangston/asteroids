@@ -1,6 +1,7 @@
 const std = @import("std");
 const Shared = @import("../Shared.zig").Shared;
 const raylib = @import("raylib");
+const raylib_math = @import("raylib-math");
 const Meteor = @import("../Models/Meteor.zig").Meteor;
 const MeteorStatus = @import("../Models/Meteor.zig").Meteor.MeteorStatus;
 const MeteorSprite = @import("../Models/Meteor.zig").MeteorSprite;
@@ -8,6 +9,7 @@ const Player = @import("../Models/Player.zig").Player;
 const PlayerStatus = @import("../Models/Player.zig").Player.PlayerStatus;
 const Shoot = @import("../Models/Shoot.zig").Shoot;
 const Starscape = @import("../Models/Starscape.zig").Starscape;
+const Alien = @import("../Models/Alien.zig").Alien;
 
 pub const AsteroidsViewModel = Shared.View.ViewModel.Create(
     struct {
@@ -20,6 +22,9 @@ pub const AsteroidsViewModel = Shared.View.ViewModel.Create(
         pub const MAX_BIG_METEORS = 8;
         pub const MAX_MEDIUM_METEORS = MAX_BIG_METEORS * 2;
         pub const MAX_SMALL_METEORS = MAX_MEDIUM_METEORS * 2;
+
+        pub const MAX_ALIENS = 4;
+        pub const ALIENS_MAX_SHOOTS: i32 = MAX_ALIENS * 2;
 
         // Variables
         pub var gameOver = false;
@@ -35,6 +40,8 @@ pub const AsteroidsViewModel = Shared.View.ViewModel.Create(
         pub var bigMeteors: [MAX_BIG_METEORS]Meteor = undefined;
         pub var mediumMeteors: [MAX_MEDIUM_METEORS]Meteor = undefined;
         pub var smallMeteors: [MAX_SMALL_METEORS]Meteor = undefined;
+        pub var aliens: [MAX_ALIENS]Alien = undefined;
+        pub var alien_shoot: [ALIENS_MAX_SHOOTS]Shoot = undefined;
 
         var midMeteorsCount: i32 = 0;
         var smallMeteorsCount: i32 = 0;
@@ -151,7 +158,7 @@ pub const AsteroidsViewModel = Shared.View.ViewModel.Create(
                         vely,
                     ),
                     .radius = 40,
-                    .rotation = Shared.Random.Get().float(f32),
+                    .rotation = Shared.Random.Get().float(f32) * 365,
                     .active = true,
                     .color = Shared.Color.Blue.Base,
                     .frame = 0,
@@ -189,10 +196,62 @@ pub const AsteroidsViewModel = Shared.View.ViewModel.Create(
                         0,
                     ),
                     .radius = 10,
-                    .rotation = Shared.Random.Get().float(f32),
+                    .rotation = Shared.Random.Get().float(f32) * 365,
                     .active = false,
                     .color = Shared.Color.Blue.Base,
                     .frame = 0,
+                };
+            }
+
+            // Initialization Aliens
+            for (0..MAX_ALIENS) |i| {
+                posx = Shared.Random.Get().float(f32) * screenSize.x;
+                while (true) {
+                    if (posx > screenSize.x / 2 - 150 and posx < screenSize.x / 2 + 150) {
+                        posx = Shared.Random.Get().float(f32) * screenSize.x;
+                    } else break;
+                }
+
+                posy = Shared.Random.Get().float(f32) * screenSize.y;
+                while (true) {
+                    if (posy > screenSize.y / 2 - 150 and posy < screenSize.y / 2 + 150) {
+                        posy = Shared.Random.Get().float(f32) * screenSize.y;
+                    } else break;
+                }
+
+                aliens[i] = Alien{
+                    .position = raylib.Vector2.init(
+                        posx,
+                        posy,
+                    ),
+                    .speed = raylib.Vector2.init(
+                        0,
+                        0,
+                    ),
+                    .radius = 10,
+                    .rotation = Shared.Random.Get().float(f32) * 360,
+                    .active = true,
+                    .color = Shared.Color.Yellow.Base,
+                    .frame = Shared.Random.Get().float(f32) * 10,
+                };
+            }
+
+            // Initialization alien shoot
+            for (0..ALIENS_MAX_SHOOTS) |i| {
+                alien_shoot[i] = Shoot{
+                    .position = raylib.Vector2.init(
+                        0,
+                        0,
+                    ),
+                    .speed = raylib.Vector2.init(
+                        0,
+                        0,
+                    ),
+                    .radius = 2,
+                    .rotation = shoot[i].rotation,
+                    .active = false,
+                    .lifeSpawn = 0,
+                    .color = Shared.Color.Green.Light,
                 };
             }
 
@@ -208,11 +267,25 @@ pub const AsteroidsViewModel = Shared.View.ViewModel.Create(
         pub inline fn Update() void {
 
             // Update Player
-            switch (player.Update(&shoot, screenSize, halfShipHeight)) {
-                PlayerStatus.collide => {
+            switch (player.Update(&shoot, &alien_shoot, screenSize, halfShipHeight)) {
+                .collide => {
                     gameOver = true;
                 },
-                PlayerStatus.default => {},
+                .shot => {
+                    gameOver = true;
+                },
+                .default => {},
+            }
+
+            // Update Aliens
+            inline for (0..MAX_ALIENS) |i| {
+                switch (aliens[i].Update(player, &shoot, &alien_shoot, screenSize)) {
+                    .collide => {
+                        gameOver = true;
+                    },
+                    .shot => {},
+                    .default => {},
+                }
             }
 
             // Update Shots
@@ -220,12 +293,17 @@ pub const AsteroidsViewModel = Shared.View.ViewModel.Create(
                 shoot[i].Update(screenSize);
             }
 
+            // Update alien Shots
+            for (0..ALIENS_MAX_SHOOTS) |i| {
+                alien_shoot[i].Update(screenSize);
+            }
+
             // Update Meteors
             // We do a single loop and check small, medium, and large meteors at the same time
             for (0..MAX_SMALL_METEORS) |i| {
                 // Check Large
                 if (i < MAX_BIG_METEORS) {
-                    switch (bigMeteors[i].Update(player, &shoot, screenSize)) {
+                    switch (bigMeteors[i].Update(player, &shoot, &aliens, &alien_shoot, screenSize)) {
                         .default => {},
                         .shot => |shot| {
                             destroyedMeteorsCount += 1;
@@ -260,7 +338,7 @@ pub const AsteroidsViewModel = Shared.View.ViewModel.Create(
 
                 // Check Medium
                 if (i < MAX_MEDIUM_METEORS) {
-                    switch (mediumMeteors[i].Update(player, &shoot, screenSize)) {
+                    switch (mediumMeteors[i].Update(player, &shoot, &aliens, &alien_shoot, screenSize)) {
                         .default => {},
                         .shot => |shot| {
                             destroyedMeteorsCount += 1;
@@ -294,7 +372,7 @@ pub const AsteroidsViewModel = Shared.View.ViewModel.Create(
                 }
 
                 // Check Small
-                switch (smallMeteors[i].Update(player, &shoot, screenSize)) {
+                switch (smallMeteors[i].Update(player, &shoot, &aliens, &alien_shoot, screenSize)) {
                     .default => {},
                     .shot => {
                         destroyedMeteorsCount += 1;
@@ -308,6 +386,9 @@ pub const AsteroidsViewModel = Shared.View.ViewModel.Create(
             if (destroyedMeteorsCount == MAX_BIG_METEORS + MAX_MEDIUM_METEORS + MAX_SMALL_METEORS) {
                 victory = true;
             }
+
+            // Uncomment to disable gameover
+            //gameOver = false;
         }
     },
     .{
