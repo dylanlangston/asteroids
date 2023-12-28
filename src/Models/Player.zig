@@ -1,7 +1,9 @@
 const std = @import("std");
 const raylib = @import("raylib");
+const raylib_math = @import("raylib-math");
 const Shared = @import("../Shared.zig").Shared;
 const Shoot = @import("./Shoot.zig").Shoot;
+const Alien = @import("./Alien.zig").Alien;
 
 pub const Player = struct {
     position: raylib.Vector2,
@@ -25,7 +27,29 @@ pub const Player = struct {
         default: bool,
     };
 
-    pub inline fn Update(self: *@This(), comptime shoots: []Shoot, comptime alien_shoots: []Shoot, screenSize: raylib.Vector2, halfShipHeight: f32) PlayerStatus {
+    pub inline fn init(screenSize: raylib.Vector2, shipHeight: f32) Player {
+        const position = raylib.Vector2.init(
+            screenSize.x / 2,
+            (screenSize.y - shipHeight) / 2,
+        );
+        return Player{
+            .position = position,
+            .speed = raylib.Vector2.init(
+                0,
+                0,
+            ),
+            .acceleration = 0,
+            .rotation = 0,
+            .collider = raylib.Vector3.init(
+                position.x,
+                position.y,
+                12,
+            ),
+            .color = Shared.Color.Gray.Light,
+        };
+    }
+
+    pub inline fn Update(self: *@This(), comptime shoots: []Shoot, comptime aliens: []Alien, comptime alien_shoots: []Shoot, screenSize: raylib.Vector2, halfShipHeight: f32) PlayerStatus {
         // Player logic: rotation
         if (Shared.Input.Left_Held()) {
             self.rotation -= 2.5;
@@ -111,7 +135,7 @@ pub const Player = struct {
         // Collision logic: player vs meteors
         self.collider.x = self.position.x;
         self.collider.y = self.position.y;
-        self.collider.z = 12;
+        //self.collider.z = 12;
 
         // Check if alien shot hit
         inline for (0..alien_shoots.len) |i| {
@@ -125,6 +149,38 @@ pub const Player = struct {
                 alien_shoots[i].lifeSpawn = 0;
 
                 return PlayerStatus{ .shot = alien_shoots[i] };
+            }
+        }
+
+        // Check if alien will collide
+        inline for (0..aliens.len) |i| {
+            if (aliens[i].active and raylib.checkCollisionCircles(
+                aliens[i].position,
+                aliens[i].radius,
+                raylib.Vector2.init(
+                    self.position.x - 25,
+                    self.position.y - 25,
+                ),
+                self.collider.z + 50,
+            )) {
+                aliens[i].rotation = std.math.radiansToDegrees(f32, raylib_math.vector2LineAngle(aliens[i].position, self.position)) - 90;
+
+                aliens[i].position.x = aliens[i].position.x + @sin(std.math.degreesToRadians(
+                    f32,
+                    aliens[i].rotation,
+                )) * aliens[i].radius;
+                aliens[i].position.y = aliens[i].position.y - @cos(std.math.degreesToRadians(
+                    f32,
+                    aliens[i].rotation,
+                )) * aliens[i].radius;
+                aliens[i].speed.x = @sin(std.math.degreesToRadians(
+                    f32,
+                    aliens[i].rotation,
+                )) * Alien.ALIEN_SPEED;
+                aliens[i].speed.y = @cos(std.math.degreesToRadians(
+                    f32,
+                    aliens[i].rotation,
+                )) * Alien.ALIEN_SPEED;
             }
         }
 

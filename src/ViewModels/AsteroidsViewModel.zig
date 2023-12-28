@@ -17,8 +17,6 @@ pub const AsteroidsViewModel = Shared.View.ViewModel.Create(
         pub const PLAYER_BASE_SIZE: f32 = 20;
         pub const PLAYER_MAX_SHOOTS: i32 = 10;
 
-        const METEORS_SPEED = 3;
-
         pub const MAX_BIG_METEORS = 8;
         pub const MAX_MEDIUM_METEORS = MAX_BIG_METEORS * 2;
         pub const MAX_SMALL_METEORS = MAX_MEDIUM_METEORS * 2;
@@ -44,8 +42,10 @@ pub const AsteroidsViewModel = Shared.View.ViewModel.Create(
         pub var aliens: [MAX_ALIENS]Alien = undefined;
         pub var alien_shoot: [ALIENS_MAX_SHOOTS]Shoot = undefined;
 
+        var bigMeteorsCount: u8 = 0;
         var midMeteorsCount: u8 = 0;
         var smallMeteorsCount: u16 = 0;
+        var smallMeteorsDestroyedCount: u2 = 0;
 
         pub var score: u64 = 0;
 
@@ -55,10 +55,6 @@ pub const AsteroidsViewModel = Shared.View.ViewModel.Create(
         pub inline fn init() void {
             starScape = Starscape.init(screenSize);
 
-            var posx: f32 = undefined;
-            var posy: f32 = undefined;
-            var velx: f32 = undefined;
-            var vely: f32 = undefined;
             shieldLevel = MAX_SHIELD;
             nextShieldLevel = MAX_SHIELD;
 
@@ -68,193 +64,39 @@ pub const AsteroidsViewModel = Shared.View.ViewModel.Create(
             ));
             halfShipHeight = shipHeight / 2;
 
-            player = Player{
-                .position = raylib.Vector2.init(
-                    screenSize.x / 2,
-                    (screenSize.y - shipHeight) / 2,
-                ),
-                .speed = raylib.Vector2.init(
-                    0,
-                    0,
-                ),
-                .acceleration = 0,
-                .rotation = 0,
-                .collider = raylib.Vector3.init(
-                    player.position.x,
-                    player.position.y,
-                    12,
-                ),
-                .color = Shared.Color.Gray.Light,
-            };
+            player = Player.init(screenSize, shipHeight);
 
             score = 0;
 
             // Initialization shoot
             for (0..PLAYER_MAX_SHOOTS) |i| {
-                shoot[i] = Shoot{
-                    .position = raylib.Vector2.init(
-                        0,
-                        0,
-                    ),
-                    .speed = raylib.Vector2.init(
-                        0,
-                        0,
-                    ),
-                    .radius = 2,
-                    .rotation = shoot[i].rotation,
-                    .active = false,
-                    .lifeSpawn = 0,
-                    .color = Shared.Color.Tone.Light,
-                };
+                shoot[i] = Shoot.init(Shared.Color.Tone.Light);
             }
 
             // Initialization Big Meteor
             for (0..MAX_BIG_METEORS) |i| {
-                posx = Shared.Random.Get().float(f32) * screenSize.x;
-                while (true) {
-                    if (posx > screenSize.x / 2 - 150 and posx < screenSize.x / 2 + 150) {
-                        posx = Shared.Random.Get().float(f32) * screenSize.x;
-                    } else break;
-                }
-
-                posy = Shared.Random.Get().float(f32) * screenSize.y;
-                while (true) {
-                    if (posy > screenSize.y / 2 - 150 and posy < screenSize.y / 2 + 150) {
-                        posy = Shared.Random.Get().float(f32) * screenSize.y;
-                    } else break;
-                }
-
-                if (Shared.Random.Get().boolean()) {
-                    velx = Shared.Random.Get().float(f32) * METEORS_SPEED;
-                } else {
-                    velx = Shared.Random.Get().float(f32) * METEORS_SPEED * -1;
-                }
-                if (Shared.Random.Get().boolean()) {
-                    vely = Shared.Random.Get().float(f32) * METEORS_SPEED;
-                } else {
-                    vely = Shared.Random.Get().float(f32) * METEORS_SPEED * -1;
-                }
-
-                while (true) {
-                    if (velx == 0 and vely == 0) {
-                        if (Shared.Random.Get().boolean()) {
-                            velx = Shared.Random.Get().float(f32) * METEORS_SPEED;
-                        } else {
-                            velx = Shared.Random.Get().float(f32) * METEORS_SPEED * -1;
-                        }
-                        if (Shared.Random.Get().boolean()) {
-                            vely = Shared.Random.Get().float(f32) * METEORS_SPEED;
-                        } else {
-                            vely = Shared.Random.Get().float(f32) * METEORS_SPEED * -1;
-                        }
-                    } else break;
-                }
-
-                bigMeteors[i] = Meteor{
-                    .position = raylib.Vector2.init(
-                        posx,
-                        posy,
-                    ),
-                    .speed = raylib.Vector2.init(
-                        velx,
-                        vely,
-                    ),
-                    .radius = 40,
-                    .rotation = Shared.Random.Get().float(f32) * 365,
-                    .active = true,
-                    .color = Shared.Color.Blue.Base,
-                    .frame = 0,
-                };
+                bigMeteors[i] = Meteor.init(player, screenSize, 40, true);
+                bigMeteorsCount += 1;
             }
 
             // Initialization Medium Meteor
             for (0..MAX_MEDIUM_METEORS) |i| {
-                mediumMeteors[i] = Meteor{
-                    .position = raylib.Vector2.init(
-                        -100,
-                        -100,
-                    ),
-                    .speed = raylib.Vector2.init(
-                        0,
-                        0,
-                    ),
-                    .radius = 20,
-                    .rotation = Shared.Random.Get().float(f32),
-                    .active = false,
-                    .color = Shared.Color.Blue.Base,
-                    .frame = 0,
-                };
+                mediumMeteors[i] = Meteor.init(player, screenSize, 20, false);
             }
 
             // Initialization Small Meteor
             for (0..MAX_SMALL_METEORS) |i| {
-                smallMeteors[i] = Meteor{
-                    .position = raylib.Vector2.init(
-                        -100,
-                        -100,
-                    ),
-                    .speed = raylib.Vector2.init(
-                        0,
-                        0,
-                    ),
-                    .radius = 10,
-                    .rotation = Shared.Random.Get().float(f32) * 365,
-                    .active = false,
-                    .color = Shared.Color.Blue.Base,
-                    .frame = 0,
-                };
+                smallMeteors[i] = Meteor.init(player, screenSize, 10, false);
             }
 
             // Initialization Aliens
             for (0..MAX_ALIENS) |i| {
-                posx = Shared.Random.Get().float(f32) * screenSize.x;
-                while (true) {
-                    if (posx > screenSize.x / 2 - 150 and posx < screenSize.x / 2 + 150) {
-                        posx = Shared.Random.Get().float(f32) * screenSize.x;
-                    } else break;
-                }
-
-                posy = Shared.Random.Get().float(f32) * screenSize.y;
-                while (true) {
-                    if (posy > screenSize.y / 2 - 150 and posy < screenSize.y / 2 + 150) {
-                        posy = Shared.Random.Get().float(f32) * screenSize.y;
-                    } else break;
-                }
-
-                aliens[i] = Alien{
-                    .position = raylib.Vector2.init(
-                        posx,
-                        posy,
-                    ),
-                    .speed = raylib.Vector2.init(
-                        0,
-                        0,
-                    ),
-                    .radius = 10,
-                    .rotation = Shared.Random.Get().float(f32) * 360,
-                    .active = true,
-                    .color = Shared.Color.Yellow.Base,
-                    .frame = Shared.Random.Get().float(f32) * 10,
-                };
+                aliens[i] = Alien.init(player, screenSize, true);
             }
 
             // Initialization alien shoot
             for (0..ALIENS_MAX_SHOOTS) |i| {
-                alien_shoot[i] = Shoot{
-                    .position = raylib.Vector2.init(
-                        0,
-                        0,
-                    ),
-                    .speed = raylib.Vector2.init(
-                        0,
-                        0,
-                    ),
-                    .radius = 2,
-                    .rotation = shoot[i].rotation,
-                    .active = false,
-                    .lifeSpawn = 0,
-                    .color = Shared.Color.Green.Light,
-                };
+                alien_shoot[i] = Shoot.init(Shared.Color.Green.Light);
             }
 
             midMeteorsCount = 0;
@@ -276,7 +118,7 @@ pub const AsteroidsViewModel = Shared.View.ViewModel.Create(
             }
 
             // Update Player
-            switch (player.Update(&shoot, &alien_shoot, screenSize, halfShipHeight)) {
+            switch (player.Update(&shoot, &aliens, &alien_shoot, screenSize, halfShipHeight)) {
                 .collide => {
                     shieldLevel = 0;
                 },
@@ -289,11 +131,12 @@ pub const AsteroidsViewModel = Shared.View.ViewModel.Create(
             // Update Aliens
             inline for (0..MAX_ALIENS) |i| {
                 switch (aliens[i].Update(player, &shoot, &alien_shoot, screenSize)) {
-                    .collide => {
-                        shieldLevel = 0;
-                    },
                     .shot => {
                         score += 8;
+
+                        // Move to new random position and reactivate
+                        aliens[i].RandomizePosition(player, screenSize, false);
+                        aliens[i].active = true;
                     },
                     .default => {},
                 }
@@ -317,6 +160,7 @@ pub const AsteroidsViewModel = Shared.View.ViewModel.Create(
                     switch (bigMeteors[i].Update(player, &shoot, &aliens, &alien_shoot, screenSize)) {
                         .default => {},
                         .shot => |shot| {
+                            bigMeteorsCount -= 1;
                             score += 4;
 
                             for (0..2) |_| {
@@ -327,13 +171,13 @@ pub const AsteroidsViewModel = Shared.View.ViewModel.Create(
 
                                 if (@rem(midMeteorsCount, 2) == 0) {
                                     mediumMeteors[@intCast(midMeteorsCount)].speed = raylib.Vector2.init(
-                                        @cos(std.math.degreesToRadians(f32, shot.rotation)) * METEORS_SPEED * -1,
-                                        @sin(std.math.degreesToRadians(f32, shot.rotation)) * METEORS_SPEED * -1,
+                                        @cos(std.math.degreesToRadians(f32, shot.rotation)) * Meteor.METEORS_SPEED * -1,
+                                        @sin(std.math.degreesToRadians(f32, shot.rotation)) * Meteor.METEORS_SPEED * -1,
                                     );
                                 } else {
                                     mediumMeteors[@intCast(midMeteorsCount)].speed = raylib.Vector2.init(
-                                        @cos(std.math.degreesToRadians(f32, shot.rotation)) * METEORS_SPEED,
-                                        @sin(std.math.degreesToRadians(f32, shot.rotation)) * METEORS_SPEED,
+                                        @cos(std.math.degreesToRadians(f32, shot.rotation)) * Meteor.METEORS_SPEED,
+                                        @sin(std.math.degreesToRadians(f32, shot.rotation)) * Meteor.METEORS_SPEED,
                                     );
                                 }
 
@@ -352,6 +196,7 @@ pub const AsteroidsViewModel = Shared.View.ViewModel.Create(
                     switch (mediumMeteors[i].Update(player, &shoot, &aliens, &alien_shoot, screenSize)) {
                         .default => {},
                         .shot => |shot| {
+                            midMeteorsCount -= 1;
                             score += 2;
 
                             for (0..2) |_| {
@@ -362,13 +207,13 @@ pub const AsteroidsViewModel = Shared.View.ViewModel.Create(
 
                                 if (@rem(smallMeteorsCount, 2) == 0) {
                                     smallMeteors[@intCast(smallMeteorsCount)].speed = raylib.Vector2.init(
-                                        @cos(std.math.degreesToRadians(f32, shot.rotation)) * METEORS_SPEED * -1,
-                                        @sin(std.math.degreesToRadians(f32, shot.rotation)) * METEORS_SPEED * -1,
+                                        @cos(std.math.degreesToRadians(f32, shot.rotation)) * Meteor.METEORS_SPEED * -1,
+                                        @sin(std.math.degreesToRadians(f32, shot.rotation)) * Meteor.METEORS_SPEED * -1,
                                     );
                                 } else {
                                     smallMeteors[@intCast(smallMeteorsCount)].speed = raylib.Vector2.init(
-                                        @cos(std.math.degreesToRadians(f32, shot.rotation)) * METEORS_SPEED,
-                                        @sin(std.math.degreesToRadians(f32, shot.rotation)) * METEORS_SPEED,
+                                        @cos(std.math.degreesToRadians(f32, shot.rotation)) * Meteor.METEORS_SPEED,
+                                        @sin(std.math.degreesToRadians(f32, shot.rotation)) * Meteor.METEORS_SPEED,
                                     );
                                 }
 
@@ -386,13 +231,28 @@ pub const AsteroidsViewModel = Shared.View.ViewModel.Create(
                 switch (smallMeteors[i].Update(player, &shoot, &aliens, &alien_shoot, screenSize)) {
                     .default => {},
                     .shot => {
+                        smallMeteorsCount -= 1;
                         score += 1;
+
+                        // After 4 small meteors are destroyed, create a new big one
+                        if (smallMeteorsDestroyedCount == 3) {
+                            bigMeteors[@intCast(bigMeteorsCount)].RandomizePositionAndSpeed(player, screenSize, true);
+                            bigMeteors[@intCast(bigMeteorsCount)].active = true;
+
+                            smallMeteorsDestroyedCount = 0;
+                            bigMeteorsCount += 1;
+                            Shared.Log.Info("New Big Meteor");
+                        }
+                        smallMeteorsDestroyedCount += 1;
                     },
                     .collide => {
                         shieldLevel = 0;
                     },
                 }
             }
+
+            // Uncomment to disable gameover
+            //shieldLevel = MAX_SHIELD;
         }
     },
     .{

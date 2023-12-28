@@ -18,6 +18,9 @@ pub const Meteor = struct {
     frame: f32,
 
     const ANIMATION_SPEED_MOD = 15;
+    pub const METEORS_SPEED = 3;
+
+    const inactivitePoint = -100;
 
     pub const MeteorStatusType = enum {
         shot,
@@ -31,11 +34,94 @@ pub const Meteor = struct {
         default: bool,
     };
 
+    pub inline fn init(player: Player, screenSize: raylib.Vector2, radius: f32, active: bool) Meteor {
+        var meteor = Meteor{
+            .position = raylib.Vector2.init(
+                inactivitePoint,
+                inactivitePoint,
+            ),
+            .speed = raylib.Vector2.init(
+                0,
+                0,
+            ),
+            .radius = radius,
+            .rotation = Shared.Random.Get().float(f32) * 365,
+            .active = active,
+            .color = Shared.Color.Blue.Base,
+            .frame = 0,
+        };
+        if (active) {
+            meteor.RandomizePositionAndSpeed(player, screenSize, false);
+        }
+
+        return meteor;
+    }
+
+    pub inline fn RandomizePositionAndSpeed(self: *@This(), player: Player, screenSize: raylib.Vector2, offscreen: bool) void {
+        var velx: f32 = undefined;
+        var vely: f32 = undefined;
+
+        var posx: f32 = (Shared.Random.Get().float(f32) * (screenSize.x - 150)) + 150;
+        while (offscreen) {
+            const visibleX = posx - player.position.x;
+            if (visibleX < activeRadiusX or visibleX > -activeRadiusX) {
+                break;
+            }
+            posx = (Shared.Random.Get().float(f32) * (screenSize.x - 150)) + 150;
+        }
+
+        var posy: f32 = (Shared.Random.Get().float(f32) * (screenSize.y - 150)) + 150;
+        while (offscreen) {
+            const visibleY = posy - player.position.y;
+            if (visibleY < activeRadiusY or visibleY > -activeRadiusY) {
+                break;
+            }
+            posy = (Shared.Random.Get().float(f32) * (screenSize.y - 150)) + 150;
+        }
+
+        if (Shared.Random.Get().boolean()) {
+            velx = Shared.Random.Get().float(f32) * METEORS_SPEED;
+        } else {
+            velx = Shared.Random.Get().float(f32) * METEORS_SPEED * -1;
+        }
+        if (Shared.Random.Get().boolean()) {
+            vely = Shared.Random.Get().float(f32) * METEORS_SPEED;
+        } else {
+            vely = Shared.Random.Get().float(f32) * METEORS_SPEED * -1;
+        }
+
+        while (true) {
+            if (velx == 0 and vely == 0) {
+                if (Shared.Random.Get().boolean()) {
+                    velx = Shared.Random.Get().float(f32) * METEORS_SPEED;
+                } else {
+                    velx = Shared.Random.Get().float(f32) * METEORS_SPEED * -1;
+                }
+                if (Shared.Random.Get().boolean()) {
+                    vely = Shared.Random.Get().float(f32) * METEORS_SPEED;
+                } else {
+                    vely = Shared.Random.Get().float(f32) * METEORS_SPEED * -1;
+                }
+            } else break;
+        }
+
+        self.position = raylib.Vector2.init(
+            posx,
+            posy,
+        );
+        self.speed = raylib.Vector2.init(
+            velx,
+            vely,
+        );
+    }
+
     pub inline fn Update(self: *@This(), player: Player, comptime shoots: []Shoot, comptime aliens: []Alien, comptime alien_shoots: []Shoot, screenSize: raylib.Vector2) MeteorStatus {
         // If Active
         if (self.active) {
             // Reset Frame
             self.frame = 0;
+            // Reset color
+            self.color = Shared.Color.Blue.Base;
 
             // Check Collision with player
             if (raylib.checkCollisionCircles(
@@ -148,16 +234,16 @@ pub const Meteor = struct {
         return MeteorStatus{ .default = true };
     }
 
-    const screenWidth = 500;
-    const screenHeight = 325;
+    const activeRadiusX = 500;
+    const activeRadiusY = 325;
 
     pub inline fn Draw(self: @This(), shipPosition: raylib.Vector2) void {
-        if (self.position.x == -100 and self.position.y == -100) return;
+        if (self.position.x == inactivitePoint and self.position.y == inactivitePoint) return;
 
         const visibleX = self.position.x - shipPosition.x;
         const visibleY = self.position.y - shipPosition.y;
-        if (visibleX > screenWidth or visibleX < -screenWidth) return;
-        if (visibleY > screenHeight or visibleY < -screenHeight) return;
+        if (visibleX > activeRadiusX or visibleX < -activeRadiusX) return;
+        if (visibleY > activeRadiusY or visibleY < -activeRadiusY) return;
 
         const spriteFrame = MeteorSprite.getSpriteFrame(@intFromFloat(self.frame));
         const color: raylib.Color = if (self.active) self.color else raylib.Color.fade(self.color, 0.3);

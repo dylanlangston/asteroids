@@ -16,19 +16,66 @@ pub const Alien = struct {
     shouldDraw: bool = false,
 
     const ANIMATION_SPEED_MOD = 10;
-    pub const ALIEN_SPEED: f32 = 3;
+    pub const ALIEN_SPEED: f32 = 4;
 
     pub const AlienStatusType = enum {
         shot,
-        collide,
         default,
     };
 
     pub const AlienStatus = union(AlienStatusType) {
         shot: Shoot,
-        collide: bool,
         default: bool,
     };
+
+    pub inline fn init(player: Player, screenSize: raylib.Vector2, active: bool) Alien {
+        var alien = Alien{
+            .position = raylib.Vector2.init(
+                0,
+                0,
+            ),
+            .speed = raylib.Vector2.init(
+                0,
+                0,
+            ),
+            .radius = 10,
+            .rotation = Shared.Random.Get().float(f32) * 360,
+            .active = active,
+            .color = Shared.Color.Yellow.Base,
+            .frame = Shared.Random.Get().float(f32) * 10,
+        };
+
+        if (active) {
+            alien.RandomizePosition(player, screenSize, false);
+        }
+
+        return alien;
+    }
+
+    pub inline fn RandomizePosition(self: *@This(), player: Player, screenSize: raylib.Vector2, offscreen: bool) void {
+        var posx: f32 = (Shared.Random.Get().float(f32) * (screenSize.x - 150)) + 150;
+        while (offscreen) {
+            const visibleX = posx - player.position.x;
+            if (visibleX < activeRadiusX or visibleX > -activeRadiusX) {
+                break;
+            }
+            posx = (Shared.Random.Get().float(f32) * (screenSize.x - 150)) + 150;
+        }
+
+        var posy: f32 = (Shared.Random.Get().float(f32) * (screenSize.y - 150)) + 150;
+        while (offscreen) {
+            const visibleY = posy - player.position.y;
+            if (visibleY < activeRadiusY or visibleY > -activeRadiusY) {
+                break;
+            }
+            posy = (Shared.Random.Get().float(f32) * (screenSize.y - 150)) + 150;
+        }
+
+        self.position = raylib.Vector2.init(
+            posx,
+            posy,
+        );
+    }
 
     pub inline fn Update(self: *@This(), player: Player, comptime shoots: []Shoot, comptime alien_shoots: []Shoot, screenSize: raylib.Vector2) AlienStatus {
         // If Active
@@ -37,19 +84,6 @@ pub const Alien = struct {
                 self.frame = 0;
             } else {
                 self.frame += raylib.getFrameTime() * ANIMATION_SPEED_MOD;
-            }
-
-            // Check Collision with player
-            if (raylib.checkCollisionCircles(
-                raylib.Vector2.init(
-                    player.collider.x,
-                    player.collider.y,
-                ),
-                player.collider.z,
-                self.position,
-                self.radius,
-            )) {
-                return AlienStatus{ .collide = true };
             }
 
             // Random Motion
@@ -105,8 +139,6 @@ pub const Alien = struct {
                     shoots[i].active = false;
                     shoots[i].lifeSpawn = 0;
                     self.active = false;
-
-                    self.color = Shared.Color.Red.Base;
 
                     Shared.Sound.Play(.Explosion);
 

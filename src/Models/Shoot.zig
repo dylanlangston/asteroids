@@ -1,4 +1,5 @@
 const raylib = @import("raylib");
+const Shared = @import("../Shared.zig").Shared;
 
 pub const Shoot = struct {
     position: raylib.Vector2,
@@ -10,6 +11,24 @@ pub const Shoot = struct {
     color: raylib.Color,
 
     const ANIMATION_SPEED_MOD = 30;
+
+    pub inline fn init(color: raylib.Color) Shoot {
+        return Shoot{
+            .position = raylib.Vector2.init(
+                0,
+                0,
+            ),
+            .speed = raylib.Vector2.init(
+                0,
+                0,
+            ),
+            .radius = 2,
+            .rotation = 0,
+            .active = false,
+            .lifeSpawn = 0,
+            .color = color,
+        };
+    }
 
     pub inline fn Update(self: *@This(), screenSize: raylib.Vector2) void {
         if (self.active) {
