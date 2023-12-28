@@ -29,15 +29,12 @@
 						emscripten.canvas.style.width = emscripten.canvas.width + 'px !important';
 						emscripten.canvas.style.height = emscripten.canvas.height + 'px !important';
 					}
-					is_fullscreen = true;
 				})
 				.catch((err) => {
 					alert(`Error attempting to enable fullscreen mode: ${err.message} (${err.name})`);
 				});
 		} else {
-			document.exitFullscreen().then(() => {
-				is_fullscreen = false;
-			});
+			document.exitFullscreen();
 		}
 
 		emscripten?.canvas.focus();
@@ -218,6 +215,7 @@
 	on:orientationchange={(e) => UpdateSize(e)}
 	on:resize={(e) => UpdateSize(e)}
 	on:blur={(e) => requestPause()}
+	on:fullscreenchange={(e) => is_fullscreen = !!document.fullscreenElement}
 />
 
 {#if $isLoading}
