@@ -56,22 +56,6 @@ fn DrawFunction() Shared.View.Views {
         if (vm.alien_shoot[i].active) vm.alien_shoot[i].Draw();
     }
 
-    if (vm.victory) Shared.Helpers.DrawTextCentered(
-        "VICTORY",
-        Shared.Color.Blue.Light,
-        40,
-        vm.screenSize.x,
-        vm.screenSize.y / 2,
-    );
-
-    if (Shared.Input.Start_Pressed()) {
-        return Shared.View.Pause(.AsteroidsView);
-    }
-
-    if (vm.gameOver) {
-        return Shared.View.GameOver();
-    }
-
     return .AsteroidsView;
 }
 
@@ -84,7 +68,41 @@ fn DrawWithCamera() Shared.View.Views {
             vm.player.position.y - vm.shipHeight,
         ),
     );
-    return camera.Draw(Shared.View.Views, &DrawFunction);
+    const result = camera.Draw(Shared.View.Views, &DrawFunction);
+
+    // Draw Health
+    raylib.drawRectangle(5, 5, 104, 16, Shared.Color.Gray.Dark.alpha(0.5));
+    raylib.drawRectangle(
+        8,
+        8,
+        @intFromFloat(@as(
+            f32,
+            @floatFromInt(vm.shieldLevel),
+        ) / @as(
+            f32,
+            @floatFromInt(vm.MAX_SHIELD),
+        ) * 100),
+        10,
+        Shared.Color.Red.Light.alpha(0.5),
+    );
+
+    if (vm.victory) Shared.Helpers.DrawTextCentered(
+        "VICTORY",
+        Shared.Color.Blue.Light,
+        40,
+        vm.screenSize.x,
+        vm.screenSize.y / 2,
+    );
+
+    if (Shared.Input.Start_Pressed()) {
+        return Shared.View.Pause(.AsteroidsView);
+    }
+
+    if (vm.shieldLevel == 0) {
+        return Shared.View.GameOver();
+    }
+
+    return result;
 }
 
 pub const AsteroidsView = Shared.View.View{

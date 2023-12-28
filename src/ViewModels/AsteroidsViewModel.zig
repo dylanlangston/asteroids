@@ -25,9 +25,10 @@ pub const AsteroidsViewModel = Shared.View.ViewModel.Create(
 
         pub const MAX_ALIENS = 4;
         pub const ALIENS_MAX_SHOOTS: i32 = MAX_ALIENS * 2;
+        pub const MAX_SHIELD: u8 = 50;
 
         // Variables
-        pub var gameOver = false;
+        pub var shieldLevel: u8 = MAX_SHIELD;
         pub var victory = false;
 
         pub const screenSize: raylib.Vector2 = raylib.Vector2.init(3200, 1800);
@@ -58,7 +59,7 @@ pub const AsteroidsViewModel = Shared.View.ViewModel.Create(
             var velx: f32 = undefined;
             var vely: f32 = undefined;
             victory = false;
-            gameOver = false;
+            shieldLevel = MAX_SHIELD;
 
             shipHeight = (PLAYER_BASE_SIZE / 2) / @tan(std.math.degreesToRadians(
                 f32,
@@ -269,10 +270,10 @@ pub const AsteroidsViewModel = Shared.View.ViewModel.Create(
             // Update Player
             switch (player.Update(&shoot, &alien_shoot, screenSize, halfShipHeight)) {
                 .collide => {
-                    gameOver = true;
+                    shieldLevel = 0;
                 },
                 .shot => {
-                    gameOver = true;
+                    shieldLevel -= 1;
                 },
                 .default => {},
             }
@@ -281,7 +282,7 @@ pub const AsteroidsViewModel = Shared.View.ViewModel.Create(
             inline for (0..MAX_ALIENS) |i| {
                 switch (aliens[i].Update(player, &shoot, &alien_shoot, screenSize)) {
                     .collide => {
-                        gameOver = true;
+                        shieldLevel = 0;
                     },
                     .shot => {},
                     .default => {},
@@ -331,7 +332,7 @@ pub const AsteroidsViewModel = Shared.View.ViewModel.Create(
                             }
                         },
                         .collide => {
-                            gameOver = true;
+                            shieldLevel = 0;
                         },
                     }
                 }
@@ -366,7 +367,7 @@ pub const AsteroidsViewModel = Shared.View.ViewModel.Create(
                             }
                         },
                         .collide => {
-                            gameOver = true;
+                            shieldLevel = 0;
                         },
                     }
                 }
@@ -378,7 +379,7 @@ pub const AsteroidsViewModel = Shared.View.ViewModel.Create(
                         destroyedMeteorsCount += 1;
                     },
                     .collide => {
-                        gameOver = true;
+                        shieldLevel = 0;
                     },
                 }
             }
@@ -386,9 +387,6 @@ pub const AsteroidsViewModel = Shared.View.ViewModel.Create(
             if (destroyedMeteorsCount == MAX_BIG_METEORS + MAX_MEDIUM_METEORS + MAX_SMALL_METEORS) {
                 victory = true;
             }
-
-            // Uncomment to disable gameover
-            //gameOver = false;
         }
     },
     .{
