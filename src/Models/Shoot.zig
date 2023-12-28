@@ -5,13 +5,15 @@ pub const Shoot = struct {
     speed: raylib.Vector2,
     radius: f32,
     rotation: f32,
-    lifeSpawn: i8,
+    lifeSpawn: f32,
     active: bool,
     color: raylib.Color,
 
+    const ANIMATION_SPEED_MOD = 30;
+
     pub inline fn Update(self: *@This(), screenSize: raylib.Vector2) void {
         if (self.active) {
-            self.lifeSpawn += 1;
+            self.lifeSpawn += raylib.getFrameTime() * ANIMATION_SPEED_MOD;
 
             // Movement
             self.position.x += self.speed.x;
