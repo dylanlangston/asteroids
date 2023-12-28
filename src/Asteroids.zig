@@ -78,6 +78,8 @@ pub inline fn main() void {
     var view = Shared.View.ViewLocator.Build(current_view);
     view.init();
 
+    var scanlinePosition: f32 = 0;
+
     Shared.Log.Info("Begin Game Loop");
     while (!raylib.windowShouldClose()) {
         raylib.beginDrawing();
@@ -88,7 +90,14 @@ pub inline fn main() void {
         defer current_view = new_view;
 
         // Draw scan lines
-        Shared.Shader.DrawTexture(.ScanLine, .ScanLines);
+        scanlinePosition += raylib.getFrameTime() * 5;
+        if (scanlinePosition > 10) scanlinePosition = 0;
+        Shared.Shader.DrawTexture(.ScanLine, .ScanLines, raylib.Rectangle.init(
+            0,
+            -10 + scanlinePosition,
+            @as(f32, @floatFromInt(raylib.getScreenWidth())),
+            @as(f32, @floatFromInt(raylib.getScreenHeight() + 20)),
+        ));
 
         if (Shared.Settings.GetSettings().Debug) {
             raylib.drawFPS(10, 10);

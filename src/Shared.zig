@@ -125,7 +125,7 @@ pub const Shared = struct {
             };
         }
 
-        pub fn DrawTexture(texture: AssetManager.Textures, shader: AssetManager.Shaders) void {
+        pub fn DrawTexture(texture: AssetManager.Textures, shader: AssetManager.Shaders, position: raylib.Rectangle) void {
             const loadedShader = Get(shader);
             loadedShader.activate();
             defer loadedShader.deactivate();
@@ -139,12 +139,7 @@ pub const Shared = struct {
                     @as(f32, @floatFromInt(blankTexture.width)),
                     @as(f32, @floatFromInt(blankTexture.height)),
                 ),
-                raylib.Rectangle.init(
-                    0,
-                    0,
-                    @as(f32, @floatFromInt(raylib.getScreenWidth())),
-                    @as(f32, @floatFromInt(raylib.getScreenHeight())),
-                ),
+                position,
                 raylib.Vector2.init(0, 0),
                 0,
                 Shared.Color.Transparent,
