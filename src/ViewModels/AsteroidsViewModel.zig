@@ -273,7 +273,7 @@ pub const AsteroidsViewModel = Shared.View.ViewModel.Create(
                     shieldLevel = 0;
                 },
                 .shot => {
-                    shieldLevel -= 1;
+                    shieldLevel -= 5;
                 },
                 .default => {},
             }
