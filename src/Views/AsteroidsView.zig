@@ -70,20 +70,50 @@ fn DrawWithCamera() Shared.View.Views {
     );
     const result = camera.Draw(Shared.View.Views, &DrawFunction);
 
-    // Draw Health
-    raylib.drawRectangle(5, 5, 104, 16, Shared.Color.Gray.Dark.alpha(0.5));
-    raylib.drawRectangle(
-        8,
-        8,
-        @intFromFloat(@as(
-            f32,
-            @floatFromInt(vm.shieldLevel),
-        ) / @as(
-            f32,
-            @floatFromInt(vm.MAX_SHIELD),
-        ) * 100),
-        10,
-        Shared.Color.Red.Light.alpha(0.5),
+    // Draw Health Bar
+    const onePixelScaled: f32 = 0.0025 * @as(f32, @floatFromInt(raylib.getScreenWidth()));
+    const healthBarWidth = onePixelScaled * 100;
+    raylib.drawRectangleRounded(
+        raylib.Rectangle.init(
+            5 * onePixelScaled,
+            5 * onePixelScaled,
+            healthBarWidth + (4 * onePixelScaled),
+            10 * onePixelScaled,
+        ),
+        5 * onePixelScaled,
+        5,
+        Shared.Color.Gray.Dark.alpha(0.5),
+    );
+    if (vm.shieldLevel > 0) {
+        raylib.drawRectangleRounded(
+            raylib.Rectangle.init(
+                5 * onePixelScaled,
+                5 * onePixelScaled,
+                (@as(
+                    f32,
+                    @floatFromInt(vm.shieldLevel),
+                ) / @as(
+                    f32,
+                    @floatFromInt(vm.MAX_SHIELD),
+                ) * healthBarWidth) + (4 * onePixelScaled),
+                10 * onePixelScaled,
+            ),
+            5 * onePixelScaled,
+            5,
+            Shared.Color.Red.Light.alpha(0.5),
+        );
+    }
+    raylib.drawRectangleRoundedLines(
+        raylib.Rectangle.init(
+            5 * onePixelScaled,
+            5 * onePixelScaled,
+            healthBarWidth + (4 * onePixelScaled),
+            10 * onePixelScaled,
+        ),
+        5 * onePixelScaled,
+        5,
+        onePixelScaled,
+        Shared.Color.Gray.Dark,
     );
 
     if (vm.victory) Shared.Helpers.DrawTextCentered(
