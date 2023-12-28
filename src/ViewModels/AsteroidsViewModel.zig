@@ -29,6 +29,7 @@ pub const AsteroidsViewModel = Shared.View.ViewModel.Create(
 
         // Variables
         pub var shieldLevel: u8 = MAX_SHIELD;
+        var nextShieldLevel: u8 = MAX_SHIELD;
         pub var victory = false;
 
         pub const screenSize: raylib.Vector2 = raylib.Vector2.init(3200, 1800);
@@ -60,6 +61,7 @@ pub const AsteroidsViewModel = Shared.View.ViewModel.Create(
             var vely: f32 = undefined;
             victory = false;
             shieldLevel = MAX_SHIELD;
+            nextShieldLevel = MAX_SHIELD;
 
             shipHeight = (PLAYER_BASE_SIZE / 2) / @tan(std.math.degreesToRadians(
                 f32,
@@ -267,13 +269,18 @@ pub const AsteroidsViewModel = Shared.View.ViewModel.Create(
         // Update game (one frame)
         pub inline fn Update() void {
 
+            // Update Shield Level
+            if (nextShieldLevel != shieldLevel) {
+                shieldLevel = @max(nextShieldLevel, @as(u8, @intFromFloat(@as(f32, @floatFromInt(shieldLevel)) - raylib.getFrameTime())));
+            }
+
             // Update Player
             switch (player.Update(&shoot, &alien_shoot, screenSize, halfShipHeight)) {
                 .collide => {
-                    shieldLevel = 0;
+                    nextShieldLevel = 0;
                 },
                 .shot => {
-                    shieldLevel -= 5;
+                    nextShieldLevel -= 5;
                 },
                 .default => {},
             }
@@ -282,7 +289,7 @@ pub const AsteroidsViewModel = Shared.View.ViewModel.Create(
             inline for (0..MAX_ALIENS) |i| {
                 switch (aliens[i].Update(player, &shoot, &alien_shoot, screenSize)) {
                     .collide => {
-                        shieldLevel = 0;
+                        nextShieldLevel = 0;
                     },
                     .shot => {},
                     .default => {},
@@ -332,7 +339,7 @@ pub const AsteroidsViewModel = Shared.View.ViewModel.Create(
                             }
                         },
                         .collide => {
-                            shieldLevel = 0;
+                            nextShieldLevel = 0;
                         },
                     }
                 }
@@ -367,7 +374,7 @@ pub const AsteroidsViewModel = Shared.View.ViewModel.Create(
                             }
                         },
                         .collide => {
-                            shieldLevel = 0;
+                            nextShieldLevel = 0;
                         },
                     }
                 }
@@ -379,7 +386,7 @@ pub const AsteroidsViewModel = Shared.View.ViewModel.Create(
                         destroyedMeteorsCount += 1;
                     },
                     .collide => {
-                        shieldLevel = 0;
+                        nextShieldLevel = 0;
                     },
                 }
             }
