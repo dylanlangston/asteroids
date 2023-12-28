@@ -30,7 +30,6 @@ pub const AsteroidsViewModel = Shared.View.ViewModel.Create(
         // Variables
         pub var shieldLevel: u8 = MAX_SHIELD;
         var nextShieldLevel: u8 = MAX_SHIELD;
-        pub var victory = false;
 
         pub const screenSize: raylib.Vector2 = raylib.Vector2.init(3200, 1800);
 
@@ -45,9 +44,10 @@ pub const AsteroidsViewModel = Shared.View.ViewModel.Create(
         pub var aliens: [MAX_ALIENS]Alien = undefined;
         pub var alien_shoot: [ALIENS_MAX_SHOOTS]Shoot = undefined;
 
-        var midMeteorsCount: i32 = 0;
-        var smallMeteorsCount: i32 = 0;
-        var destroyedMeteorsCount: i32 = 0;
+        var midMeteorsCount: u8 = 0;
+        var smallMeteorsCount: u16 = 0;
+
+        pub var score: u64 = 0;
 
         pub var starScape: Starscape = undefined;
 
@@ -59,7 +59,6 @@ pub const AsteroidsViewModel = Shared.View.ViewModel.Create(
             var posy: f32 = undefined;
             var velx: f32 = undefined;
             var vely: f32 = undefined;
-            victory = false;
             shieldLevel = MAX_SHIELD;
             nextShieldLevel = MAX_SHIELD;
 
@@ -88,7 +87,7 @@ pub const AsteroidsViewModel = Shared.View.ViewModel.Create(
                 .color = Shared.Color.Gray.Light,
             };
 
-            destroyedMeteorsCount = 0;
+            score = 0;
 
             // Initialization shoot
             for (0..PLAYER_MAX_SHOOTS) |i| {
@@ -272,12 +271,14 @@ pub const AsteroidsViewModel = Shared.View.ViewModel.Create(
             // Update Shield Level
             if (nextShieldLevel != shieldLevel) {
                 shieldLevel = @max(nextShieldLevel, @as(u8, @intFromFloat(@as(f32, @floatFromInt(shieldLevel)) - raylib.getFrameTime())));
+            } else if (shieldLevel > MAX_SHIELD) {
+                shieldLevel = 0;
             }
 
             // Update Player
             switch (player.Update(&shoot, &alien_shoot, screenSize, halfShipHeight)) {
                 .collide => {
-                    nextShieldLevel = 0;
+                    shieldLevel = 0;
                 },
                 .shot => {
                     nextShieldLevel -= 5;
@@ -289,9 +290,11 @@ pub const AsteroidsViewModel = Shared.View.ViewModel.Create(
             inline for (0..MAX_ALIENS) |i| {
                 switch (aliens[i].Update(player, &shoot, &alien_shoot, screenSize)) {
                     .collide => {
-                        nextShieldLevel = 0;
+                        shieldLevel = 0;
                     },
-                    .shot => {},
+                    .shot => {
+                        score += 8;
+                    },
                     .default => {},
                 }
             }
@@ -314,7 +317,7 @@ pub const AsteroidsViewModel = Shared.View.ViewModel.Create(
                     switch (bigMeteors[i].Update(player, &shoot, &aliens, &alien_shoot, screenSize)) {
                         .default => {},
                         .shot => |shot| {
-                            destroyedMeteorsCount += 1;
+                            score += 4;
 
                             for (0..2) |_| {
                                 mediumMeteors[@intCast(midMeteorsCount)].position = raylib.Vector2.init(
@@ -339,7 +342,7 @@ pub const AsteroidsViewModel = Shared.View.ViewModel.Create(
                             }
                         },
                         .collide => {
-                            nextShieldLevel = 0;
+                            shieldLevel = 0;
                         },
                     }
                 }
@@ -349,7 +352,7 @@ pub const AsteroidsViewModel = Shared.View.ViewModel.Create(
                     switch (mediumMeteors[i].Update(player, &shoot, &aliens, &alien_shoot, screenSize)) {
                         .default => {},
                         .shot => |shot| {
-                            destroyedMeteorsCount += 1;
+                            score += 2;
 
                             for (0..2) |_| {
                                 smallMeteors[@intCast(smallMeteorsCount)].position = raylib.Vector2.init(
@@ -374,7 +377,7 @@ pub const AsteroidsViewModel = Shared.View.ViewModel.Create(
                             }
                         },
                         .collide => {
-                            nextShieldLevel = 0;
+                            shieldLevel = 0;
                         },
                     }
                 }
@@ -383,16 +386,12 @@ pub const AsteroidsViewModel = Shared.View.ViewModel.Create(
                 switch (smallMeteors[i].Update(player, &shoot, &aliens, &alien_shoot, screenSize)) {
                     .default => {},
                     .shot => {
-                        destroyedMeteorsCount += 1;
+                        score += 1;
                     },
                     .collide => {
-                        nextShieldLevel = 0;
+                        shieldLevel = 0;
                     },
                 }
-            }
-
-            if (destroyedMeteorsCount == MAX_BIG_METEORS + MAX_MEDIUM_METEORS + MAX_SMALL_METEORS) {
-                victory = true;
             }
         }
     },

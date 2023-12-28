@@ -71,7 +71,8 @@ fn DrawWithCamera() Shared.View.Views {
     const result = camera.Draw(Shared.View.Views, &DrawFunction);
 
     // Draw Health Bar
-    const onePixelScaled: f32 = 0.0025 * @as(f32, @floatFromInt(raylib.getScreenWidth()));
+    const screenWidth: f32 = @floatFromInt(raylib.getScreenWidth());
+    const onePixelScaled: f32 = 0.0025 * screenWidth;
     const healthBarWidth = onePixelScaled * 100;
     raylib.drawRectangleRounded(
         raylib.Rectangle.init(
@@ -116,12 +117,12 @@ fn DrawWithCamera() Shared.View.Views {
         Shared.Color.Gray.Dark,
     );
 
-    if (vm.victory) Shared.Helpers.DrawTextCentered(
-        "VICTORY",
+    Shared.Helpers.DrawTextRightAligned(
+        std.fmt.allocPrintZ(Shared.GetAllocator(), "Score: {}", .{vm.score}) catch "Score Unknown!",
         Shared.Color.Blue.Light,
-        40,
-        vm.screenSize.x,
-        vm.screenSize.y / 2,
+        onePixelScaled * 10,
+        screenWidth - (5 * onePixelScaled),
+        5,
     );
 
     if (Shared.Input.Start_Pressed()) {
