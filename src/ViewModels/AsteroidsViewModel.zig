@@ -51,9 +51,16 @@ pub const AsteroidsViewModel = Shared.View.ViewModel.Create(
 
         pub var starScape: Starscape = undefined;
 
+        var takeDamage: bool = true;
+
         // Initialize game variables
         pub inline fn init() void {
             starScape = Starscape.init(screenSize);
+
+            const settings = Shared.Settings.GetSettings();
+            if (settings.NoDamage != null) {
+                takeDamage = !settings.NoDamage.?;
+            }
 
             shieldLevel = MAX_SHIELD;
             nextShieldLevel = MAX_SHIELD;
@@ -251,8 +258,10 @@ pub const AsteroidsViewModel = Shared.View.ViewModel.Create(
                 }
             }
 
-            // Uncomment to disable gameover
-            //shieldLevel = MAX_SHIELD;
+            // Disable gameover during testing
+            if (!takeDamage) {
+                shieldLevel = MAX_SHIELD;
+            }
         }
     },
     .{

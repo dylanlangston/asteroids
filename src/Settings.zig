@@ -10,6 +10,7 @@ pub const Settings = struct {
     TargetFPS: i32,
     Debug: bool,
     DebugView: ?i32,
+    NoDamage: ?bool,
     UserLocale: Locales,
 
     pub inline fn save(self: Settings, allocator: Allocator) bool {
@@ -65,6 +66,7 @@ pub const Settings = struct {
                     .TargetFPS = 60,
                     .Debug = if (settings.value.object.contains("Debug")) settings.value.object.get("Debug").?.bool else default_settings.Debug,
                     .DebugView = if (settings.value.object.contains("DebugView")) @intCast(settings.value.object.get("DebugView").?.integer) else default_settings.DebugView,
+                    .NoDamage = if (settings.value.object.contains("NoDamage")) settings.value.object.get("NoDamage").?.bool else default_settings.NoDamage,
                     .UserLocale = if (settings.value.object.contains("UserLocale")) @enumFromInt(settings.value.object.get("UserLocale").?.integer) else default_settings.UserLocale,
                 });
             }
@@ -112,9 +114,10 @@ pub const Settings = struct {
                 .Width = settings.CurrentResolution.Width,
                 .Height = settings.CurrentResolution.Height,
             },
-            .TargetFPS = if (settings.TargetFPS == 0) 0 else @max(settings.TargetFPS, 30),
+            .TargetFPS = if (settings.TargetFPS == 0) 0 else @max(settings.TargetFPS, 60),
             .Debug = settings.Debug,
             .DebugView = settings.DebugView,
+            .NoDamage = settings.NoDamage,
             .UserLocale = settings.UserLocale,
         };
     }
@@ -138,6 +141,10 @@ pub const Settings = struct {
             try out.objectField("DebugView");
             try out.write(self.DebugView);
         }
+        if (builtin.target.os.tag != .wasi or self.NoDamage != null) {
+            try out.objectField("NoDamage");
+            try out.write(self.NoDamage);
+        }
         if (builtin.target.os.tag != .wasi) {
             try out.objectField("UserLocale");
             try out.write(self.UserLocale);
@@ -152,6 +159,7 @@ pub const Settings = struct {
         .TargetFPS = 60,
         .Debug = false,
         .DebugView = null,
+        .NoDamage = null,
         .UserLocale = Locales.unknown,
     };
 
