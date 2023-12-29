@@ -34,7 +34,7 @@ pub const Meteor = struct {
         default: bool,
     };
 
-    pub inline fn init(player: Player, screenSize: raylib.Vector2, radius: f32, active: bool) Meteor {
+    pub inline fn init(radius: f32) Meteor {
         var meteor = Meteor{
             .position = raylib.Vector2.init(
                 inactivitePoint,
@@ -46,13 +46,10 @@ pub const Meteor = struct {
             ),
             .radius = radius,
             .rotation = Shared.Random.Get().float(f32) * 365,
-            .active = active,
+            .active = false,
             .color = Shared.Color.Blue.Base,
             .frame = 0,
         };
-        if (active) {
-            meteor.RandomizePositionAndSpeed(player, screenSize, false);
-        }
 
         return meteor;
     }
@@ -64,7 +61,7 @@ pub const Meteor = struct {
         var posx: f32 = (Shared.Random.Get().float(f32) * (screenSize.x - 150)) + 150;
         while (offscreen) {
             const visibleX = posx - player.position.x;
-            if (visibleX < activeRadiusX or visibleX > -activeRadiusX) {
+            if (visibleX > activeRadiusX or visibleX < -activeRadiusX) {
                 break;
             }
             posx = (Shared.Random.Get().float(f32) * (screenSize.x - 150)) + 150;
@@ -73,7 +70,7 @@ pub const Meteor = struct {
         var posy: f32 = (Shared.Random.Get().float(f32) * (screenSize.y - 150)) + 150;
         while (offscreen) {
             const visibleY = posy - player.position.y;
-            if (visibleY < activeRadiusY or visibleY > -activeRadiusY) {
+            if (visibleY > activeRadiusY or visibleY < -activeRadiusY) {
                 break;
             }
             posy = (Shared.Random.Get().float(f32) * (screenSize.y - 150)) + 150;

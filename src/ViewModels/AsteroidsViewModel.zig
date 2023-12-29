@@ -17,11 +17,11 @@ pub const AsteroidsViewModel = Shared.View.ViewModel.Create(
         pub const PLAYER_BASE_SIZE: f32 = 20;
         pub const PLAYER_MAX_SHOOTS: i32 = 10;
 
-        pub const MAX_BIG_METEORS = 8;
-        pub const MAX_MEDIUM_METEORS = MAX_BIG_METEORS * 2;
-        pub const MAX_SMALL_METEORS = MAX_MEDIUM_METEORS * 2;
+        pub const MAX_BIG_METEORS: u16 = 64;
+        pub const MAX_MEDIUM_METEORS: u32 = MAX_BIG_METEORS * 2;
+        pub const MAX_SMALL_METEORS: u32 = MAX_MEDIUM_METEORS * 2;
 
-        pub const MAX_ALIENS = 4;
+        pub const MAX_ALIENS: u8 = 8;
         pub const ALIENS_MAX_SHOOTS: i32 = MAX_ALIENS * 2;
         pub const MAX_SHIELD: u8 = 50;
 
@@ -42,10 +42,13 @@ pub const AsteroidsViewModel = Shared.View.ViewModel.Create(
         pub var aliens: [MAX_ALIENS]Alien = undefined;
         pub var alien_shoot: [ALIENS_MAX_SHOOTS]Shoot = undefined;
 
-        var bigMeteorsCount: u8 = 0;
-        var midMeteorsCount: u8 = 0;
-        var smallMeteorsCount: u16 = 0;
-        var smallMeteorsDestroyedCount: u2 = 0;
+        var bigMeteorsCount: u16 = 0;
+        var midMeteorsCount: u32 = 0;
+        var smallMeteorsCount: u32 = 0;
+        var smallMeteorsDestroyedCount: u4 = 0;
+        var alienCount: u8 = 0;
+
+        const totalStartingMeteors: u8 = 32;
 
         pub var score: u64 = 0;
 
@@ -76,42 +79,71 @@ pub const AsteroidsViewModel = Shared.View.ViewModel.Create(
             score = 0;
 
             // Initialization shoot
-            for (0..PLAYER_MAX_SHOOTS) |i| {
+            inline for (0..PLAYER_MAX_SHOOTS) |i| {
                 shoot[i] = Shoot.init(Shared.Color.Tone.Light);
             }
 
-            // Initialization Big Meteor
-            for (0..MAX_BIG_METEORS) |i| {
-                bigMeteors[i] = Meteor.init(player, screenSize, 40, true);
-                bigMeteorsCount += 1;
-            }
-
-            // Initialization Medium Meteor
-            for (0..MAX_MEDIUM_METEORS) |i| {
-                mediumMeteors[i] = Meteor.init(player, screenSize, 20, false);
-            }
-
-            // Initialization Small Meteor
+            // Initialization Meteors
             for (0..MAX_SMALL_METEORS) |i| {
-                smallMeteors[i] = Meteor.init(player, screenSize, 10, false);
+                if (i < MAX_BIG_METEORS) {
+                    bigMeteors[i] = Meteor.init(40);
+                }
+                if (i < MAX_MEDIUM_METEORS) {
+                    mediumMeteors[i] = Meteor.init(20);
+                }
+                smallMeteors[i] = Meteor.init(10);
+            }
+            bigMeteorsCount = 0;
+            midMeteorsCount = 0;
+            smallMeteorsCount = 0;
+            var initialMeteorCount: u8 = 0;
+            while (initialMeteorCount < totalStartingMeteors) {
+                switch (Shared.Random.Get().intRangeAtMost(u2, 0, 2)) {
+                    2 => {
+                        bigMeteors[@intCast(bigMeteorsCount)].RandomizePositionAndSpeed(player, screenSize, true);
+                        bigMeteors[@intCast(bigMeteorsCount)].active = true;
+                        initialMeteorCount += 4;
+                        bigMeteorsCount += 1;
+                    },
+                    1 => {
+                        mediumMeteors[@intCast(midMeteorsCount)].RandomizePositionAndSpeed(player, screenSize, true);
+                        mediumMeteors[@intCast(midMeteorsCount)].active = true;
+                        initialMeteorCount += 2;
+                        midMeteorsCount += 1;
+                    },
+                    else => {
+                        smallMeteors[@intCast(smallMeteorsCount)].RandomizePositionAndSpeed(player, screenSize, true);
+                        smallMeteors[@intCast(smallMeteorsCount)].active = true;
+                        initialMeteorCount += 1;
+                        smallMeteorsCount += 1;
+                    },
+                }
             }
 
             // Initialization Aliens
-            for (0..MAX_ALIENS) |i| {
-                aliens[i] = Alien.init(player, screenSize, true);
+            inline for (0..MAX_ALIENS) |i| {
+                aliens[i] = Alien.init();
             }
 
             // Initialization alien shoot
-            for (0..ALIENS_MAX_SHOOTS) |i| {
+            inline for (0..ALIENS_MAX_SHOOTS) |i| {
                 alien_shoot[i] = Shoot.init(Shared.Color.Green.Light);
             }
-
-            midMeteorsCount = 0;
-            smallMeteorsCount = 0;
         }
 
         pub inline fn deinit() void {
             starScape.deinit();
+        }
+
+        var lastScore: u64 = 0;
+        inline fn NewAlien() void {
+            while (alienCount < MAX_ALIENS and score - lastScore > 10) {
+                aliens[@intCast(alienCount)].RandomizePosition(player, screenSize, true);
+                aliens[@intCast(alienCount)].active = true;
+                alienCount += 1;
+
+                lastScore += 10;
+            }
         }
 
         // Update game (one frame)
@@ -139,11 +171,10 @@ pub const AsteroidsViewModel = Shared.View.ViewModel.Create(
             inline for (0..MAX_ALIENS) |i| {
                 switch (aliens[i].Update(player, &shoot, &alien_shoot, screenSize)) {
                     .shot => {
+                        alienCount -= 1;
                         score += 8;
 
-                        // Move to new random position and reactivate
-                        aliens[i].RandomizePosition(player, screenSize, false);
-                        aliens[i].active = true;
+                        NewAlien();
                     },
                     .default => {},
                 }
@@ -191,6 +222,8 @@ pub const AsteroidsViewModel = Shared.View.ViewModel.Create(
                                 mediumMeteors[@intCast(midMeteorsCount)].active = true;
                                 midMeteorsCount += 1;
                             }
+
+                            NewAlien();
                         },
                         .collide => {
                             shieldLevel = 0;
@@ -227,6 +260,8 @@ pub const AsteroidsViewModel = Shared.View.ViewModel.Create(
                                 smallMeteors[@intCast(smallMeteorsCount)].active = true;
                                 smallMeteorsCount += 1;
                             }
+
+                            NewAlien();
                         },
                         .collide => {
                             shieldLevel = 0;
@@ -239,18 +274,21 @@ pub const AsteroidsViewModel = Shared.View.ViewModel.Create(
                     .default => {},
                     .shot => {
                         smallMeteorsCount -= 1;
+                        smallMeteorsDestroyedCount += 1;
                         score += 1;
 
-                        // After 4 small meteors are destroyed, create a new big one
-                        if (smallMeteorsDestroyedCount == 3) {
-                            bigMeteors[@intCast(bigMeteorsCount)].RandomizePositionAndSpeed(player, screenSize, true);
-                            bigMeteors[@intCast(bigMeteorsCount)].active = true;
+                        // After 4 small meteors are destroyed, create two big ones (until the max meteors is reached)
+                        for (0..2) |_| {
+                            if (bigMeteorsCount < MAX_BIG_METEORS and smallMeteorsDestroyedCount / 4 >= 1) {
+                                bigMeteors[@intCast(bigMeteorsCount)].RandomizePositionAndSpeed(player, screenSize, true);
+                                bigMeteors[@intCast(bigMeteorsCount)].active = true;
 
-                            smallMeteorsDestroyedCount = 0;
-                            bigMeteorsCount += 1;
-                            Shared.Log.Info("New Big Meteor");
+                                smallMeteorsDestroyedCount -= 4;
+                                bigMeteorsCount += 1;
+                            }
                         }
-                        smallMeteorsDestroyedCount += 1;
+
+                        NewAlien();
                     },
                     .collide => {
                         shieldLevel = 0;

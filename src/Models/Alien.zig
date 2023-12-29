@@ -28,7 +28,7 @@ pub const Alien = struct {
         default: bool,
     };
 
-    pub inline fn init(player: Player, screenSize: raylib.Vector2, active: bool) Alien {
+    pub inline fn init() Alien {
         var alien = Alien{
             .position = raylib.Vector2.init(
                 0,
@@ -40,14 +40,10 @@ pub const Alien = struct {
             ),
             .radius = 10,
             .rotation = Shared.Random.Get().float(f32) * 360,
-            .active = active,
+            .active = false,
             .color = Shared.Color.Yellow.Base,
             .frame = Shared.Random.Get().float(f32) * 10,
         };
-
-        if (active) {
-            alien.RandomizePosition(player, screenSize, false);
-        }
 
         return alien;
     }
@@ -56,7 +52,7 @@ pub const Alien = struct {
         var posx: f32 = (Shared.Random.Get().float(f32) * (screenSize.x - 150)) + 150;
         while (offscreen) {
             const visibleX = posx - player.position.x;
-            if (visibleX < activeRadiusX or visibleX > -activeRadiusX) {
+            if (visibleX > activeRadiusX or visibleX < -activeRadiusX) {
                 break;
             }
             posx = (Shared.Random.Get().float(f32) * (screenSize.x - 150)) + 150;
@@ -65,7 +61,7 @@ pub const Alien = struct {
         var posy: f32 = (Shared.Random.Get().float(f32) * (screenSize.y - 150)) + 150;
         while (offscreen) {
             const visibleY = posy - player.position.y;
-            if (visibleY < activeRadiusY or visibleY > -activeRadiusY) {
+            if (visibleY > activeRadiusY or visibleY < -activeRadiusY) {
                 break;
             }
             posy = (Shared.Random.Get().float(f32) * (screenSize.y - 150)) + 150;
