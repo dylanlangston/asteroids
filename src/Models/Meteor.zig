@@ -59,18 +59,20 @@ pub const Meteor = struct {
         var vely: f32 = undefined;
 
         var posx: f32 = (Shared.Random.Get().float(f32) * (screenSize.x - 150)) + 150;
-        while (offscreen) {
+        const radiusX = if (offscreen) activeRadiusX else 100;
+        while (true) {
             const visibleX = posx - player.position.x;
-            if (visibleX > activeRadiusX or visibleX < -activeRadiusX) {
+            if (visibleX > radiusX or visibleX < -radiusX) {
                 break;
             }
             posx = (Shared.Random.Get().float(f32) * (screenSize.x - 150)) + 150;
         }
 
         var posy: f32 = (Shared.Random.Get().float(f32) * (screenSize.y - 150)) + 150;
-        while (offscreen) {
+        const radiusY = if (offscreen) activeRadiusY else 100;
+        while (true) {
             const visibleY = posy - player.position.y;
-            if (visibleY > activeRadiusY or visibleY < -activeRadiusY) {
+            if (visibleY > radiusY or visibleY < -radiusY) {
                 break;
             }
             posy = (Shared.Random.Get().float(f32) * (screenSize.y - 150)) + 150;

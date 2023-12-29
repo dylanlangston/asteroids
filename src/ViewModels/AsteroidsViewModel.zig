@@ -100,19 +100,19 @@ pub const AsteroidsViewModel = Shared.View.ViewModel.Create(
             while (initialMeteorCount < totalStartingMeteors) {
                 switch (Shared.Random.Get().intRangeAtMost(u2, 0, 2)) {
                     2 => {
-                        bigMeteors[@intCast(bigMeteorsCount)].RandomizePositionAndSpeed(player, screenSize, true);
+                        bigMeteors[@intCast(bigMeteorsCount)].RandomizePositionAndSpeed(player, screenSize, false);
                         bigMeteors[@intCast(bigMeteorsCount)].active = true;
                         initialMeteorCount += 4;
                         bigMeteorsCount += 1;
                     },
                     1 => {
-                        mediumMeteors[@intCast(midMeteorsCount)].RandomizePositionAndSpeed(player, screenSize, true);
+                        mediumMeteors[@intCast(midMeteorsCount)].RandomizePositionAndSpeed(player, screenSize, false);
                         mediumMeteors[@intCast(midMeteorsCount)].active = true;
                         initialMeteorCount += 2;
                         midMeteorsCount += 1;
                     },
                     else => {
-                        smallMeteors[@intCast(smallMeteorsCount)].RandomizePositionAndSpeed(player, screenSize, true);
+                        smallMeteors[@intCast(smallMeteorsCount)].RandomizePositionAndSpeed(player, screenSize, false);
                         smallMeteors[@intCast(smallMeteorsCount)].active = true;
                         initialMeteorCount += 1;
                         smallMeteorsCount += 1;
