@@ -121,6 +121,7 @@ pub const AsteroidsViewModel = Shared.View.ViewModel.Create(
             }
 
             // Initialization Aliens
+            alienCount = 0;
             inline for (0..MAX_ALIENS) |i| {
                 aliens[i] = Alien.init();
             }
