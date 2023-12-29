@@ -21,6 +21,7 @@ const Helpers_ = @import("Helpers.zig").Helpers;
 const RndGen = std.rand.DefaultPrng;
 const Sprites = @import("Sprite.zig").Sprite;
 const CameraController = @import("Camera.zig").Camera;
+const Crypto_ = @import("Crypto.zig").Crypto;
 
 pub const Shared = struct {
     const Alloc = struct {
@@ -69,6 +70,8 @@ pub const Shared = struct {
     pub const Color = Colors;
 
     pub const Helpers = Helpers_;
+
+    pub const Crypto = Crypto_;
 
     pub const Time = struct {
         extern fn WASMTimestamp() i64;
@@ -196,14 +199,14 @@ pub const Shared = struct {
 
     pub const Settings = struct {
         var loaded_settings: ?SettingsManager = null;
-        pub fn GetSettings() SettingsManager {
+        pub inline fn GetSettings() SettingsManager {
             if (loaded_settings == null) {
                 loaded_settings = SettingsManager.load(Alloc.allocator);
             }
             return loaded_settings.?;
         }
 
-        pub fn UpdateSettings(newValue: anytype) void {
+        pub inline fn UpdateSettings(newValue: anytype) void {
             const original_settings = GetSettings();
             loaded_settings = SettingsManager.update(original_settings, newValue);
 
@@ -221,7 +224,7 @@ pub const Shared = struct {
             }
         }
 
-        pub fn SaveNow() void {
+        pub inline fn SaveNow() void {
             _ = loaded_settings.?.save(Alloc.allocator);
         }
     };
@@ -266,9 +269,9 @@ pub const Shared = struct {
             return vl.Views.PausedView;
         }
 
-        pub inline fn GameOver() vl.Views {
+        pub inline fn GameOver(Score: u64, HighScore: u64) vl.Views {
             const gameover_vm = GameOverViewModel.GetVM();
-            gameover_vm.GameOver();
+            gameover_vm.GameOver(Score, HighScore);
             return vl.Views.GameOverView;
         }
     };

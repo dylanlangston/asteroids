@@ -130,7 +130,7 @@ fn DrawWithCamera() Shared.View.Views {
     }
 
     if (vm.shieldLevel == 0) {
-        return Shared.View.GameOver();
+        return Shared.View.GameOver(vm.score, 0);
     }
 
     return result;
