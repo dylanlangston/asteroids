@@ -1,6 +1,6 @@
 {
-    "name": "Asteroids",
-    "short_name": "Asteroids",
+    "name": "Asteroid Arena",
+    "short_name": "Asteroid Arena",
     "theme_color": "#2485a6",
     "background_color": "#754d45",
     "display_override": ["standalone", "window-controls-overlay", "fullscreen"],
@@ -21,15 +21,15 @@
         "sizes": "1000x500",
         "type": "image/png",
         "form_factor": "wide",
-        "label": "Asteroids Game Banner"
+        "label": "Asteroid Arena Game Banner"
       },
       {
         "src": "/favicon.png",
         "sizes": "320x320",
         "type": "image/png",
-        "label": "Asteroids Game Logo"
+        "label": "Asteroid Arena Game Logo"
       }
     ],
-    "description": "Asteroides clone created for raylib Slow-Jam",
+    "description": "Asteroids clone created for raylib Slow-Jam",
     "categories": [ "games", "raylib", "zig"]
 }

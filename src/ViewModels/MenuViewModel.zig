@@ -15,6 +15,12 @@ pub const MenuViewModel = Shared.View.ViewModel.Create(
         pub var selection = Selection.Start;
         pub var Rectangles: [std.enums.directEnumArrayLen(Selection, 0) - 1]raylib.Rectangle = undefined;
 
+        pub var frameCount: f32 = 0;
+
+        pub inline fn init() void {
+            frameCount = 0;
+        }
+
         pub inline fn GetSelectionText(select: Selection) [:0]const u8 {
             const locale = Shared.Locale.GetLocale().?;
 
@@ -34,5 +40,11 @@ pub const MenuViewModel = Shared.View.ViewModel.Create(
             }
         }
     },
-    .{},
+    .{
+        .Init = init,
+    },
 );
+
+fn init() void {
+    MenuViewModel.GetVM().init();
+}

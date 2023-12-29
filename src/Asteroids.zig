@@ -38,7 +38,7 @@ pub inline fn main() void {
 
     // Create window
     Shared.Log.Info("Creating Window");
-    raylib.initWindow(settings.CurrentResolution.Width, settings.CurrentResolution.Height, "Asteroids Game!");
+    raylib.initWindow(settings.CurrentResolution.Width, settings.CurrentResolution.Height, "Asteroid Arena");
     defer raylib.closeWindow();
     raylib.initAudioDevice();
     defer raylib.closeAudioDevice();

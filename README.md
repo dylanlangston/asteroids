@@ -1,6 +1,6 @@
 [//]: https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet
 
-# Asteroids Game 🪨
+# Asteroid Arena 🪨
 
 <p align="center">
   <a href="https://itch.io/jam/raylib-slo-jam"><img alt="Due January 8th 2024 at 3:00 PM EST" src="https://img.shields.io/badge/dynamic/xml?url=https%3A%2F%2Ffree.timeanddate.com%2Fcountdown%2FtatTime%2520left%2520to%2520Event%2520in%2Ftac000%2FtptTime%2520since%2520Event%2520started%2520in%2Ftpc000%2Fmac000%2Fmpc000%2Fiso2024-01-08T20%3A00%3A00&query=%2F%2Ftd%5B%40id%3D%22cd%22%5D&suffix=%20days&label=Deadline%3A"></a>

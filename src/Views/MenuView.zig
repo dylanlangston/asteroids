@@ -31,7 +31,7 @@ pub fn DrawFunction() Shared.View.Views {
     const TitleTextSize = raylib.measureTextEx(
         titleFont,
         title,
-        @as(f32, @floatFromInt(fontSize)) * 3.25,
+        @as(f32, @floatFromInt(fontSize)) * 2.5,
         @floatFromInt(font.glyphPadding),
     );
     const titleFontsizeF: f32 = TitleTextSize.y;
@@ -70,22 +70,41 @@ pub fn DrawFunction() Shared.View.Views {
             height,
         );
 
-        const selected_or_not_color = if (select == vm.selection) accentColor else foregroundColor;
+        const selected = select == vm.selection;
 
         const TextSize = raylib.measureTextEx(font, text, @floatFromInt(fontSize), @floatFromInt(font.glyphPadding));
         const fontsizeF: f32 = TextSize.y;
 
-        raylib.drawTextEx(
-            font,
-            text,
-            raylib.Vector2.init(
-                8 + vm.Rectangles[index].x + ((vm.Rectangles[index].width - TextSize.x) / 2),
-                vm.Rectangles[index].y + 8,
-            ),
-            fontsizeF,
-            @floatFromInt(font.glyphPadding),
-            selected_or_not_color,
-        );
+        vm.frameCount += raylib.getFrameTime();
+        if (selected and vm.frameCount < 0.75) {
+            raylib.drawTextEx(
+                font,
+                text,
+                raylib.Vector2.init(
+                    8 + vm.Rectangles[index].x + ((vm.Rectangles[index].width - TextSize.x) / 2),
+                    vm.Rectangles[index].y + 8,
+                ),
+                fontsizeF,
+                @floatFromInt(font.glyphPadding),
+                accentColor,
+            );
+        } else if (!selected) {
+            raylib.drawTextEx(
+                font,
+                text,
+                raylib.Vector2.init(
+                    8 + vm.Rectangles[index].x + ((vm.Rectangles[index].width - TextSize.x) / 2),
+                    vm.Rectangles[index].y + 8,
+                ),
+                fontsizeF,
+                @floatFromInt(font.glyphPadding),
+                foregroundColor,
+            );
+        }
+
+        if (vm.frameCount > 1.25) {
+            vm.frameCount = 0;
+        }
 
         index += 1;
 
