@@ -135,7 +135,7 @@ jobs:
         name: itch-io
     - name: Change Directory
       run: |
-        cd ./astroids
+        cd ${{ steps.download.outputs.download-path }}
     - uses: manleydev/butler-publish-itchio-action@master
       env:
         BUTLER_CREDENTIALS: ${{ secrets.ITCHIO_API_KEY }}
@@ -153,12 +153,13 @@ jobs:
       contents: write
     steps:
     - name: Download artifact
+      id: download
       uses: actions/download-artifact@v4
       with:
         name: asteroids-v${{ needs.build.outputs.datetime}}
     - name: Change Directory
       run: |
-        cd ./astroids
+        cd ${{ steps.download.outputs.download-path }}
     - name: Create Release
       id: create_release
       uses: ncipollo/release-action@v1
