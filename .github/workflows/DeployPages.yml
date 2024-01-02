@@ -130,15 +130,14 @@ jobs:
       contents: write
     steps:
     - name: Download artifact compressed
+      id: download
       uses: actions/download-artifact@v4
       with:
         name: itch-io
     - name: Create ZIP
       run: |
         cd ${{ steps.download.outputs.download-path }}/../
-        ls
         zip -r ./asteroids-v${{ needs.build.outputs.datetime}}.zip ./asteroids/
-        ls
     - uses: manleydev/butler-publish-itchio-action@master
       env:
         BUTLER_CREDENTIALS: ${{ secrets.ITCHIO_API_KEY }}
@@ -146,7 +145,7 @@ jobs:
         VERSION: v${{ needs.build.outputs.datetime }}
         ITCH_GAME: asteroids
         ITCH_USER: dylanlangston
-        PACKAGE: ./asteroids-v${{ needs.build.outputs.datetime}}.zip
+        PACKAGE: ${{ steps.download.outputs.download-path }}/../asteroids-v${{ needs.build.outputs.datetime}}.zip
 
         
   release:
@@ -163,14 +162,12 @@ jobs:
     - name: Create ZIP
       run: |
         cd ${{ steps.download.outputs.download-path }}/../
-        ls
         zip -r ./asteroids-v${{ needs.build.outputs.datetime}}.zip ./asteroids/
-        ls
     - name: Create Release
       id: create_release
       uses: ncipollo/release-action@v1
       with:
-        artifacts: "./asteroids-v${{ needs.build.outputs.datetime}}.zip"
+        artifacts: "${{ steps.download.outputs.download-path }}/../asteroids-v${{ needs.build.outputs.datetime}}.zip"
         artifactContentType: application/zip
         body: |
           **Asteroids Game - _Prerelease v${{ needs.build.outputs.datetime }}_**
