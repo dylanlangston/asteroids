@@ -91,7 +91,7 @@ jobs:
         id: upload
         uses: actions/upload-artifact@v4
         with:
-          name: asteroids-v${{ steps.set_datetime.outputs.datetime }}
+          name: release-artifact
           path: '${{ github.workspace }}/src/asteroids-website/build'
       - name: Build Svelte compressed
         run: |
@@ -133,10 +133,10 @@ jobs:
       uses: actions/download-artifact@v4
       with:
         name: itch-io
-    - name: Change Directory
+    - name: Create ZIP
       run: |
-        cd ${{ steps.download.outputs.download-path }}
-        ls
+        cd ${{ steps.download.outputs.download-path }}/../
+        zip -r ./astroids-v${{ needs.build.outputs.datetime}}.zip ./astroids/
     - uses: manleydev/butler-publish-itchio-action@master
       env:
         BUTLER_CREDENTIALS: ${{ secrets.ITCHIO_API_KEY }}
@@ -144,7 +144,7 @@ jobs:
         VERSION: v${{ needs.build.outputs.datetime }}
         ITCH_GAME: asteroids
         ITCH_USER: dylanlangston
-        PACKAGE: ./itch-io.zip
+        PACKAGE: ./astroids-v${{ needs.build.outputs.datetime}}.zip
 
         
   release:
@@ -157,11 +157,11 @@ jobs:
       id: download
       uses: actions/download-artifact@v4
       with:
-        name: asteroids-v${{ needs.build.outputs.datetime}}
-    - name: Change Directory
+        name: release-artifact
+    - name: Create ZIP
       run: |
-        cd ${{ steps.download.outputs.download-path }}
-        ls
+        cd ${{ steps.download.outputs.download-path }}/../
+        zip -r ./astroids-v${{ needs.build.outputs.datetime}}.zip ./astroids/
     - name: Create Release
       id: create_release
       uses: ncipollo/release-action@v1
