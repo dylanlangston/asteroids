@@ -136,7 +136,7 @@ jobs:
     - name: Create ZIP
       run: |
         cd ${{ steps.download.outputs.download-path }}/../
-        zip -r ./astroids-v${{ needs.build.outputs.datetime}}.zip ./astroids/
+        zip -r ./asteroids-v${{ needs.build.outputs.datetime}}.zip ./asteroids/
     - uses: manleydev/butler-publish-itchio-action@master
       env:
         BUTLER_CREDENTIALS: ${{ secrets.ITCHIO_API_KEY }}
@@ -144,7 +144,7 @@ jobs:
         VERSION: v${{ needs.build.outputs.datetime }}
         ITCH_GAME: asteroids
         ITCH_USER: dylanlangston
-        PACKAGE: ./astroids-v${{ needs.build.outputs.datetime}}.zip
+        PACKAGE: ./asteroids-v${{ needs.build.outputs.datetime}}.zip
 
         
   release:
@@ -161,7 +161,7 @@ jobs:
     - name: Create ZIP
       run: |
         cd ${{ steps.download.outputs.download-path }}/../
-        zip -r ./astroids-v${{ needs.build.outputs.datetime}}.zip ./astroids/
+        zip -r ./asteroids-v${{ needs.build.outputs.datetime}}.zip ./asteroids/
     - name: Create Release
       id: create_release
       uses: ncipollo/release-action@v1
