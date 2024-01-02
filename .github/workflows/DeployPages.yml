@@ -155,11 +155,12 @@ jobs:
       with:
         pattern: asteroids-*
         path: asteroids
+
     - name: Create Release
       id: create_release
       uses: ncipollo/release-action@v1
       with:
-        artifacts: "./asteroids/asteroids-v${{ needs.build.outputs.datetime}}.zip
+        artifacts: "./asteroids/asteroids-v${{ needs.build.outputs.datetime}}.zip"
         artifactContentType: application/zip
         body: |
           **Asteroids Game - _Prerelease v${{ needs.build.outputs.datetime }}_**
