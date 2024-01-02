@@ -215,7 +215,7 @@
 	on:orientationchange={(e) => UpdateSize(e)}
 	on:resize={(e) => UpdateSize(e)}
 	on:blur={(e) => requestPause()}
-	on:fullscreenchange={(e) => is_fullscreen = !!document.fullscreenElement}
+	on:fullscreenchange={(e) => (is_fullscreen = !!document.fullscreenElement)}
 />
 
 {#if $isLoading}

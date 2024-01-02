@@ -1,5 +1,5 @@
 import { vitePreprocess } from '@sveltejs/kit/vite';
-import preprocess from "svelte-preprocess";
+import preprocess from 'svelte-preprocess';
 import adapter from '@sveltejs/adapter-static';
 
 /** @type {import('@sveltejs/kit').Config} */
@@ -8,9 +8,9 @@ const config = {
 	// for more information about preprocessors
 	preprocess: [
 		preprocess({
-		  postcss: true,
+			postcss: true
 		}),
-		vitePreprocess(),
+		vitePreprocess()
 	],
 
 	kit: {
@@ -23,10 +23,35 @@ const config = {
 			pages: 'build',
 			assets: 'build',
 			fallback: '404.html',
-			precompress: false,
-			strict: true,
-		}),
-	},
+			precompress: shouldPrecompress(),
+			strict: true
+		})
+	}
 };
 
 export default config;
+
+function getArgs() {
+	const args = {};
+	process.argv.slice(2, process.argv.length).forEach((arg) => {
+		// long arg
+		if (arg.slice(0, 2) === '--') {
+			const longArg = arg.split('=');
+			const longArgFlag = longArg[0].slice(2, longArg[0].length);
+			const longArgValue = longArg.length > 1 ? longArg[1] : true;
+			args[longArgFlag] = longArgValue;
+		}
+		// flags
+		else if (arg[0] === '-') {
+			const flags = arg.slice(1, arg.length).split('');
+			flags.forEach((flag) => {
+				args[flag] = true;
+			});
+		}
+	});
+	return args;
+}
+
+function shouldPrecompress() {
+	return Object.keys(getArgs()).some((v) => v.toLowerCase() == 'precompress');
+}

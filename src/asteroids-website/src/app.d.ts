@@ -1,4 +1,4 @@
-import type { MiniAudio } from "./types/miniaudio";
+import type { MiniAudio } from './types/miniaudio';
 
 // See https://kit.svelte.dev/docs/types#app
 // for information about these interfaces

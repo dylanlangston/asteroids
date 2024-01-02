@@ -1,19 +1,19 @@
 {
-    "page": {
-        "Downloading": "Downloading... 📡",
-        "View_Source": "View Source",
-        "Fullscreen": "Fullscreen",
-        "Exit_Fullscreen": "Exit Fullscreen",
-        "Rotate": "Rotate!",
-        "Resize": "Resize!",
-        "Exception": "Exception thrown, see JavaScript console.\nReload page to try again."
-    },
-    "controls": {
-        "Pause": "Pause",
-        "Up": "Accelerate",
-        "Down": "Decelerate",
-        "Left": "Left",
-        "Right": "Right",
-        "A": "Fire"
-    }
+	"page": {
+		"Downloading": "Downloading... 📡",
+		"View_Source": "View Source",
+		"Fullscreen": "Fullscreen",
+		"Exit_Fullscreen": "Exit Fullscreen",
+		"Rotate": "Rotate!",
+		"Resize": "Resize!",
+		"Exception": "Exception thrown, see JavaScript console.\nReload page to try again."
+	},
+	"controls": {
+		"Pause": "Pause",
+		"Up": "Accelerate",
+		"Down": "Decelerate",
+		"Left": "Left",
+		"Right": "Right",
+		"A": "Fire"
+	}
 }

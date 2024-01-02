@@ -155,6 +155,12 @@ pub const Shared = struct {
             defer loadedShader.deactivate();
             return drawFunction();
         }
+        pub fn DrawWithArgs(shader: AssetManager.Shaders, comptime T: type, comptime A: type, drawFunction: *const fn (a: A) T, args: A) T {
+            const loadedShader = Get(shader);
+            loadedShader.activate();
+            defer loadedShader.deactivate();
+            return drawFunction(args);
+        }
     };
 
     pub const Sprite = Sprites;

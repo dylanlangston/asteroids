@@ -6,6 +6,7 @@
 		"dev": "vite dev",
 		"dev-open": "vite dev --open",
 		"build": "vite build",
+		"build-compressed": "vite build -- --precompress",
 		"preview": "vite preview --port 8080",
 		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
 		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",

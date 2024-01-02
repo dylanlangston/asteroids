@@ -1,4 +1,4 @@
-import "../app.postcss";
+import '../app.postcss';
 
 export const prerender = true;
 export const ssr = true;
