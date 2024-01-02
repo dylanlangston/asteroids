@@ -91,7 +91,7 @@ jobs:
         id: upload
         uses: actions/upload-artifact@v4
         with:
-          name: release-${{ steps.set_datetime.outputs.datetime }}
+          name: asteroids-${{ steps.set_datetime.outputs.datetime }}
           path: '${{ github.workspace }}/src/asteroids-website/build'
       - name: Build Svelte compressed
         run: |
@@ -128,6 +128,12 @@ jobs:
       with:
         name: github-pages
         path: asteroids
+    - name: Create compressed ZIP
+      run: |
+        cd ./asteroids
+        mkdir ./asteroids
+        tar -xvf ./artifact.tar -C ./asteroids
+        zip -r ../asteroids-v${{ needs.build.outputs.datetime}}.zip ./asteroids/
     - uses: manleydev/butler-publish-itchio-action@master
       env:
         BUTLER_CREDENTIALS: ${{ secrets.ITCHIO_API_KEY }}
@@ -135,7 +141,7 @@ jobs:
         VERSION: v${{ needs.build.outputs.datetime }}
         ITCH_GAME: asteroids
         ITCH_USER: dylanlangston
-        PACKAGE: ./asteroids/release-v${{ needs.build.outputs.datetime}}.zip 
+        PACKAGE: ./asteroids-v${{ needs.build.outputs.datetime }}.zip
 
         
   release:
@@ -147,19 +153,13 @@ jobs:
     - name: Download artifact
       uses: actions/download-artifact@v4
       with:
-        pattern: release-*
+        pattern: asteroids-*
         path: asteroids
-    - name: Create ZIP
-      run: |
-        cd ./asteroids
-        mkdir ./asteroids
-        tar -xvf ./artifact.tar -C ./asteroids
-        zip -r ../asteroids-v${{ needs.build.outputs.datetime}}.zip ./asteroids/
     - name: Create Release
       id: create_release
       uses: ncipollo/release-action@v1
       with:
-        artifacts: "./asteroids-v${{ needs.build.outputs.datetime }}.zip"
+        artifacts: "./asteroids/asteroids-v${{ needs.build.outputs.datetime}}.zip
         artifactContentType: application/zip
         body: |
           **Asteroids Game - _Prerelease v${{ needs.build.outputs.datetime }}_**
