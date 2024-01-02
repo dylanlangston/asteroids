@@ -130,10 +130,10 @@ jobs:
         path: asteroids-compressed
     - name: Create compressed ZIP
       run: |
-        cd ./asteroids-compressed
-        mkdir ./asteroids-compressed
-        tar -xvf ./artifact-compressed.tar -C ./asteroids-compressed
-        zip -r ../asteroids-v${{ needs.build.outputs.datetime }}.zip ./asteroids/
+        cd ./asteroids
+        mkdir ./asteroids
+        tar -xvf ./artifact.tar -C ./asteroids
+        zip -r ../asteroids-v${{ needs.build.outputs.datetime}}.zip ./asteroids/
     - uses: manleydev/butler-publish-itchio-action@master
       env:
         BUTLER_CREDENTIALS: ${{ secrets.ITCHIO_API_KEY }}
