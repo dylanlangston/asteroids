@@ -97,10 +97,16 @@ jobs:
         run: |
           cd ${{ github.workspace }}/src/asteroids-website
           npm run build-compressed
-      - name: Upload compressed artifact
+      - name: Upload github pages artifact
         id: upload-compressed
         uses: actions/upload-pages-artifact@v2
         with:
+          path: '${{ github.workspace }}/src/asteroids-website/build'
+      - name: Upload itch.io artifact
+        id: upload
+        uses: actions/upload-artifact@v4
+        with:
+          name: itch-io
           path: '${{ github.workspace }}/src/asteroids-website/build'
 
   deploy-github-pages:
@@ -126,14 +132,8 @@ jobs:
     - name: Download artifact compressed
       uses: actions/download-artifact@v4
       with:
-        name: github-pages
+        name: itch-io
         path: asteroids
-    - name: Create compressed ZIP
-      run: |
-        cd ./asteroids
-        mkdir ./asteroids
-        tar -xvf ./artifact.tar -C ./asteroids
-        zip -r ../asteroids-v${{ needs.build.outputs.datetime}}.zip ./asteroids/
     - uses: manleydev/butler-publish-itchio-action@master
       env:
         BUTLER_CREDENTIALS: ${{ secrets.ITCHIO_API_KEY }}
@@ -141,7 +141,7 @@ jobs:
         VERSION: v${{ needs.build.outputs.datetime }}
         ITCH_GAME: asteroids
         ITCH_USER: dylanlangston
-        PACKAGE: ./asteroids-v${{ needs.build.outputs.datetime }}.zip
+        PACKAGE: ./asteroids/itch-io.zip
 
         
   release:
