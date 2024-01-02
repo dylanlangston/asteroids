@@ -136,6 +136,7 @@ jobs:
     - name: Change Directory
       run: |
         cd ${{ steps.download.outputs.download-path }}
+        ls
     - uses: manleydev/butler-publish-itchio-action@master
       env:
         BUTLER_CREDENTIALS: ${{ secrets.ITCHIO_API_KEY }}
@@ -160,6 +161,7 @@ jobs:
     - name: Change Directory
       run: |
         cd ${{ steps.download.outputs.download-path }}
+        ls
     - name: Create Release
       id: create_release
       uses: ncipollo/release-action@v1
