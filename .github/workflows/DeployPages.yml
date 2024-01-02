@@ -103,7 +103,7 @@ jobs:
         with:
           path: '${{ github.workspace }}/src/asteroids-website/build'
       - name: Upload itch.io artifact
-        id: upload
+        id: upload-itchio
         uses: actions/upload-artifact@v4
         with:
           name: itch-io
