@@ -128,12 +128,6 @@ jobs:
       with:
         name: github-pages
         path: asteroids
-    - name: Create compressed ZIP
-      run: |
-        cd ./asteroids
-        mkdir ./asteroids
-        tar -xvf ./artifact.tar -C ./asteroids
-        zip -r ../asteroids-v${{ needs.build.outputs.datetime}}.zip ./asteroids/
     - uses: manleydev/butler-publish-itchio-action@master
       env:
         BUTLER_CREDENTIALS: ${{ secrets.ITCHIO_API_KEY }}
@@ -141,7 +135,7 @@ jobs:
         VERSION: v${{ needs.build.outputs.datetime }}
         ITCH_GAME: asteroids
         ITCH_USER: dylanlangston
-        PACKAGE: ./asteroids-v${{ needs.build.outputs.datetime }}.zip
+        PACKAGE: ./asteroids/release-v${{ needs.build.outputs.datetime}}.zip 
 
         
   release:
