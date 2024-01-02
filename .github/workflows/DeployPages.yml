@@ -136,7 +136,9 @@ jobs:
     - name: Create ZIP
       run: |
         cd ${{ steps.download.outputs.download-path }}/../
+        ls
         zip -r ./asteroids-v${{ needs.build.outputs.datetime}}.zip ./asteroids/
+        ls
     - uses: manleydev/butler-publish-itchio-action@master
       env:
         BUTLER_CREDENTIALS: ${{ secrets.ITCHIO_API_KEY }}
@@ -161,7 +163,9 @@ jobs:
     - name: Create ZIP
       run: |
         cd ${{ steps.download.outputs.download-path }}/../
+        ls
         zip -r ./asteroids-v${{ needs.build.outputs.datetime}}.zip ./asteroids/
+        ls
     - name: Create Release
       id: create_release
       uses: ncipollo/release-action@v1
