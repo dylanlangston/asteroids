@@ -134,18 +134,15 @@ jobs:
       uses: actions/download-artifact@v4
       with:
         name: itch-io
-    - name: Create ZIP
-      run: |
-        cd ${{ steps.download.outputs.download-path }}/../
-        zip -r ./asteroids-v${{ needs.build.outputs.datetime}}.zip ./asteroids/
-    - uses: manleydev/butler-publish-itchio-action@master
+    - name: Push to itch.io
+      uses: manleydev/butler-publish-itchio-action@master
       env:
         BUTLER_CREDENTIALS: ${{ secrets.ITCHIO_API_KEY }}
         CHANNEL: html
         VERSION: v${{ needs.build.outputs.datetime }}
         ITCH_GAME: asteroids
         ITCH_USER: dylanlangston
-        PACKAGE: ${{ steps.download.outputs.download-path }}/../asteroids-v${{ needs.build.outputs.datetime}}.zip
+        PACKAGE: ${{ steps.download.outputs.download-path }}
 
         
   release:
