@@ -142,7 +142,7 @@ jobs:
         VERSION: v${{ needs.build.outputs.datetime }}
         ITCH_GAME: asteroids
         ITCH_USER: dylanlangston
-        PACKAGE: ${{ steps.download.outputs.download-path }}
+        PACKAGE: /home/runner/work/asteroids/asteroids/
 
         
   release:
