@@ -143,10 +143,10 @@ jobs:
         ITCH_GAME: asteroids
         ITCH_USER: dylanlangston
         PACKAGE: ${{ steps.download.outputs.download-path }}
-      - name: First load of itch.io 
-        uses: karol-brejna-i/webpage-screenshot-action@v1
-        with:
-          url: https://dylanlangston.itch.io/asteroids
+    - name: First load of itch.io 
+      uses: karol-brejna-i/webpage-screenshot-action@v1
+      with:
+        url: https://dylanlangston.itch.io/asteroids
 
         
   release:
