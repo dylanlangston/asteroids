@@ -91,7 +91,7 @@ jobs:
         id: upload
         uses: actions/upload-artifact@v4
         with:
-          name: release-artifact
+          name: release-${{ steps.set_datetime.outputs.datetime }}
           path: '${{ github.workspace }}/src/asteroids-website/build'
       - name: Build Svelte compressed
         run: |
@@ -124,7 +124,7 @@ jobs:
       contents: write
     steps:
     - name: Download artifact compressed
-      uses: actions/download-artifact@v3.0.2
+      uses: actions/download-artifact@v4
       with:
         name: github-pages
         path: asteroids
@@ -151,7 +151,7 @@ jobs:
       contents: write
     steps:
     - name: Download artifact
-      uses: actions/download-artifact@v3.0.2
+      uses: actions/download-artifact@v4
       with:
         pattern: release-*
         path: asteroids
