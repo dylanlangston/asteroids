@@ -18,12 +18,7 @@ concurrency:
 jobs:
   build:
     runs-on: ubuntu-latest
-    outputs:
-      datetime: ${{ steps.set_datetime.outputs.datetime }}
     steps:
-      - name: Set current datetime output variable
-        id: set_datetime
-        run: echo "datetime=$(date +"%Y%m%d%H%M%S")" >> "$GITHUB_OUTPUT"
       - name: Setup Pages
         uses: actions/configure-pages@v3
       - name: Checkout
@@ -104,7 +99,9 @@ jobs:
 
   deploy-github-pages:
     runs-on: ubuntu-latest
-    needs: [build]
+    outputs:
+      datetime: ${{ steps.set_datetime.outputs.datetime }}
+    needs: build
     permissions:
       pages: write      # to deploy to Pages
       id-token: write   # to verify the deployment originates from an appropriate source
@@ -112,13 +109,16 @@ jobs:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
+      - name: Set current datetime output variable
+        id: set_datetime
+        run: echo "datetime=$(date +"%Y%m%d%H%M%S")" >> "$GITHUB_OUTPUT"
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v2
   
   deploy-itchio:
     runs-on: ubuntu-latest
-    needs: [build, deploy-github-pages]
+    needs: deploy-github-pages
     permissions:
       contents: write
     steps:
@@ -145,7 +145,7 @@ jobs:
         
   release:
     runs-on: ubuntu-latest
-    needs: [build, deploy-github-pages]
+    needs: deploy-github-pages
     permissions:
       contents: write
     steps:
