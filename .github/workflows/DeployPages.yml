@@ -91,6 +91,7 @@ jobs:
         id: upload
         uses: actions/upload-artifact@v4
         with:
+          name: release-artifact
           path: '${{ github.workspace }}/src/asteroids-website/build'
       - name: Build Svelte compressed
         run: |
@@ -100,7 +101,6 @@ jobs:
         id: upload-compressed
         uses: actions/upload-pages-artifact@v2
         with:
-          name: release-artifact
           path: '${{ github.workspace }}/src/asteroids-website/build'
 
   deploy-github-pages:
