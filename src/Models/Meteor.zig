@@ -114,7 +114,7 @@ pub const Meteor = struct {
         );
     }
 
-    pub inline fn Update(self: *@This(), player: Player, comptime shoots: []Shoot, comptime aliens: []Alien, comptime alien_shoots: []Shoot, screenSize: raylib.Vector2) MeteorStatus {
+    pub inline fn Update(self: *@This(), player: Player, comptime shoots: []Shoot, comptime aliens: []Alien, comptime alien_shoots: []Shoot, screenSize: raylib.Vector2, shipHeight: f32, base_size: f32) MeteorStatus {
         // If Active
         if (self.active) {
             // Reset Frame
@@ -122,7 +122,7 @@ pub const Meteor = struct {
             // Reset color
             self.color = Shared.Color.Blue.Base;
 
-            // Check Collision with player
+            // Check Collision with player based on circle radius
             if (raylib.checkCollisionCircles(
                 raylib.Vector2.init(
                     player.collider.x,
@@ -132,12 +132,15 @@ pub const Meteor = struct {
                 self.position,
                 self.radius,
             )) {
-                self.active = false;
+                // Phase 2, check per pixel collision with player
+                if (PerPixelCollisionDetection(self.*, player, shipHeight, base_size)) {
+                    self.active = false;
 
-                self.color = Shared.Color.Red.Base;
+                    self.color = Shared.Color.Red.Base;
 
-                Shared.Sound.Play(.Explosion);
-                return MeteorStatus{ .collide = true };
+                    Shared.Sound.Play(.Explosion);
+                    return MeteorStatus{ .collide = true };
+                }
             }
 
             // Check if alien will collide
@@ -236,6 +239,85 @@ pub const Meteor = struct {
         }
 
         return MeteorStatus{ .default = true };
+    }
+
+    // Very costly to calculate so this should be used sparingly
+    pub fn PerPixelCollisionDetection(meteor: Meteor, player: Player, shipHeight: f32, base_size: f32) bool {
+
+        // Calculate the intersecting rectangle
+        const x1 = @max(meteor.position.x - meteor.radius, player.collider.x - player.collider.z);
+        const x2 = @min(meteor.position.x + meteor.radius, player.collider.x + player.collider.z);
+        const y1 = @max(meteor.position.y - meteor.radius, player.collider.y - player.collider.z);
+        const y2 = @min(meteor.position.y + meteor.radius, player.collider.y + player.collider.z);
+        const width = x2 - x1;
+        const height = y2 - y1;
+
+        const meteorRenderTexture = raylib.loadRenderTexture(@intFromFloat(width), @intFromFloat(height));
+        defer raylib.unloadRenderTexture(meteorRenderTexture);
+        {
+            raylib.beginTextureMode(meteorRenderTexture);
+
+            // Draw Meteor
+            const spriteFrame = MeteorSprite.getSpriteFrame(@intFromFloat(meteor.frame));
+            raylib.drawTextureNPatch(
+                spriteFrame.Texture,
+                spriteFrame.NPatchInfo,
+                raylib.Rectangle.init(
+                    meteor.position.x - x1,
+                    meteor.position.y - y1,
+                    meteor.radius * 2,
+                    meteor.radius * 2,
+                ),
+                raylib.Vector2.init(
+                    meteor.radius,
+                    meteor.radius,
+                ),
+                meteor.rotation * 365,
+                Shared.Color.Tone.Light,
+            );
+
+            raylib.endTextureMode();
+        }
+        const meteorRenderImage = raylib.Image.fromTexture(meteorRenderTexture.texture);
+        defer meteorRenderImage.unload();
+
+        const playerRenderTexture = raylib.loadRenderTexture(@intFromFloat(width), @intFromFloat(height));
+        defer raylib.unloadRenderTexture(playerRenderTexture);
+        {
+            raylib.beginTextureMode(playerRenderTexture);
+
+            // Draw Player
+            const shipTexture = Shared.Texture.Get(.Ship);
+            const shipWidthF = @as(f32, @floatFromInt(shipTexture.width));
+            const shipHeightF = @as(f32, @floatFromInt(shipTexture.height));
+            raylib.drawTexturePro(
+                shipTexture,
+                raylib.Rectangle.init(0, 0, shipWidthF, shipHeightF),
+                raylib.Rectangle.init(player.position.x - x1, player.position.y - y1, base_size, shipHeight),
+                raylib.Vector2.init(base_size / 2, shipHeight / 2),
+                player.rotation,
+                Shared.Color.Tone.Light,
+            );
+
+            raylib.endTextureMode();
+        }
+        const playerRenderImage = raylib.Image.fromTexture(playerRenderTexture.texture);
+        defer playerRenderImage.unload();
+
+        for (0..@as(usize, @intFromFloat(height))) |y| {
+            for (0..@as(usize, @intFromFloat(width))) |x| {
+                // Get the color from each image
+                const meteorColor = raylib.getImageColor(meteorRenderImage, @intCast(x), @intCast(y));
+                const playerColor = raylib.getImageColor(playerRenderImage, @intCast(x), @intCast(y));
+
+                if (meteorColor.a != 0 and playerColor.a != 0) // If both colors are not transparent (the alpha channel is not 0), then there is a collision
+                {
+                    return true;
+                }
+            }
+        }
+
+        return false;
     }
 
     const activeRadiusX = 500;

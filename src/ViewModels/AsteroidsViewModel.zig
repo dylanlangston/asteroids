@@ -198,7 +198,7 @@ pub const AsteroidsViewModel = Shared.View.ViewModel.Create(
             for (0..MAX_SMALL_METEORS) |i| {
                 // Check Large
                 if (i < MAX_BIG_METEORS) {
-                    switch (bigMeteors[i].Update(player, &shoot, &aliens, &alien_shoot, screenSize)) {
+                    switch (bigMeteors[i].Update(player, &shoot, &aliens, &alien_shoot, screenSize, shipHeight, PLAYER_BASE_SIZE)) {
                         .default => {},
                         .shot => |shot| {
                             bigMeteorsCount -= 1;
@@ -273,7 +273,7 @@ pub const AsteroidsViewModel = Shared.View.ViewModel.Create(
 
                 // Check Medium
                 if (i < MAX_MEDIUM_METEORS) {
-                    switch (mediumMeteors[i].Update(player, &shoot, &aliens, &alien_shoot, screenSize)) {
+                    switch (mediumMeteors[i].Update(player, &shoot, &aliens, &alien_shoot, screenSize, shipHeight, PLAYER_BASE_SIZE)) {
                         .default => {},
                         .shot => |shot| {
                             midMeteorsCount -= 1;
@@ -347,7 +347,7 @@ pub const AsteroidsViewModel = Shared.View.ViewModel.Create(
                 }
 
                 // Check Small
-                switch (smallMeteors[i].Update(player, &shoot, &aliens, &alien_shoot, screenSize)) {
+                switch (smallMeteors[i].Update(player, &shoot, &aliens, &alien_shoot, screenSize, shipHeight, PLAYER_BASE_SIZE)) {
                     .default => {},
                     .shot => {
                         smallMeteorsCount -= 1;

@@ -21,6 +21,7 @@ pub const Starscape = struct {
         var renderTexture = raylib.loadRenderTexture(@intFromFloat(screenSize.x), @intFromFloat(screenSize.y));
         {
             raylib.beginTextureMode(renderTexture);
+            defer raylib.endTextureMode();
             raylib.clearBackground(Shared.Color.Transparent);
             for (stars) |star| {
                 raylib.drawCircleGradient(
@@ -31,7 +32,6 @@ pub const Starscape = struct {
                     Shared.Color.Yellow.Base,
                 );
             }
-            defer raylib.endTextureMode();
         }
 
         return Starscape{

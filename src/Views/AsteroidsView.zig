@@ -24,8 +24,6 @@ fn DrawFunction() Shared.View.Views {
         vm.player.position,
     );
 
-    vm.Update();
-
     // Draw spaceship
     vm.player.Draw(vm.shipHeight, vm.PLAYER_BASE_SIZE);
 
@@ -61,6 +59,8 @@ fn DrawFunction() Shared.View.Views {
 
 fn DrawWithCamera() Shared.View.Views {
     Shared.Music.Play(.BackgroundMusic);
+
+    vm.Update();
 
     const camera = Shared.Camera.initScaledTargetCamera(
         vm.screenSize,
