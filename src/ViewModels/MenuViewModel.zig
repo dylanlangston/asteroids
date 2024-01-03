@@ -11,7 +11,6 @@ const Shoot = @import("../Models/Shoot.zig").Shoot;
 
 pub const Selection = enum {
     Start,
-    Settings,
     Quit,
     None,
 };
@@ -75,9 +74,6 @@ pub const MenuViewModel = Shared.View.ViewModel.Create(
             switch (select) {
                 Selection.Start => {
                     return locale.Menu_StartGame;
-                },
-                Selection.Settings => {
-                    return locale.Menu_Settings;
                 },
                 Selection.Quit => {
                     return locale.Menu_Quit;

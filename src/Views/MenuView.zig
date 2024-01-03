@@ -176,9 +176,6 @@ inline fn GetSelection() Shared.View.Views {
         Selection.Start => {
             return .AsteroidsView;
         },
-        Selection.Settings => {
-            return .SettingsView;
-        },
         Selection.Quit => {
             return .Unknown;
         },

@@ -4,7 +4,6 @@ pub const spanish = Locale{
     .Dylan_Splash_Text = "DylanLangston Juegos",
     .Title = "Arena de asteroides",
     .Menu_StartGame = "Presione Disparar para comenzar",
-    .Menu_Settings = "Configuracion",
     .Menu_Quit = "Salir",
     .Paused = "Pausado",
     .Continue = "Continuar",

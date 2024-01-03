@@ -24,7 +24,6 @@ pub const Locale = struct {
     Dylan_Splash_Text: [:0]const u8,
     Title: [:0]const u8,
     Menu_StartGame: [:0]const u8,
-    Menu_Settings: [:0]const u8,
     Menu_Quit: [:0]const u8,
     Paused: [:0]const u8,
     Continue: [:0]const u8,

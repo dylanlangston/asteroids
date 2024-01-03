@@ -12,7 +12,6 @@ pub const ViewLocator = struct {
         @import("./Views/PausedView.zig").PausedView,
         @import("./Views/AsteroidsView.zig").AsteroidsView,
         @import("./Views/MenuView.zig").MenuView,
-        @import("./Views/SettingsView.zig").SettingsView,
         @import("./Views/GameOverView.zig").GameOverView,
     };
 
