@@ -136,6 +136,7 @@ pub const AsteroidsViewModel = Shared.View.ViewModel.Create(
 
         pub inline fn deinit() void {
             starScape.deinit();
+            lastScore = 0;
         }
 
         var lastScore: u64 = 0;
