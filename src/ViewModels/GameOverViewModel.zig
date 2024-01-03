@@ -13,6 +13,8 @@ pub const GameOverViewModel = Shared.View.ViewModel.Create(
             score = Score;
             highScore = HighScore;
 
+            Shared.Sound.Play(.Gameover);
+
             if (score > highScore) {
                 Shared.Settings.UpdateSettings(.{
                     .HighScore = score,
