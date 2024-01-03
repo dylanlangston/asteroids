@@ -88,12 +88,12 @@ pub const AsteroidsViewModel = Shared.View.ViewModel.Create(
             // Initialization Meteors
             for (0..MAX_SMALL_METEORS) |i| {
                 if (i < MAX_BIG_METEORS) {
-                    bigMeteors[i] = Meteor.init(40);
+                    bigMeteors[i] = Meteor.init(Shared.Random.Get().float(f32) * 40 + 40);
                 }
                 if (i < MAX_MEDIUM_METEORS) {
-                    mediumMeteors[i] = Meteor.init(20);
+                    mediumMeteors[i] = Meteor.init(Shared.Random.Get().float(f32) * 20 + 20);
                 }
-                smallMeteors[i] = Meteor.init(10);
+                smallMeteors[i] = Meteor.init(Shared.Random.Get().float(f32) * 10 + 10);
             }
             bigMeteorsCount = 0;
             midMeteorsCount = 0;
