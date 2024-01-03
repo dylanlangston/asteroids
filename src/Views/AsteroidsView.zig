@@ -62,18 +62,32 @@ fn DrawWithCamera() Shared.View.Views {
 
     vm.Update();
 
+    const screenWidth: f32 = @floatFromInt(raylib.getScreenWidth());
+    const screenHeight: f32 = @floatFromInt(raylib.getScreenHeight());
+    const screenSize = raylib.Vector2.init(screenWidth, screenHeight);
+
+    const shakeAmount = screenWidth / 400;
+    const target = if (vm.player.status == .collide) raylib.Vector2.init(
+        vm.player.position.x - (if (Shared.Random.Get().boolean()) shakeAmount else -shakeAmount),
+        vm.player.position.y - vm.shipHeight - (if (Shared.Random.Get().boolean()) shakeAmount else -shakeAmount),
+    ) else raylib.Vector2.init(
+        vm.player.position.x,
+        vm.player.position.y - vm.shipHeight,
+    );
     const camera = Shared.Camera.initScaledTargetCamera(
         vm.screenSize,
+        screenSize,
         3.5,
-        raylib.Vector2.init(
-            vm.player.position.x,
-            vm.player.position.y - vm.shipHeight,
-        ),
+        target,
     );
     const result = camera.Draw(Shared.View.Views, &DrawFunction);
 
+    // Flash screen if player hurt
+    if (vm.player.status != .default) {
+        raylib.drawRectangleV(raylib.Vector2.init(0, 0), screenSize, Shared.Color.Red.Base.alpha(0.1));
+    }
+
     // Draw Health Bar
-    const screenWidth: f32 = @floatFromInt(raylib.getScreenWidth());
     const onePixelScaled: f32 = 0.0025 * screenWidth;
     const healthBarWidth = onePixelScaled * 100;
     raylib.drawRectangleRounded(

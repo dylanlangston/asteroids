@@ -18,14 +18,12 @@ pub const Camera = struct {
         };
     }
 
-    pub fn initScaledTargetCamera(targetScreenSize: raylib.Vector2, scaleFactor: f32, target: raylib.Vector2) Camera {
-        const screenWidth: f32 = @as(f32, @floatFromInt(raylib.getScreenWidth()));
-        const screenHeight: f32 = @as(f32, @floatFromInt(raylib.getScreenHeight()));
-        const zoomScale: f32 = (screenWidth / targetScreenSize.x) * scaleFactor;
+    pub fn initScaledTargetCamera(targetScreenSize: raylib.Vector2, currentScreenSize: raylib.Vector2, scaleFactor: f32, target: raylib.Vector2) Camera {
+        const zoomScale: f32 = (currentScreenSize.x / targetScreenSize.x) * scaleFactor;
         return Camera{
             .camera2D = raylib.Camera2D{
                 .target = target,
-                .offset = raylib.Vector2.init(screenWidth / 2, screenHeight / 2),
+                .offset = raylib.Vector2.init(currentScreenSize.x / 2, currentScreenSize.y / 2),
                 .zoom = zoomScale,
                 .rotation = 0,
             },

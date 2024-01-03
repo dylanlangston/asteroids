@@ -12,6 +12,8 @@ pub const Player = struct {
     rotation: f32,
     collider: raylib.Vector3,
     color: raylib.Color,
+    frame: f32,
+    status: PlayerStatusType,
 
     const PLAYER_SPEED: f32 = 5;
 
@@ -38,6 +40,8 @@ pub const Player = struct {
                 0,
                 0,
             ),
+            .frame = 0,
+            .status = .default,
             .acceleration = 0,
             .rotation = 0,
             .collider = raylib.Vector3.init(

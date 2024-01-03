@@ -163,12 +163,22 @@ pub const AsteroidsViewModel = Shared.View.ViewModel.Create(
             // Update Player
             switch (player.Update(&shoot, &aliens, &alien_shoot, screenSize, halfShipHeight)) {
                 .collide => {
+                    player.status = .collide;
+                    player.frame = 0;
                     nextShieldLevel -= 1;
                 },
                 .shot => {
+                    player.status = .shot;
                     nextShieldLevel -= 5;
                 },
-                .default => {},
+                .default => {
+                    if (player.frame > 0.25) {
+                        player.status = .default;
+                        player.frame = 0;
+                    } else if (player.status != .default) {
+                        player.frame += raylib.getFrameTime();
+                    }
+                },
             }
 
             // Update Aliens
@@ -230,6 +240,8 @@ pub const AsteroidsViewModel = Shared.View.ViewModel.Create(
                             NewAlien();
                         },
                         .collide => {
+                            player.status = .collide;
+
                             if (bigMeteors[i].position.x > player.collider.x - halfShipHeight) {
                                 player.rotation = std.math.radiansToDegrees(f32, std.math.pi * 2 - std.math.degreesToRadians(f32, player.rotation));
                             } else if (bigMeteors[i].position.x < halfShipHeight) {
@@ -305,6 +317,8 @@ pub const AsteroidsViewModel = Shared.View.ViewModel.Create(
                             NewAlien();
                         },
                         .collide => {
+                            player.status = .collide;
+
                             if (mediumMeteors[i].position.x > player.collider.x) {
                                 player.rotation = std.math.radiansToDegrees(f32, std.math.pi * 2 - std.math.degreesToRadians(f32, player.rotation));
                             } else if (mediumMeteors[i].position.x < player.collider.x) {
@@ -369,6 +383,8 @@ pub const AsteroidsViewModel = Shared.View.ViewModel.Create(
                         NewAlien();
                     },
                     .collide => {
+                        player.status = .collide;
+
                         if (smallMeteors[i].position.x > player.collider.x) {
                             player.rotation = std.math.radiansToDegrees(f32, std.math.pi * 2 - std.math.degreesToRadians(f32, player.rotation));
                         } else if (smallMeteors[i].position.x < player.collider.x) {
