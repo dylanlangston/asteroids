@@ -60,6 +60,8 @@ fn DrawFunction() Shared.View.Views {
 }
 
 fn DrawWithCamera() Shared.View.Views {
+    Shared.Music.Play(.BackgroundMusic);
+
     const camera = Shared.Camera.initScaledTargetCamera(
         vm.screenSize,
         3.5,

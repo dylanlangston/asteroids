@@ -201,6 +201,12 @@ pub const Shared = struct {
                 raylib.updateMusicStream(s.?);
             }
         }
+        pub inline fn SetVolume(music: AssetManager.Musics, volume: f32) void {
+            const s = Get(music);
+            if (s != null) {
+                raylib.setMusicVolume(s.?, volume);
+            }
+        }
     };
 
     pub const Settings = struct {

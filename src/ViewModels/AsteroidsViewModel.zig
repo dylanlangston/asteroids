@@ -60,6 +60,8 @@ pub const AsteroidsViewModel = Shared.View.ViewModel.Create(
         pub inline fn init() void {
             starScape = Starscape.init(screenSize);
 
+            Shared.Music.SetVolume(.BackgroundMusic, 0.35);
+
             const settings = Shared.Settings.GetSettings();
             if (settings.NoDamage != null) {
                 takeDamage = !settings.NoDamage.?;
