@@ -29,7 +29,7 @@ pub const Player = struct {
         default: bool,
     };
 
-    pub inline fn init(screenSize: raylib.Vector2, shipHeight: f32) Player {
+    pub inline fn init(screenSize: raylib.Vector2, shipHeight: f32, colliderSize: f32) Player {
         const position = raylib.Vector2.init(
             screenSize.x / 2,
             (screenSize.y - shipHeight) / 2,
@@ -47,7 +47,7 @@ pub const Player = struct {
             .collider = raylib.Vector3.init(
                 position.x,
                 position.y,
-                12,
+                colliderSize,
             ),
             .color = Shared.Color.Gray.Light,
         };

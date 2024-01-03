@@ -9,24 +9,28 @@ const Shared = @import("../Shared.zig").Shared;
 const vm: type = MenuViewModel.GetVM();
 const AsteroidsVM = AsteroidsViewModel.GetVM();
 
-pub fn Background(target: raylib.Vector2) void {
-    raylib.drawRectangleLinesEx(
-        raylib.Rectangle.init(0, 0, AsteroidsVM.screenSize.x, AsteroidsVM.screenSize.y),
-        5,
-        Shared.Color.Green.Light,
-    );
-
+fn Background(target: raylib.Vector2) void {
     AsteroidsVM.starScape.Draw(
         AsteroidsVM.screenSize.x,
         AsteroidsVM.screenSize.y,
         target,
     );
+
+    inline for (0..vm.aliens.len) |i| {
+        vm.aliens[i].Draw();
+    }
+
+    inline for (0..vm.meteors.len) |i| {
+        vm.meteors[i].Draw(vm.player.position);
+    }
 }
 
 pub fn DrawFunction() Shared.View.Views {
     raylib.clearBackground(Shared.Color.Tone.Dark);
 
     Shared.Music.Play(.TitleScreenMusic);
+
+    vm.Update();
 
     const locale = Shared.Locale.GetLocale().?;
     const font = Shared.Font.Get(.Unknown);

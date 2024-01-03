@@ -73,7 +73,7 @@ pub const AsteroidsViewModel = Shared.View.ViewModel.Create(
             shieldLevel = MAX_SHIELD;
             nextShieldLevel = MAX_SHIELD;
 
-            player = Player.init(screenSize, shipHeight);
+            player = Player.init(screenSize, shipHeight, 12);
 
             score = 0;
 
