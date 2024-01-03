@@ -12,6 +12,7 @@ pub const Settings = struct {
     DebugView: ?i32,
     NoDamage: ?bool,
     UserLocale: Locales,
+    HighScore: u64,
 
     pub inline fn save(self: Settings, allocator: Allocator) bool {
         var settings = std.ArrayList(u8).init(allocator);
@@ -58,6 +59,11 @@ pub const Settings = struct {
                 };
                 defer settings.deinit();
 
+                var highScoreDecryptedOut: [32]u8 = undefined;
+                Shared.Crypto.Decrypt(settings.value.object.get("HighScore").?.string[0..], highScoreDecryptedOut[0..]);
+                var trimValue: [1]u8 = undefined;
+                const highScore = if (settings.value.object.contains("HighScore")) (std.fmt.parseInt(u64, std.mem.trimRight(u8, &highScoreDecryptedOut, &trimValue), 10) catch default_settings.HighScore) else default_settings.HighScore;
+
                 return NormalizeSettings(Settings{
                     .CurrentResolution = Resolution{
                         .Width = 1,
@@ -68,6 +74,7 @@ pub const Settings = struct {
                     .DebugView = if (settings.value.object.contains("DebugView")) @intCast(settings.value.object.get("DebugView").?.integer) else default_settings.DebugView,
                     .NoDamage = if (settings.value.object.contains("NoDamage")) settings.value.object.get("NoDamage").?.bool else default_settings.NoDamage,
                     .UserLocale = if (settings.value.object.contains("UserLocale")) @enumFromInt(settings.value.object.get("UserLocale").?.integer) else default_settings.UserLocale,
+                    .HighScore = highScore,
                 });
             }
             return default_settings;
@@ -119,6 +126,7 @@ pub const Settings = struct {
             .DebugView = settings.DebugView,
             .NoDamage = settings.NoDamage,
             .UserLocale = settings.UserLocale,
+            .HighScore = settings.HighScore,
         };
     }
 
@@ -149,6 +157,17 @@ pub const Settings = struct {
             try out.objectField("UserLocale");
             try out.write(self.UserLocale);
         }
+        if (builtin.target.os.tag != .wasi) {
+            try out.objectField("HighScore");
+            try out.write(self.HighScore);
+        } else {
+            try out.objectField("HighScore");
+            var highScoreEncryptedBuffer: [48]u8 = undefined;
+            var printBuffer: [32]u8 = undefined;
+            Shared.Crypto.Encrypt(Shared.Crypto.GetIV(), std.fmt.bufPrint(&printBuffer, "{d}", .{self.HighScore}) catch "0", &highScoreEncryptedBuffer);
+            try out.write(highScoreEncryptedBuffer);
+        }
+
         try out.endObject();
     }
 
@@ -161,6 +180,7 @@ pub const Settings = struct {
         .DebugView = null,
         .NoDamage = null,
         .UserLocale = Locales.unknown,
+        .HighScore = 0,
     };
 
     const Resolution = struct {

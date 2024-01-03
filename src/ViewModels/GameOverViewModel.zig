@@ -12,6 +12,14 @@ pub const GameOverViewModel = Shared.View.ViewModel.Create(
         pub inline fn GameOver(Score: u64, HighScore: u64) void {
             score = Score;
             highScore = HighScore;
+
+            if (score > highScore) {
+                Shared.Settings.UpdateSettings(.{
+                    .HighScore = score,
+                });
+                Shared.Settings.SaveNow();
+            }
+
             raylib.endDrawing();
             const img = raylib.loadImageFromScreen();
             defer img.unload();
