@@ -26,8 +26,8 @@ pub const AsteroidsViewModel = Shared.View.ViewModel.Create(
         pub const MAX_SHIELD: u8 = 50;
 
         // Variables
-        pub var shieldLevel: u8 = MAX_SHIELD;
-        var nextShieldLevel: u8 = MAX_SHIELD;
+        pub var shieldLevel: i16 = MAX_SHIELD;
+        var nextShieldLevel: i16 = MAX_SHIELD;
 
         pub const screenSize: raylib.Vector2 = raylib.Vector2.init(3200, 1800);
 
@@ -160,7 +160,7 @@ pub const AsteroidsViewModel = Shared.View.ViewModel.Create(
             // Update Player
             switch (player.Update(&shoot, &aliens, &alien_shoot, screenSize, halfShipHeight)) {
                 .collide => {
-                    shieldLevel = 0;
+                    nextShieldLevel -= 1;
                 },
                 .shot => {
                     nextShieldLevel -= 5;
@@ -227,7 +227,44 @@ pub const AsteroidsViewModel = Shared.View.ViewModel.Create(
                             NewAlien();
                         },
                         .collide => {
-                            shieldLevel = 0;
+                            if (bigMeteors[i].position.x > player.collider.x - halfShipHeight) {
+                                player.rotation = std.math.radiansToDegrees(f32, std.math.pi * 2 - std.math.degreesToRadians(f32, player.rotation));
+                            } else if (bigMeteors[i].position.x < halfShipHeight) {
+                                player.rotation = std.math.radiansToDegrees(f32, std.math.pi * 2 - std.math.degreesToRadians(f32, player.rotation));
+                            }
+                            if (bigMeteors[i].position.y > player.collider.y - halfShipHeight) {
+                                player.rotation = std.math.radiansToDegrees(f32, std.math.pi - std.math.degreesToRadians(f32, player.rotation));
+                            } else if (bigMeteors[i].position.y < halfShipHeight) {
+                                player.rotation = std.math.radiansToDegrees(f32, std.math.pi - std.math.degreesToRadians(f32, player.rotation));
+                            }
+
+                            bigMeteorsCount -= 1;
+
+                            for (0..2) |_| {
+                                mediumMeteors[@intCast(midMeteorsCount)].position = raylib.Vector2.init(
+                                    bigMeteors[i].position.x,
+                                    bigMeteors[i].position.y,
+                                );
+
+                                if (@rem(midMeteorsCount, 2) == 0) {
+                                    mediumMeteors[@intCast(midMeteorsCount)].speed = raylib.Vector2.init(
+                                        @cos(std.math.degreesToRadians(f32, player.rotation)) * Meteor.METEORS_SPEED * -1,
+                                        @sin(std.math.degreesToRadians(f32, player.rotation)) * Meteor.METEORS_SPEED * -1,
+                                    );
+                                } else {
+                                    mediumMeteors[@intCast(midMeteorsCount)].speed = raylib.Vector2.init(
+                                        @cos(std.math.degreesToRadians(f32, player.rotation)) * Meteor.METEORS_SPEED,
+                                        @sin(std.math.degreesToRadians(f32, player.rotation)) * Meteor.METEORS_SPEED,
+                                    );
+                                }
+
+                                mediumMeteors[@intCast(midMeteorsCount)].active = true;
+                                midMeteorsCount += 1;
+                            }
+
+                            NewAlien();
+
+                            nextShieldLevel -= 10;
                         },
                     }
                 }
@@ -265,7 +302,44 @@ pub const AsteroidsViewModel = Shared.View.ViewModel.Create(
                             NewAlien();
                         },
                         .collide => {
-                            shieldLevel = 0;
+                            if (mediumMeteors[i].position.x > player.collider.x) {
+                                player.rotation = std.math.radiansToDegrees(f32, std.math.pi * 2 - std.math.degreesToRadians(f32, player.rotation));
+                            } else if (mediumMeteors[i].position.x < player.collider.x) {
+                                player.rotation = std.math.radiansToDegrees(f32, std.math.pi * 2 - std.math.degreesToRadians(f32, player.rotation));
+                            }
+                            if (mediumMeteors[i].position.y > player.collider.y) {
+                                player.rotation = std.math.radiansToDegrees(f32, std.math.pi - std.math.degreesToRadians(f32, player.rotation));
+                            } else if (mediumMeteors[i].position.y < player.collider.y) {
+                                player.rotation = std.math.radiansToDegrees(f32, std.math.pi - std.math.degreesToRadians(f32, player.rotation));
+                            }
+
+                            midMeteorsCount -= 1;
+
+                            for (0..2) |_| {
+                                smallMeteors[@intCast(smallMeteorsCount)].position = raylib.Vector2.init(
+                                    mediumMeteors[i].position.x,
+                                    mediumMeteors[i].position.y,
+                                );
+
+                                if (@rem(smallMeteorsCount, 2) == 0) {
+                                    smallMeteors[@intCast(smallMeteorsCount)].speed = raylib.Vector2.init(
+                                        @cos(std.math.degreesToRadians(f32, player.rotation)) * Meteor.METEORS_SPEED * -1,
+                                        @sin(std.math.degreesToRadians(f32, player.rotation)) * Meteor.METEORS_SPEED * -1,
+                                    );
+                                } else {
+                                    smallMeteors[@intCast(smallMeteorsCount)].speed = raylib.Vector2.init(
+                                        @cos(std.math.degreesToRadians(f32, player.rotation)) * Meteor.METEORS_SPEED,
+                                        @sin(std.math.degreesToRadians(f32, player.rotation)) * Meteor.METEORS_SPEED,
+                                    );
+                                }
+
+                                smallMeteors[@intCast(smallMeteorsCount)].active = true;
+                                smallMeteorsCount += 1;
+                            }
+
+                            NewAlien();
+
+                            nextShieldLevel -= 8;
                         },
                     }
                 }
@@ -292,7 +366,34 @@ pub const AsteroidsViewModel = Shared.View.ViewModel.Create(
                         NewAlien();
                     },
                     .collide => {
-                        shieldLevel = 0;
+                        if (smallMeteors[i].position.x > player.collider.x) {
+                            player.rotation = std.math.radiansToDegrees(f32, std.math.pi * 2 - std.math.degreesToRadians(f32, player.rotation));
+                        } else if (smallMeteors[i].position.x < player.collider.x) {
+                            player.rotation = std.math.radiansToDegrees(f32, std.math.pi * 2 - std.math.degreesToRadians(f32, player.rotation));
+                        }
+                        if (smallMeteors[i].position.y > player.collider.y) {
+                            player.rotation = std.math.radiansToDegrees(f32, std.math.pi - std.math.degreesToRadians(f32, player.rotation));
+                        } else if (smallMeteors[i].position.y < player.collider.y) {
+                            player.rotation = std.math.radiansToDegrees(f32, std.math.pi - std.math.degreesToRadians(f32, player.rotation));
+                        }
+
+                        smallMeteorsCount -= 1;
+                        smallMeteorsDestroyedCount += 1;
+
+                        // After 4 small meteors are destroyed, create two big ones (until the max meteors is reached)
+                        for (0..2) |_| {
+                            if (bigMeteorsCount < MAX_BIG_METEORS and smallMeteorsDestroyedCount / 4 >= 1) {
+                                bigMeteors[@intCast(bigMeteorsCount)].RandomizePositionAndSpeed(player, screenSize, true);
+                                bigMeteors[@intCast(bigMeteorsCount)].active = true;
+
+                                smallMeteorsDestroyedCount -= 4;
+                                bigMeteorsCount += 1;
+                            }
+                        }
+
+                        NewAlien();
+
+                        nextShieldLevel -= 6;
                     },
                 }
             }

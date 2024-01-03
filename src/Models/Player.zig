@@ -92,13 +92,17 @@ pub const Player = struct {
 
         // Collision logic: player vs walls
         if (self.position.x > screenSize.x - halfShipHeight) {
+            self.rotation = std.math.radiansToDegrees(f32, std.math.pi * 2 - std.math.degreesToRadians(f32, self.rotation));
             return PlayerStatus{ .collide = true };
         } else if (self.position.x < halfShipHeight) {
+            self.rotation = std.math.radiansToDegrees(f32, std.math.pi * 2 - std.math.degreesToRadians(f32, self.rotation));
             return PlayerStatus{ .collide = true };
         }
         if (self.position.y > screenSize.y - halfShipHeight) {
+            self.rotation = std.math.radiansToDegrees(f32, std.math.pi - std.math.degreesToRadians(f32, self.rotation));
             return PlayerStatus{ .collide = true };
         } else if (self.position.y < halfShipHeight) {
+            self.rotation = std.math.radiansToDegrees(f32, std.math.pi - std.math.degreesToRadians(f32, self.rotation));
             return PlayerStatus{ .collide = true };
         }
 

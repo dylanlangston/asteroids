@@ -132,6 +132,11 @@ pub const Meteor = struct {
                 self.position,
                 self.radius,
             )) {
+                self.active = false;
+
+                self.color = Shared.Color.Red.Base;
+
+                Shared.Sound.Play(.Explosion);
                 return MeteorStatus{ .collide = true };
             }
 

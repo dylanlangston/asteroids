@@ -117,8 +117,9 @@ fn DrawWithCamera() Shared.View.Views {
         Shared.Color.Gray.Dark,
     );
 
+    var scoreBuffer: [64]u8 = undefined;
     Shared.Helpers.DrawTextRightAligned(
-        std.fmt.allocPrintZ(Shared.GetAllocator(), "Score: {}", .{vm.score}) catch "Score Unknown!",
+        std.fmt.bufPrintZ(&scoreBuffer, "Score: {}", .{vm.score}) catch "Score Unknown!",
         Shared.Color.Blue.Light,
         onePixelScaled * 10,
         screenWidth - (5 * onePixelScaled),
