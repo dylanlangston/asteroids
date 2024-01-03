@@ -295,8 +295,8 @@ pub const Shared = struct {
     };
 
     pub inline fn init() !void {
-        const menu = Shared.View.ViewLocator.Build(.MenuView);
-        menu.init();
+        // const menu = Shared.View.ViewLocator.Build(.MenuView);
+        // menu.init();
 
         raylib.setConfigFlags(
             @enumFromInt( //@intFromEnum(raylib.ConfigFlags.flag_window_always_run) +
