@@ -78,7 +78,7 @@ pub inline fn main() void {
     var view = Shared.View.ViewLocator.Build(current_view);
     view.init();
 
-    var scanlinePosition: f32 = 0;
+    var scanlinePosition: f32 = -10;
 
     Shared.Log.Info("Begin Game Loop");
     while (!raylib.windowShouldClose()) {
@@ -90,13 +90,16 @@ pub inline fn main() void {
         defer current_view = new_view;
 
         // Draw scan lines
+        const screenHeight: f32 = @floatFromInt(raylib.getScreenHeight());
+        const screenTick = screenHeight / 240;
         scanlinePosition += raylib.getFrameTime() * 5;
-        if (scanlinePosition > 10) scanlinePosition = 0;
+        if (scanlinePosition > 0) scanlinePosition -= 10;
+        //raylib.drawLine(0, @intFromFloat(screenTick * (scanlinePosition + 10)), raylib.getScreenWidth(), @intFromFloat(screenTick * (scanlinePosition + 10)), Shared.Color.Red.Base);
         Shared.Shader.DrawTexture(.ScanLine, .ScanLines, raylib.Rectangle.init(
             0,
-            -10 + scanlinePosition,
+            screenTick * scanlinePosition,
             @as(f32, @floatFromInt(raylib.getScreenWidth())),
-            @as(f32, @floatFromInt(raylib.getScreenHeight() + 20)),
+            screenHeight + (screenTick * 20),
         ));
 
         if (Shared.Settings.GetSettings().Debug) {

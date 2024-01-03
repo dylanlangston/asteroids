@@ -229,6 +229,12 @@ pub const Shared = struct {
                     loaded_settings.?.CurrentResolution.Width,
                     loaded_settings.?.CurrentResolution.Height,
                 );
+
+                // Update shader scanlines
+                const shader = Shared.Shader.Get(.ScanLines);
+                const screenHeight: f32 = @floatFromInt(raylib.getScreenHeight());
+                const screenHeightLoc = raylib.getShaderLocation(shader, "screenHeight");
+                raylib.setShaderValue(shader, screenHeightLoc, &screenHeight, @intFromEnum(raylib.ShaderUniformDataType.shader_uniform_float));
             }
 
             if (original_settings.UserLocale != loaded_settings.?.UserLocale) {
