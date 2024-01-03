@@ -16,6 +16,13 @@ pub fn DrawFunction() Shared.View.Views {
     const startY = @divFloor(screenHeight, 4);
     const startX = @divFloor(screenWidth, 4);
 
+    vm.frameCount += raylib.getFrameTime();
+    const selectionHidden = if (vm.frameCount < 0.75) false else true;
+
+    if (vm.frameCount > 1.25) {
+        vm.frameCount = 0;
+    }
+
     // Draw the background texture
     if (vm.BackgroundTexture != null) {
         const bg: raylib.Texture = vm.BackgroundTexture.?;
@@ -42,7 +49,6 @@ pub fn DrawFunction() Shared.View.Views {
     const foregroundColor = Shared.Color.Blue.Base;
     const backgroundColor = Shared.Color.Blue.Light.alpha(0.75);
     const accentColor = Shared.Color.Blue.Dark;
-    _ = accentColor;
 
     const background_rec = raylib.Rectangle.init(
         startX,
@@ -86,6 +92,44 @@ pub fn DrawFunction() Shared.View.Views {
         @floatFromInt(font.glyphPadding),
         foregroundColor,
     );
+
+    _ = Shared.Helpers.DrawTextWithFontCentered(
+        locale.Continue,
+        if (selectionHidden) Shared.Color.Transparent else accentColor,
+        font,
+        fontSize,
+        screenWidth,
+        ((screenHeight - fontSize) / 2) + (fontSize * 2),
+    );
+
+    var scoreBuffer: [64]u8 = undefined;
+    if (vm.score > vm.highScore) {
+        _ = Shared.Helpers.DrawTextWithFontCentered(
+            std.fmt.bufPrintZ(&scoreBuffer, "{s}{}", .{ locale.HighScore, vm.score }) catch locale.ScoreNotFound,
+            if (selectionHidden) Shared.Color.Transparent else accentColor,
+            font,
+            fontSize,
+            screenWidth,
+            ((screenHeight - fontSize) / 2) - (fontSize * 2),
+        );
+    } else {
+        _ = Shared.Helpers.DrawTextWithFontCentered(
+            std.fmt.bufPrintZ(&scoreBuffer, "{s}{}", .{ locale.Score, vm.score }) catch locale.ScoreNotFound,
+            foregroundColor,
+            font,
+            fontSize,
+            screenWidth,
+            ((screenHeight - fontSize) / 2) - (fontSize * 2),
+        );
+        _ = Shared.Helpers.DrawTextWithFontCentered(
+            std.fmt.bufPrintZ(&scoreBuffer, "{s}{}", .{ locale.HighScore, vm.highScore }) catch locale.ScoreNotFound,
+            foregroundColor,
+            font,
+            fontSize,
+            screenWidth,
+            ((screenHeight - fontSize) / 2) - (fontSize * 3.1),
+        );
+    }
 
     if (vm.startTime <= 0 and Shared.Input.A_Pressed()) {
         if (vm.BackgroundTexture != null) {

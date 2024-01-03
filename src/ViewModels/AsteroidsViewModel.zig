@@ -61,8 +61,6 @@ pub const AsteroidsViewModel = Shared.View.ViewModel.Create(
 
         // Initialize game variables
         pub inline fn init() void {
-            //starScape = Starscape.init(screenSize);
-
             Shared.Music.SetVolume(.BackgroundMusic, 0.35);
 
             const settings = Shared.Settings.GetSettings();

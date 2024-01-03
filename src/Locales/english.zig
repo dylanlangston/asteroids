@@ -8,7 +8,9 @@ pub const english = Locale{
     .Paused = "Paused",
     .Continue = "Continue",
     .Quit = "Quit",
-    .Time = "Time: ",
+    .Score = "Score: ",
+    .HighScore = "HighScore: ",
+    .ScoreNotFound = "Score Unknown!",
     .Game_Over = "Game Over",
     .Missing_Text = "Text not found!",
 };

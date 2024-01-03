@@ -14,7 +14,11 @@ pub const PausedViewModel = Shared.View.ViewModel.Create(
         pub var View: Shared.View.Views = undefined;
         pub var BackgroundTexture: ?raylib.Texture = null;
 
+        pub var frameCount: f32 = 0;
+
         pub inline fn PauseView(v: Shared.View.Views) void {
+            frameCount = 0;
+
             raylib.endDrawing();
             const img = raylib.loadImageFromScreen();
             defer img.unload();

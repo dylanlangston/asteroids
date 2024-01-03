@@ -49,11 +49,6 @@ pub inline fn main() void {
 
     // Default View on startup is the Splash Screen
     var current_view: Shared.View.Views = Shared.View.Views.RaylibSplashScreenView;
-
-    // If DebugView is configure use that instead
-    if (settings.Debug and settings.DebugView != null) {
-        current_view = @enumFromInt(settings.DebugView.?);
-    }
     defer DeinitViews();
 
     // Load locale

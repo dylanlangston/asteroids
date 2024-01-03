@@ -11,7 +11,7 @@ pub const Helpers = struct {
         fontSize: f32,
         screenWidth: f32,
         positionY: f32,
-    ) void {
+    ) raylib.Vector2 {
         const TitleTextSize = raylib.measureTextEx(
             font,
             text,
@@ -29,6 +29,7 @@ pub const Helpers = struct {
             @floatFromInt(font.glyphPadding),
             color,
         );
+        return TitleTextSize;
     }
     pub inline fn DrawTextCentered(
         text: [:0]const u8,
@@ -36,7 +37,7 @@ pub const Helpers = struct {
         fontSize: f32,
         screenWidth: f32,
         positionY: f32,
-    ) void {
+    ) i32 {
         const TitleTextSize = raylib.measureText(text, @intFromFloat(fontSize));
         raylib.drawText(
             text,
@@ -45,6 +46,7 @@ pub const Helpers = struct {
             @intFromFloat(fontSize),
             color,
         );
+        return TitleTextSize;
     }
     pub inline fn DrawTextWithFontRightAligned(
         text: [:0]const u8,

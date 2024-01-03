@@ -9,7 +9,11 @@ pub const GameOverViewModel = Shared.View.ViewModel.Create(
         pub var score: u64 = 0;
         pub var highScore: u64 = 0;
 
+        pub var frameCount: f32 = 0;
+
         pub inline fn GameOver(Score: u64, HighScore: u64) void {
+            frameCount = 0.75;
+
             score = Score;
             highScore = HighScore;
 

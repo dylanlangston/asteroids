@@ -13,7 +13,7 @@ pub fn DrawFunction() Shared.View.Views {
     const screenWidth: f32 = @floatFromInt(raylib.getScreenWidth());
     const screenHeight: f32 = @floatFromInt(raylib.getScreenHeight());
     const font = Shared.Font.Get(.Unknown);
-    const fontSize = @divFloor(screenWidth, 25);
+    const fontSize = @divFloor(screenWidth, 30);
     const startY = @divFloor(screenHeight, 4);
     const startX = @divFloor(screenWidth, 4);
 
@@ -109,6 +109,13 @@ pub fn DrawFunction() Shared.View.Views {
     const combinedYesNoWidth: f32 = yesSize.x + noSize.x;
     const YesNoPadding = (background_rec.width - combinedYesNoWidth) / 3;
 
+    vm.frameCount += raylib.getFrameTime();
+    const selectionHidden = if (vm.frameCount < 0.75) false else true;
+
+    if (vm.frameCount > 1.25) {
+        vm.frameCount = 0;
+    }
+
     raylib.drawTextEx(
         font,
         yes,
@@ -118,7 +125,7 @@ pub fn DrawFunction() Shared.View.Views {
         ),
         yesSizeF,
         @floatFromInt(font.glyphPadding),
-        if (vm.selection == PauseOptions.Continue) accentColor else foregroundColor,
+        if (vm.selection == PauseOptions.Continue) (if (selectionHidden) Shared.Color.Transparent else accentColor) else foregroundColor,
     );
 
     raylib.drawTextEx(
@@ -130,7 +137,7 @@ pub fn DrawFunction() Shared.View.Views {
         ),
         noSizeF,
         @floatFromInt(font.glyphPadding),
-        if (vm.selection == PauseOptions.Quit) accentColor else foregroundColor,
+        if (vm.selection == PauseOptions.Quit) (if (selectionHidden) Shared.Color.Transparent else accentColor) else foregroundColor,
     );
 
     if (Shared.Input.Left_Pressed() and vm.selection != PauseOptions.Continue) {

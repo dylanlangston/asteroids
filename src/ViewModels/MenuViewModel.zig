@@ -20,7 +20,7 @@ const AsteroidsVM = AsteroidsViewModel.GetVM();
 pub const MenuViewModel = Shared.View.ViewModel.Create(
     struct {
         pub var selection = Selection.Start;
-        pub var Rectangles: [std.enums.directEnumArrayLen(Selection, 0) - 1]raylib.Rectangle = undefined;
+        pub var Rectangles: [std.enums.directEnumArrayLen(Selection, 0)]raylib.Rectangle = undefined;
 
         pub var frameCount: f32 = 0;
 

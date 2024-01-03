@@ -12,17 +12,23 @@ const vm: type = AsteroidsViewModel.GetVM();
 
 fn DrawFunction() Shared.View.Views {
     raylib.clearBackground(Shared.Color.Tone.Dark);
-    raylib.drawRectangleLinesEx(
-        raylib.Rectangle.init(0, 0, vm.screenSize.x, vm.screenSize.y),
-        5,
-        Shared.Color.Green.Light,
-    );
 
     vm.starScape.Draw(
         vm.screenSize.x,
         vm.screenSize.y,
         vm.player.position,
     );
+
+    raylib.drawRectangleLinesEx(
+        raylib.Rectangle.init(0, 0, vm.screenSize.x, vm.screenSize.y),
+        3,
+        Shared.Color.Green.Light,
+    );
+
+    // Flash shield if player hurt
+    if (vm.player.status != .default) {
+        raylib.drawCircleV(vm.player.position, vm.player.collider.z * 1.75, Shared.Color.Yellow.Base.alpha((Shared.Random.Get().float(f32) * 0.2) + 0.1));
+    }
 
     // Draw spaceship
     vm.player.Draw(vm.shipHeight, vm.PLAYER_BASE_SIZE);
@@ -79,10 +85,10 @@ fn DrawWithCamera() Shared.View.Views {
     );
     const result = camera.Draw(Shared.View.Views, &DrawFunction);
 
-    // Flash screen if player hurt
-    if (vm.player.status != .default) {
-        raylib.drawRectangleV(raylib.Vector2.init(0, 0), screenSize, Shared.Color.Red.Base.alpha(0.1));
-    }
+    //Flash screen if player hurt
+    // if (vm.player.status != .default) {
+    //     raylib.drawRectangleV(raylib.Vector2.init(0, 0), screenSize, Shared.Color.Red.Base.alpha(0.1));
+    // }
 
     // Draw Health Bar
     const onePixelScaled: f32 = 0.0025 * screenWidth;
@@ -130,9 +136,11 @@ fn DrawWithCamera() Shared.View.Views {
         Shared.Color.Gray.Dark,
     );
 
+    const locale = Shared.Locale.GetLocale();
+
     var scoreBuffer: [64]u8 = undefined;
     Shared.Helpers.DrawTextRightAligned(
-        std.fmt.bufPrintZ(&scoreBuffer, "Score: {}", .{vm.score}) catch "Score Unknown!",
+        std.fmt.bufPrintZ(&scoreBuffer, "{s}{}", .{ locale.?.Score, vm.score }) catch locale.?.ScoreNotFound,
         Shared.Color.Blue.Light,
         onePixelScaled * 10,
         screenWidth - (5 * onePixelScaled),

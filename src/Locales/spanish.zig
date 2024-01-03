@@ -8,7 +8,9 @@ pub const spanish = Locale{
     .Paused = "Pausado",
     .Continue = "Continuar",
     .Quit = "Salir",
-    .Time = "Tiempo: ",
+    .Score = "Puntuacion: ",
+    .HighScore = "Puntuacion mas alta: ",
+    .ScoreNotFound = "!Puntuacion desconocida!",
     .Game_Over = "Fin del Juego",
     .Missing_Text = "!Texto no encontrado!",
 };

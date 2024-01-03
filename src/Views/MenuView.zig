@@ -38,7 +38,7 @@ pub fn DrawFunction() Shared.View.Views {
     const title = locale.Title;
     const screenWidth: f32 = @floatFromInt(raylib.getScreenWidth());
     const screenHeight: f32 = @floatFromInt(raylib.getScreenHeight());
-    const fontSize = screenWidth / 20;
+    const fontSize = screenWidth / 25;
     const startY = screenHeight / 4;
 
     const playerPosition = raylib.Vector2.init(
@@ -145,7 +145,7 @@ pub fn DrawFunction() Shared.View.Views {
             // Disable settings and quit options in WASM
             if (index == 1) break;
         }
-        if (index == 3) break;
+        if (index == 2) break;
     }
 
     if (Shared.Input.A_Pressed()) {
