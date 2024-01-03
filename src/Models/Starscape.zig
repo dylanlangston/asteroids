@@ -73,27 +73,27 @@ pub const Starscape = struct {
             Shared.Color.Tone.Base,
         );
 
-        raylib.drawTexturePro(
-            self.starTexture,
-            raylib.Rectangle.init(
-                0,
-                0,
-                textWidthF,
-                textHeightF,
-            ),
-            raylib.Rectangle.init(
-                position.x - (textWidthF / 2),
-                position.y - (textHeightF / 2),
-                textWidthF,
-                textHeightF,
-            ),
-            raylib.Vector2.init(
-                0,
-                0,
-            ),
-            0,
-            Shared.Color.Tone.Base,
-        );
+        // raylib.drawTexturePro(
+        //     self.starTexture,
+        //     raylib.Rectangle.init(
+        //         0,
+        //         0,
+        //         textWidthF,
+        //         textHeightF,
+        //     ),
+        //     raylib.Rectangle.init(
+        //         position.x - (textWidthF / 2),
+        //         position.y - (textHeightF / 2),
+        //         textWidthF,
+        //         textHeightF,
+        //     ),
+        //     raylib.Vector2.init(
+        //         0,
+        //         0,
+        //     ),
+        //     0,
+        //     Shared.Color.Tone.Base,
+        // );
 
         raylib.drawTexturePro(
             self.starTexture,
@@ -115,6 +115,28 @@ pub const Starscape = struct {
             ),
             0,
             Shared.Color.Red.Light,
+        );
+
+        raylib.drawTexturePro(
+            self.starTexture,
+            raylib.Rectangle.init(
+                0,
+                0,
+                -textWidthF,
+                -textHeightF,
+            ),
+            raylib.Rectangle.init(
+                position.x - (textWidthF / 2),
+                position.y - (textHeightF / 2),
+                textWidthF + (screenWidth * 0.25),
+                textHeightF + (screenHeight * 0.25),
+            ),
+            raylib.Vector2.init(
+                (position.x / textWidthF) * (textWidthF * 0.25),
+                (position.y / textHeightF) * (textHeightF * 0.25),
+            ),
+            0,
+            Shared.Color.Tone.Base,
         );
 
         // const paralaxAngles = [_]f32{ 0.2, 0.05 };
