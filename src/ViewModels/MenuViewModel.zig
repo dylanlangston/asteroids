@@ -2,6 +2,8 @@ const std = @import("std");
 const Shared = @import("../Shared.zig").Shared;
 const Logger = @import("../Logger.zig").Logger;
 const raylib = @import("raylib");
+const Starscape = @import("../Models/Starscape.zig").Starscape;
+const AsteroidsViewModel = @import("../ViewModels/AsteroidsViewModel.zig").AsteroidsViewModel;
 
 pub const Selection = enum {
     Start,
@@ -10,6 +12,8 @@ pub const Selection = enum {
     None,
 };
 
+const AsteroidsVM = AsteroidsViewModel.GetVM();
+
 pub const MenuViewModel = Shared.View.ViewModel.Create(
     struct {
         pub var selection = Selection.Start;
@@ -17,8 +21,13 @@ pub const MenuViewModel = Shared.View.ViewModel.Create(
 
         pub var frameCount: f32 = 0;
 
+        var starScape: Starscape = undefined;
+
         pub inline fn init() void {
             frameCount = 0;
+
+            starScape = Starscape.init(AsteroidsVM.screenSize);
+            AsteroidsVM.starScape = starScape;
         }
 
         pub inline fn GetSelectionText(select: Selection) [:0]const u8 {

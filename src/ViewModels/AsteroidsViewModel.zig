@@ -31,8 +31,11 @@ pub const AsteroidsViewModel = Shared.View.ViewModel.Create(
 
         pub const screenSize: raylib.Vector2 = raylib.Vector2.init(3200, 1800);
 
-        pub var shipHeight: f32 = 0;
-        pub var halfShipHeight: f32 = 0;
+        pub const shipHeight: f32 = (PLAYER_BASE_SIZE / 2) / @tan(std.math.degreesToRadians(
+            f32,
+            20,
+        ));
+        pub const halfShipHeight: f32 = shipHeight / 2;
 
         pub var player: Player = undefined;
         pub var shoot: [PLAYER_MAX_SHOOTS]Shoot = undefined;
@@ -58,7 +61,7 @@ pub const AsteroidsViewModel = Shared.View.ViewModel.Create(
 
         // Initialize game variables
         pub inline fn init() void {
-            starScape = Starscape.init(screenSize);
+            //starScape = Starscape.init(screenSize);
 
             Shared.Music.SetVolume(.BackgroundMusic, 0.35);
 
@@ -69,12 +72,6 @@ pub const AsteroidsViewModel = Shared.View.ViewModel.Create(
 
             shieldLevel = MAX_SHIELD;
             nextShieldLevel = MAX_SHIELD;
-
-            shipHeight = (PLAYER_BASE_SIZE / 2) / @tan(std.math.degreesToRadians(
-                f32,
-                20,
-            ));
-            halfShipHeight = shipHeight / 2;
 
             player = Player.init(screenSize, shipHeight);
 

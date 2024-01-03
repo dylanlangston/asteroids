@@ -2,13 +2,29 @@ const std = @import("std");
 const builtin = @import("builtin");
 const raylib = @import("raylib");
 const MenuViewModel = @import("../ViewModels/MenuViewModel.zig").MenuViewModel;
+const AsteroidsViewModel = @import("../ViewModels/AsteroidsViewModel.zig").AsteroidsViewModel;
 const Selection = @import("../ViewModels/MenuViewModel.zig").Selection;
 const Shared = @import("../Shared.zig").Shared;
 
 const vm: type = MenuViewModel.GetVM();
+const AsteroidsVM = AsteroidsViewModel.GetVM();
+
+pub fn Background(target: raylib.Vector2) void {
+    raylib.drawRectangleLinesEx(
+        raylib.Rectangle.init(0, 0, AsteroidsVM.screenSize.x, AsteroidsVM.screenSize.y),
+        5,
+        Shared.Color.Green.Light,
+    );
+
+    AsteroidsVM.starScape.Draw(
+        AsteroidsVM.screenSize.x,
+        AsteroidsVM.screenSize.y,
+        target,
+    );
+}
 
 pub fn DrawFunction() Shared.View.Views {
-    raylib.clearBackground(Shared.Color.Gray.Base);
+    raylib.clearBackground(Shared.Color.Tone.Dark);
 
     Shared.Music.Play(.TitleScreenMusic);
 
@@ -16,10 +32,23 @@ pub fn DrawFunction() Shared.View.Views {
     const font = Shared.Font.Get(.Unknown);
 
     const title = locale.Title;
-    const screenWidth = raylib.getScreenWidth();
-    const screenHeight = raylib.getScreenHeight();
-    const fontSize = @divFloor(screenWidth, 20);
-    const startY = @divFloor(screenHeight, 4);
+    const screenWidth: f32 = @floatFromInt(raylib.getScreenWidth());
+    const screenHeight: f32 = @floatFromInt(raylib.getScreenHeight());
+    const fontSize = screenWidth / 20;
+    const startY = screenHeight / 4;
+
+    const playerPosition = raylib.Vector2.init(
+        AsteroidsVM.screenSize.x / 2,
+        (AsteroidsVM.screenSize.y - AsteroidsVM.shipHeight) / 2,
+    );
+
+    const camera = Shared.Camera.initScaledTargetCamera(
+        AsteroidsVM.screenSize,
+        raylib.Vector2.init(screenWidth, screenHeight),
+        3.5,
+        playerPosition,
+    );
+    camera.DrawWithArg(void, raylib.Vector2, Background, playerPosition);
 
     const foregroundColor = Shared.Color.Blue.Base;
     const backgroundColor = Shared.Color.Blue.Light.alpha(0.75);
@@ -31,7 +60,7 @@ pub fn DrawFunction() Shared.View.Views {
     const TitleTextSize = raylib.measureTextEx(
         titleFont,
         title,
-        @as(f32, @floatFromInt(fontSize)) * 2.5,
+        fontSize * 2.5,
         @floatFromInt(font.glyphPadding),
     );
     const titleFontsizeF: f32 = TitleTextSize.y;
@@ -39,8 +68,8 @@ pub fn DrawFunction() Shared.View.Views {
         titleFont,
         title,
         raylib.Vector2.init(
-            ((@as(f32, @floatFromInt(screenWidth)) - TitleTextSize.x) / 2),
-            @as(f32, @floatFromInt(startY)) - (titleFontsizeF / 2),
+            ((screenWidth - TitleTextSize.x) / 2),
+            startY - (titleFontsizeF / 2),
         ),
         titleFontsizeF,
         @floatFromInt(titleFont.glyphPadding),
@@ -58,11 +87,11 @@ pub fn DrawFunction() Shared.View.Views {
     var index: usize = 0;
     for (std.enums.values(Selection)) |select| {
         const text = vm.GetSelectionText(select);
-        const i: i8 = @intCast(index);
-        const x: f32 = @floatFromInt(@divFloor(screenWidth, 2) - @divFloor(screenWidth, 3));
-        const y: f32 = @floatFromInt(startY + (fontSize * 3) + (fontSize + 32) * i);
-        const width: f32 = @floatFromInt(@divFloor(screenWidth, 3) * 2);
-        const height: f32 = @floatFromInt(fontSize + 16);
+        const i: f32 = @floatFromInt(index);
+        const x: f32 = (screenWidth / 2) - (screenWidth / 3);
+        const y: f32 = startY + (fontSize * 3) + (fontSize + 32) * i;
+        const width: f32 = (screenWidth / 3) * 2;
+        const height: f32 = fontSize + 16;
         vm.Rectangles[index] = raylib.Rectangle.init(
             x,
             y,
@@ -72,7 +101,7 @@ pub fn DrawFunction() Shared.View.Views {
 
         const selected = select == vm.selection;
 
-        const TextSize = raylib.measureTextEx(font, text, @floatFromInt(fontSize), @floatFromInt(font.glyphPadding));
+        const TextSize = raylib.measureTextEx(font, text, fontSize, @floatFromInt(font.glyphPadding));
         const fontsizeF: f32 = TextSize.y;
 
         vm.frameCount += raylib.getFrameTime();

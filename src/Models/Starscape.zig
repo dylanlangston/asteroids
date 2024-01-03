@@ -100,8 +100,8 @@ pub const Starscape = struct {
             raylib.Rectangle.init(
                 0,
                 0,
-                -textWidthF,
-                -textHeightF,
+                textWidthF,
+                textHeightF,
             ),
             raylib.Rectangle.init(
                 position.x - (textWidthF / 2),

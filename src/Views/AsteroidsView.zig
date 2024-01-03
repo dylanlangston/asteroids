@@ -69,11 +69,8 @@ fn DrawWithCamera() Shared.View.Views {
     const shakeAmount = screenWidth / 400;
     const target = if (vm.player.status == .collide) raylib.Vector2.init(
         vm.player.position.x - (if (Shared.Random.Get().boolean()) shakeAmount else -shakeAmount),
-        vm.player.position.y - vm.shipHeight - (if (Shared.Random.Get().boolean()) shakeAmount else -shakeAmount),
-    ) else raylib.Vector2.init(
-        vm.player.position.x,
-        vm.player.position.y - vm.shipHeight,
-    );
+        vm.player.position.y - (if (Shared.Random.Get().boolean()) shakeAmount else -shakeAmount),
+    ) else vm.player.position;
     const camera = Shared.Camera.initScaledTargetCamera(
         vm.screenSize,
         screenSize,

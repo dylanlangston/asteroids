@@ -36,4 +36,11 @@ pub const Camera = struct {
         const result: T = drawFunction();
         return result;
     }
+
+    pub fn DrawWithArg(self: @This(), comptime T: type, comptime A: type, drawFunction: *const fn (arg: A) T, arg: A) T {
+        raylib.beginMode2D(self.camera2D);
+        defer raylib.endMode2D();
+        const result: T = drawFunction(arg);
+        return result;
+    }
 };
