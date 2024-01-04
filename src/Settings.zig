@@ -59,7 +59,14 @@ pub const Settings = struct {
                 defer settings.deinit();
 
                 var highScoreDecryptedOut: [32]u8 = undefined;
-                Shared.Crypto.Decrypt(settings.value.object.get("HighScore").?.string[0..], highScoreDecryptedOut[0..]);
+                if (settings.value.object.contains("HighScore")) {
+                    const highScore = settings.value.object.get("HighScore").?.array;
+                    var scoreBuffer: [48]u8 = undefined;
+                    for (0..highScore.items.len) |i| {
+                        scoreBuffer[i] = @intCast(highScore.items[i].integer);
+                    }
+                    Shared.Crypto.Decrypt(&scoreBuffer, highScoreDecryptedOut[0..]);
+                }
                 var trimValue: [1]u8 = undefined;
                 const highScore = if (settings.value.object.contains("HighScore")) (std.fmt.parseInt(u64, std.mem.trimRight(u8, &highScoreDecryptedOut, &trimValue), 10) catch default_settings.HighScore) else default_settings.HighScore;
 
