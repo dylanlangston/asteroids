@@ -69,7 +69,7 @@ pub const Settings = struct {
                 }
                 var trimValue: [1]u8 = undefined;
                 var highScoreTrimmed = std.mem.trimRight(u8, &highScoreDecryptedOut, &trimValue);
-                Shared.Log.Debug_Formatted("HighScore: {s}", .{highScoreTrimmed});
+                Shared.Log.Info_Formatted("HighScore: {s}", .{highScoreTrimmed});
                 const highScore = if (settings.value.object.contains("HighScore")) (std.fmt.parseInt(u64, highScoreTrimmed, 10) catch default_settings.HighScore) else default_settings.HighScore;
 
                 return NormalizeSettings(Settings{
@@ -102,20 +102,38 @@ pub const Settings = struct {
         };
         defer allocator.free(file_buffer);
 
-        // Validate JSON
         if (!(std.json.validate(allocator, file_buffer) catch true)) {
-            Logger.Error_Formatted("Failed to validate settings: {s}", .{file_buffer});
+            Logger.Error_Formatted("Failed to validate settings: {?s}", .{file_buffer});
             return default_settings;
         }
-
-        // Parse JSON
-        var settings = std.json.parseFromSlice(Settings, allocator, file_buffer, .{}) catch |er| {
+        var settings = std.json.parseFromSlice(std.json.Value, allocator, file_buffer, .{}) catch |er| {
             Logger.Error_Formatted("Failed to deserialize settings: {}", .{er});
             return default_settings;
         };
         defer settings.deinit();
 
-        return NormalizeSettings(settings.value);
+        var highScoreDecryptedOut: [32]u8 = undefined;
+        if (settings.value.object.contains("HighScore")) {
+            const highScore = settings.value.object.get("HighScore").?.array;
+            var scoreBuffer: [48]u8 = undefined;
+            for (0..highScore.items.len) |i| {
+                scoreBuffer[i] = @intCast(highScore.items[i].integer);
+            }
+            Shared.Crypto.Decrypt(&scoreBuffer, highScoreDecryptedOut[0..]);
+        }
+        var trimValue: [1]u8 = undefined;
+        var highScoreTrimmed = std.mem.trimRight(u8, &highScoreDecryptedOut, &trimValue);
+        Shared.Log.Info_Formatted("HighScore: {s}", .{highScoreTrimmed});
+        const highScore = if (settings.value.object.contains("HighScore")) (std.fmt.parseInt(u64, highScoreTrimmed, 10) catch default_settings.HighScore) else default_settings.HighScore;
+
+        return NormalizeSettings(Settings{
+            .CurrentResolution = default_settings.CurrentResolution,
+            .TargetFPS = 60,
+            .Debug = if (settings.value.object.contains("Debug")) settings.value.object.get("Debug").?.bool else default_settings.Debug,
+            .NoDamage = default_settings.NoDamage,
+            .UserLocale = default_settings.UserLocale,
+            .HighScore = highScore,
+        });
     }
 
     pub inline fn update(base: Settings, diff: anytype) Settings {
@@ -159,17 +177,12 @@ pub const Settings = struct {
             try out.objectField("UserLocale");
             try out.write(self.UserLocale);
         }
-        if (builtin.target.os.tag != .wasi) {
-            try out.objectField("HighScore");
-            try out.write(self.HighScore);
-        } else {
-            try out.objectField("HighScore");
-            var highScoreEncryptedBuffer: [48]u8 = undefined;
-            var printBuffer: [32]u8 = undefined;
-            _ = std.fmt.bufPrint(&printBuffer, "{d}", .{self.HighScore}) catch "0";
-            Shared.Crypto.Encrypt(Shared.Crypto.GetIV(), &printBuffer, &highScoreEncryptedBuffer);
-            try out.write(highScoreEncryptedBuffer);
-        }
+        try out.objectField("HighScore");
+        var highScoreEncryptedBuffer: [48]u8 = undefined;
+        var printBuffer: [32]u8 = undefined;
+        _ = std.fmt.bufPrint(&printBuffer, "{d}", .{self.HighScore}) catch "0";
+        Shared.Crypto.Encrypt(Shared.Crypto.GetIV(), &printBuffer, &highScoreEncryptedBuffer);
+        try out.write(highScoreEncryptedBuffer);
 
         try out.endObject();
     }
