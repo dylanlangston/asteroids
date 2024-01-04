@@ -164,7 +164,8 @@ pub const Settings = struct {
             try out.objectField("HighScore");
             var highScoreEncryptedBuffer: [48]u8 = undefined;
             var printBuffer: [32]u8 = undefined;
-            Shared.Crypto.Encrypt(Shared.Crypto.GetIV(), std.fmt.bufPrint(&printBuffer, "{d}", .{self.HighScore}) catch "0", &highScoreEncryptedBuffer);
+            _ = std.fmt.bufPrint(&printBuffer, "{d}", .{self.HighScore}) catch "0";
+            Shared.Crypto.Encrypt(Shared.Crypto.GetIV(), &printBuffer, &highScoreEncryptedBuffer);
             try out.write(highScoreEncryptedBuffer);
         }
 
