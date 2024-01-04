@@ -235,7 +235,7 @@ pub const AsteroidsViewModel = Shared.View.ViewModel.Create(
                             // Swap the inactive meteor with the last active one
                             const temp = bigMeteors[i];
                             bigMeteors[i] = bigMeteors[bigMeteorsCount];
-                            bigMeteors[bigMeteorsCount] = bigMeteors[i];
+                            bigMeteors[bigMeteorsCount] = temp;
 
                             NewAlien();
                         },
@@ -276,7 +276,7 @@ pub const AsteroidsViewModel = Shared.View.ViewModel.Create(
                                 // Swap the inactive meteor with the last active one
                                 const temp = bigMeteors[i];
                                 bigMeteors[i] = bigMeteors[bigMeteorsCount];
-                                bigMeteors[bigMeteorsCount] = bigMeteors[i];
+                                bigMeteors[bigMeteorsCount] = temp;
 
                                 mediumMeteors[@intCast(midMeteorsCount)].active = true;
                                 midMeteorsCount += 1;
@@ -318,7 +318,7 @@ pub const AsteroidsViewModel = Shared.View.ViewModel.Create(
                                 // Swap the inactive meteor with the last active one
                                 const temp = mediumMeteors[i];
                                 mediumMeteors[i] = mediumMeteors[midMeteorsCount];
-                                mediumMeteors[midMeteorsCount] = mediumMeteors[i];
+                                mediumMeteors[midMeteorsCount] = temp;
 
                                 smallMeteors[@intCast(smallMeteorsCount)].active = true;
                                 smallMeteorsCount += 1;
@@ -367,7 +367,7 @@ pub const AsteroidsViewModel = Shared.View.ViewModel.Create(
                             // Swap the inactive meteor with the last active one
                             const temp = mediumMeteors[i];
                             mediumMeteors[i] = mediumMeteors[midMeteorsCount];
-                            mediumMeteors[midMeteorsCount] = mediumMeteors[i];
+                            mediumMeteors[midMeteorsCount] = temp;
 
                             NewAlien();
 
@@ -398,7 +398,7 @@ pub const AsteroidsViewModel = Shared.View.ViewModel.Create(
                         // Swap the inactive meteor with the last active one
                         const temp = smallMeteors[i];
                         smallMeteors[i] = smallMeteors[smallMeteorsCount];
-                        smallMeteors[smallMeteorsCount] = smallMeteors[i];
+                        smallMeteors[smallMeteorsCount] = temp;
 
                         NewAlien();
                     },
@@ -433,7 +433,7 @@ pub const AsteroidsViewModel = Shared.View.ViewModel.Create(
                         // Swap the inactive meteor with the last active one
                         const temp = smallMeteors[i];
                         smallMeteors[i] = smallMeteors[smallMeteorsCount];
-                        smallMeteors[smallMeteorsCount] = smallMeteors[i];
+                        smallMeteors[smallMeteorsCount] = temp;
 
                         NewAlien();
 
