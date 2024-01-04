@@ -232,6 +232,11 @@ pub const AsteroidsViewModel = Shared.View.ViewModel.Create(
                                 midMeteorsCount += 1;
                             }
 
+                            // Swap the inactive meteor with the last active one
+                            const temp = bigMeteors[i];
+                            bigMeteors[i] = bigMeteors[bigMeteorsCount];
+                            bigMeteors[bigMeteorsCount] = bigMeteors[i];
+
                             NewAlien();
                         },
                         .collide => {
@@ -267,6 +272,11 @@ pub const AsteroidsViewModel = Shared.View.ViewModel.Create(
                                         @sin(std.math.degreesToRadians(f32, player.rotation)) * Meteor.METEORS_SPEED,
                                     );
                                 }
+
+                                // Swap the inactive meteor with the last active one
+                                const temp = bigMeteors[i];
+                                bigMeteors[i] = bigMeteors[bigMeteorsCount];
+                                bigMeteors[bigMeteorsCount] = bigMeteors[i];
 
                                 mediumMeteors[@intCast(midMeteorsCount)].active = true;
                                 midMeteorsCount += 1;
@@ -304,6 +314,11 @@ pub const AsteroidsViewModel = Shared.View.ViewModel.Create(
                                         @sin(std.math.degreesToRadians(f32, shot.rotation)) * Meteor.METEORS_SPEED,
                                     );
                                 }
+
+                                // Swap the inactive meteor with the last active one
+                                const temp = mediumMeteors[i];
+                                mediumMeteors[i] = mediumMeteors[midMeteorsCount];
+                                mediumMeteors[midMeteorsCount] = mediumMeteors[i];
 
                                 smallMeteors[@intCast(smallMeteorsCount)].active = true;
                                 smallMeteorsCount += 1;
@@ -349,6 +364,11 @@ pub const AsteroidsViewModel = Shared.View.ViewModel.Create(
                                 smallMeteorsCount += 1;
                             }
 
+                            // Swap the inactive meteor with the last active one
+                            const temp = mediumMeteors[i];
+                            mediumMeteors[i] = mediumMeteors[midMeteorsCount];
+                            mediumMeteors[midMeteorsCount] = mediumMeteors[i];
+
                             NewAlien();
 
                             nextShieldLevel -= 8;
@@ -374,6 +394,11 @@ pub const AsteroidsViewModel = Shared.View.ViewModel.Create(
                                 bigMeteorsCount += 1;
                             }
                         }
+
+                        // Swap the inactive meteor with the last active one
+                        const temp = smallMeteors[i];
+                        smallMeteors[i] = smallMeteors[smallMeteorsCount];
+                        smallMeteors[smallMeteorsCount] = smallMeteors[i];
 
                         NewAlien();
                     },
@@ -404,6 +429,11 @@ pub const AsteroidsViewModel = Shared.View.ViewModel.Create(
                                 bigMeteorsCount += 1;
                             }
                         }
+
+                        // Swap the inactive meteor with the last active one
+                        const temp = smallMeteors[i];
+                        smallMeteors[i] = smallMeteors[smallMeteorsCount];
+                        smallMeteors[smallMeteorsCount] = smallMeteors[i];
 
                         NewAlien();
 
