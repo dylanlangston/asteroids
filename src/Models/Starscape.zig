@@ -98,7 +98,7 @@ pub const Starscape = struct {
         raylib.drawTexturePro(
             self.starTexture,
             raylib.Rectangle.init(
-                0,
+                -500,
                 0,
                 textWidthF,
                 textHeightF,
@@ -121,7 +121,7 @@ pub const Starscape = struct {
             self.starTexture,
             raylib.Rectangle.init(
                 0,
-                0,
+                -500,
                 -textWidthF,
                 -textHeightF,
             ),
