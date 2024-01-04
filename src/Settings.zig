@@ -68,7 +68,9 @@ pub const Settings = struct {
                     Shared.Crypto.Decrypt(&scoreBuffer, highScoreDecryptedOut[0..]);
                 }
                 var trimValue: [1]u8 = undefined;
-                const highScore = if (settings.value.object.contains("HighScore")) (std.fmt.parseInt(u64, std.mem.trimRight(u8, &highScoreDecryptedOut, &trimValue), 10) catch default_settings.HighScore) else default_settings.HighScore;
+                var highScoreTrimmed = std.mem.trimRight(u8, &highScoreDecryptedOut, &trimValue);
+                Shared.Log.Debug_Formatted("HighScore: {s}", .{highScoreTrimmed});
+                const highScore = if (settings.value.object.contains("HighScore")) (std.fmt.parseInt(u64, highScoreTrimmed, 10) catch default_settings.HighScore) else default_settings.HighScore;
 
                 return NormalizeSettings(Settings{
                     .CurrentResolution = Resolution{
