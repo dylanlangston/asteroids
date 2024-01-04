@@ -33,7 +33,7 @@ pub fn DrawFunction() Shared.View.Views {
     vm.Update();
 
     const locale = Shared.Locale.GetLocale().?;
-    const font = Shared.Font.Get(.Unknown);
+    const font = Shared.Font.Get(.HyperspaceBold);
 
     const title = locale.Title;
     const screenWidth: f32 = @floatFromInt(raylib.getScreenWidth());
@@ -60,23 +60,22 @@ pub fn DrawFunction() Shared.View.Views {
     const accentColor = Shared.Color.Blue.Dark;
 
     // Title
-    const titleFont = Shared.Font.Get(.Unknown);
     const TitleTextSize = raylib.measureTextEx(
-        titleFont,
+        font,
         title,
         fontSize * 2.5,
         @floatFromInt(font.glyphPadding),
     );
     const titleFontsizeF: f32 = TitleTextSize.y;
     raylib.drawTextEx(
-        titleFont,
+        font,
         title,
         raylib.Vector2.init(
             ((screenWidth - TitleTextSize.x) / 2),
             startY - (titleFontsizeF / 2),
         ),
         titleFontsizeF,
-        @floatFromInt(titleFont.glyphPadding),
+        @floatFromInt(font.glyphPadding),
         Shared.Color.Brown.Base,
     );
 

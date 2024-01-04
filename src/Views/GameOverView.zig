@@ -11,7 +11,7 @@ pub fn DrawFunction() Shared.View.Views {
 
     const screenWidth: f32 = @floatFromInt(raylib.getScreenWidth());
     const screenHeight: f32 = @floatFromInt(raylib.getScreenHeight());
-    const font = Shared.Font.Get(.Unknown);
+    const font = Shared.Font.Get(.HyperspaceBold);
     const fontSize = @divFloor(screenWidth, 30);
     const startY = @divFloor(screenHeight, 4);
     const startX = @divFloor(screenWidth, 4);

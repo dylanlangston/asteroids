@@ -138,10 +138,12 @@ fn DrawWithCamera() Shared.View.Views {
 
     const locale = Shared.Locale.GetLocale();
 
+    const font = Shared.Font.Get(.HyperspaceBold);
     var scoreBuffer: [64]u8 = undefined;
-    Shared.Helpers.DrawTextRightAligned(
+    Shared.Helpers.DrawTextWithFontRightAligned(
         std.fmt.bufPrintZ(&scoreBuffer, "{s}{}", .{ locale.?.Score, vm.score }) catch locale.?.ScoreNotFound,
         Shared.Color.Blue.Light,
+        font,
         onePixelScaled * 10,
         screenWidth - (5 * onePixelScaled),
         5,
