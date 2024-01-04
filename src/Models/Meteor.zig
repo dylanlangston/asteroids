@@ -256,6 +256,7 @@ pub const Meteor = struct {
         defer raylib.unloadRenderTexture(meteorRenderTexture);
         {
             raylib.beginTextureMode(meteorRenderTexture);
+            defer raylib.endTextureMode();
 
             // Draw Meteor
             const spriteFrame = MeteorSprite.getSpriteFrame(@intFromFloat(meteor.frame));
@@ -275,8 +276,6 @@ pub const Meteor = struct {
                 meteor.rotation * 365,
                 Shared.Color.Tone.Light,
             );
-
-            raylib.endTextureMode();
         }
         const meteorRenderImage = raylib.Image.fromTexture(meteorRenderTexture.texture);
         defer meteorRenderImage.unload();
@@ -285,6 +284,7 @@ pub const Meteor = struct {
         defer raylib.unloadRenderTexture(playerRenderTexture);
         {
             raylib.beginTextureMode(playerRenderTexture);
+            defer raylib.endTextureMode();
 
             // Draw Player
             const shipTexture = Shared.Texture.Get(.Ship);
@@ -298,8 +298,6 @@ pub const Meteor = struct {
                 player.rotation,
                 Shared.Color.Tone.Light,
             );
-
-            raylib.endTextureMode();
         }
         const playerRenderImage = raylib.Image.fromTexture(playerRenderTexture.texture);
         defer playerRenderImage.unload();
