@@ -52,18 +52,13 @@ pub const MenuViewModel = Shared.View.ViewModel.Create(
             inline for (0..meteors.len) |i| {
                 // Check Large
                 switch (meteors[i].Update(player, &shoots, &aliens, &shoots, AsteroidsVM.screenSize, AsteroidsVM.shipHeight, AsteroidsVM.PLAYER_BASE_SIZE)) {
-                    .default => {},
-                    .shot => |shot| {
-                        _ = shot;
-                    },
-                    .collide => {},
+                    else => {},
                 }
             }
 
             inline for (0..aliens.len) |i| {
                 switch (aliens[i].Update(player, &shoots, &shoots, AsteroidsVM.screenSize)) {
-                    .shot => {},
-                    .default => {},
+                    else => {},
                 }
             }
         }

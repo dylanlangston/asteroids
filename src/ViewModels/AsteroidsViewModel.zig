@@ -183,9 +183,17 @@ pub const AsteroidsViewModel = Shared.View.ViewModel.Create(
                         alienCount -= 1;
                         score += 8;
 
+                        // Swap the inactive alien with the last active one
+                        const temp = aliens[i];
+                        aliens[i] = aliens[alienCount];
+                        aliens[alienCount] = temp;
+
                         NewAlien();
                     },
-                    .default => {},
+                    .active => {},
+                    .default => {
+                        break;
+                    },
                 }
             }
 
@@ -195,25 +203,37 @@ pub const AsteroidsViewModel = Shared.View.ViewModel.Create(
             }
 
             // Update alien Shots
-            for (0..ALIENS_MAX_SHOOTS) |i| {
+            inline for (0..ALIENS_MAX_SHOOTS) |i| {
                 alien_shoot[i].Update(screenSize);
             }
 
             // Update Meteors
             // We do a single loop and check small, medium, and large meteors at the same time
+            var allBigChecked = false;
+            var allMidChecked = false;
+            var allSmallChecked = false;
             for (0..MAX_SMALL_METEORS) |i| {
                 // Check Large
-                if (i < MAX_BIG_METEORS) {
+                if (!allBigChecked and i < MAX_BIG_METEORS) {
                     switch (bigMeteors[i].Update(player, &shoot, &aliens, &alien_shoot, screenSize, shipHeight, PLAYER_BASE_SIZE)) {
-                        .default => {},
+                        else => {},
+                        .default => {
+                            const nextMeteor = bigMeteors[@min(MAX_BIG_METEORS - 1, i + 2)];
+                            if (!nextMeteor.active and nextMeteor.frame < MeteorSprite.Frames - 1) allBigChecked = true;
+                        },
                         .shot => |shot| {
                             bigMeteorsCount -= 1;
                             score += 4;
 
+                            // Swap the inactive meteor with the last active one
+                            const temp = bigMeteors[i];
+                            bigMeteors[i] = bigMeteors[bigMeteorsCount];
+                            bigMeteors[bigMeteorsCount] = temp;
+
                             for (0..2) |_| {
                                 mediumMeteors[@intCast(midMeteorsCount)].position = raylib.Vector2.init(
-                                    bigMeteors[i].position.x,
-                                    bigMeteors[i].position.y,
+                                    temp.position.x,
+                                    temp.position.y,
                                 );
 
                                 if (@rem(midMeteorsCount, 2) == 0) {
@@ -231,11 +251,6 @@ pub const AsteroidsViewModel = Shared.View.ViewModel.Create(
                                 mediumMeteors[@intCast(midMeteorsCount)].active = true;
                                 midMeteorsCount += 1;
                             }
-
-                            // Swap the inactive meteor with the last active one
-                            const temp = bigMeteors[i];
-                            bigMeteors[i] = bigMeteors[bigMeteorsCount];
-                            bigMeteors[bigMeteorsCount] = temp;
 
                             NewAlien();
                         },
@@ -255,10 +270,15 @@ pub const AsteroidsViewModel = Shared.View.ViewModel.Create(
 
                             bigMeteorsCount -= 1;
 
+                            // Swap the inactive meteor with the last active one
+                            const temp = bigMeteors[i];
+                            bigMeteors[i] = bigMeteors[bigMeteorsCount];
+                            bigMeteors[bigMeteorsCount] = temp;
+
                             for (0..2) |_| {
                                 mediumMeteors[@intCast(midMeteorsCount)].position = raylib.Vector2.init(
-                                    bigMeteors[i].position.x,
-                                    bigMeteors[i].position.y,
+                                    temp.position.x,
+                                    temp.position.y,
                                 );
 
                                 if (@rem(midMeteorsCount, 2) == 0) {
@@ -273,11 +293,6 @@ pub const AsteroidsViewModel = Shared.View.ViewModel.Create(
                                     );
                                 }
 
-                                // Swap the inactive meteor with the last active one
-                                const temp = bigMeteors[i];
-                                bigMeteors[i] = bigMeteors[bigMeteorsCount];
-                                bigMeteors[bigMeteorsCount] = temp;
-
                                 mediumMeteors[@intCast(midMeteorsCount)].active = true;
                                 midMeteorsCount += 1;
                             }
@@ -290,17 +305,26 @@ pub const AsteroidsViewModel = Shared.View.ViewModel.Create(
                 }
 
                 // Check Medium
-                if (i < MAX_MEDIUM_METEORS) {
+                if (!allMidChecked and i < MAX_MEDIUM_METEORS) {
                     switch (mediumMeteors[i].Update(player, &shoot, &aliens, &alien_shoot, screenSize, shipHeight, PLAYER_BASE_SIZE)) {
-                        .default => {},
+                        else => {},
+                        .default => {
+                            const nextMeteor = mediumMeteors[@min(MAX_MEDIUM_METEORS - 1, i + 1)];
+                            if (!nextMeteor.active and nextMeteor.frame < MeteorSprite.Frames - 1) allMidChecked = true;
+                        },
                         .shot => |shot| {
                             midMeteorsCount -= 1;
                             score += 2;
 
+                            // Swap the inactive meteor with the last active one
+                            const temp = mediumMeteors[i];
+                            mediumMeteors[i] = mediumMeteors[midMeteorsCount];
+                            mediumMeteors[midMeteorsCount] = temp;
+
                             for (0..2) |_| {
                                 smallMeteors[@intCast(smallMeteorsCount)].position = raylib.Vector2.init(
-                                    mediumMeteors[i].position.x,
-                                    mediumMeteors[i].position.y,
+                                    temp.position.x,
+                                    temp.position.y,
                                 );
 
                                 if (@rem(smallMeteorsCount, 2) == 0) {
@@ -314,11 +338,6 @@ pub const AsteroidsViewModel = Shared.View.ViewModel.Create(
                                         @sin(std.math.degreesToRadians(f32, shot.rotation)) * Meteor.METEORS_SPEED,
                                     );
                                 }
-
-                                // Swap the inactive meteor with the last active one
-                                const temp = mediumMeteors[i];
-                                mediumMeteors[i] = mediumMeteors[midMeteorsCount];
-                                mediumMeteors[midMeteorsCount] = temp;
 
                                 smallMeteors[@intCast(smallMeteorsCount)].active = true;
                                 smallMeteorsCount += 1;
@@ -342,10 +361,15 @@ pub const AsteroidsViewModel = Shared.View.ViewModel.Create(
 
                             midMeteorsCount -= 1;
 
+                            // Swap the inactive meteor with the last active one
+                            const temp = mediumMeteors[i];
+                            mediumMeteors[i] = mediumMeteors[midMeteorsCount];
+                            mediumMeteors[midMeteorsCount] = temp;
+
                             for (0..2) |_| {
                                 smallMeteors[@intCast(smallMeteorsCount)].position = raylib.Vector2.init(
-                                    mediumMeteors[i].position.x,
-                                    mediumMeteors[i].position.y,
+                                    temp.position.x,
+                                    temp.position.y,
                                 );
 
                                 if (@rem(smallMeteorsCount, 2) == 0) {
@@ -364,11 +388,6 @@ pub const AsteroidsViewModel = Shared.View.ViewModel.Create(
                                 smallMeteorsCount += 1;
                             }
 
-                            // Swap the inactive meteor with the last active one
-                            const temp = mediumMeteors[i];
-                            mediumMeteors[i] = mediumMeteors[midMeteorsCount];
-                            mediumMeteors[midMeteorsCount] = temp;
-
                             NewAlien();
 
                             nextShieldLevel -= 8;
@@ -377,69 +396,78 @@ pub const AsteroidsViewModel = Shared.View.ViewModel.Create(
                 }
 
                 // Check Small
-                switch (smallMeteors[i].Update(player, &shoot, &aliens, &alien_shoot, screenSize, shipHeight, PLAYER_BASE_SIZE)) {
-                    .default => {},
-                    .shot => {
-                        smallMeteorsCount -= 1;
-                        smallMeteorsDestroyedCount += 1;
-                        score += 1;
+                if (!allSmallChecked) {
+                    switch (smallMeteors[i].Update(player, &shoot, &aliens, &alien_shoot, screenSize, shipHeight, PLAYER_BASE_SIZE)) {
+                        else => {},
+                        .default => {
+                            const nextMeteor = bigMeteors[@min(MAX_BIG_METEORS - 1, i + 1)];
+                            if (!nextMeteor.active and nextMeteor.frame < MeteorSprite.Frames - 1) allSmallChecked = true;
+                        },
+                        .shot => {
+                            smallMeteorsCount -= 1;
+                            smallMeteorsDestroyedCount += 1;
+                            score += 1;
 
-                        // After 4 small meteors are destroyed, create two big ones (until the max meteors is reached)
-                        for (0..2) |_| {
-                            if (bigMeteorsCount < MAX_BIG_METEORS and smallMeteorsDestroyedCount / 4 >= 1) {
-                                bigMeteors[@intCast(bigMeteorsCount)].RandomizePositionAndSpeed(player, screenSize, true);
-                                bigMeteors[@intCast(bigMeteorsCount)].active = true;
+                            // Swap the inactive meteor with the last active one
+                            const temp = smallMeteors[i];
+                            smallMeteors[i] = smallMeteors[smallMeteorsCount];
+                            smallMeteors[smallMeteorsCount] = temp;
 
-                                smallMeteorsDestroyedCount -= 4;
-                                bigMeteorsCount += 1;
+                            // After 4 small meteors are destroyed, create two big ones (until the max meteors is reached)
+                            for (0..2) |_| {
+                                if (bigMeteorsCount < MAX_BIG_METEORS and smallMeteorsDestroyedCount / 4 >= 1) {
+                                    bigMeteors[@intCast(bigMeteorsCount)].RandomizePositionAndSpeed(player, screenSize, true);
+                                    bigMeteors[@intCast(bigMeteorsCount)].active = true;
+
+                                    smallMeteorsDestroyedCount -= 4;
+                                    bigMeteorsCount += 1;
+                                }
                             }
-                        }
 
-                        // Swap the inactive meteor with the last active one
-                        const temp = smallMeteors[i];
-                        smallMeteors[i] = smallMeteors[smallMeteorsCount];
-                        smallMeteors[smallMeteorsCount] = temp;
+                            NewAlien();
+                        },
+                        .collide => {
+                            player.status = .collide;
 
-                        NewAlien();
-                    },
-                    .collide => {
-                        player.status = .collide;
-
-                        if (smallMeteors[i].position.x > player.collider.x) {
-                            player.rotation = std.math.radiansToDegrees(f32, std.math.pi * 2 - std.math.degreesToRadians(f32, player.rotation));
-                        } else if (smallMeteors[i].position.x < player.collider.x) {
-                            player.rotation = std.math.radiansToDegrees(f32, std.math.pi * 2 - std.math.degreesToRadians(f32, player.rotation));
-                        }
-                        if (smallMeteors[i].position.y > player.collider.y) {
-                            player.rotation = std.math.radiansToDegrees(f32, std.math.pi - std.math.degreesToRadians(f32, player.rotation));
-                        } else if (smallMeteors[i].position.y < player.collider.y) {
-                            player.rotation = std.math.radiansToDegrees(f32, std.math.pi - std.math.degreesToRadians(f32, player.rotation));
-                        }
-
-                        smallMeteorsCount -= 1;
-                        smallMeteorsDestroyedCount += 1;
-
-                        // After 4 small meteors are destroyed, create two big ones (until the max meteors is reached)
-                        for (0..2) |_| {
-                            if (bigMeteorsCount < MAX_BIG_METEORS and smallMeteorsDestroyedCount / 4 >= 1) {
-                                bigMeteors[@intCast(bigMeteorsCount)].RandomizePositionAndSpeed(player, screenSize, true);
-                                bigMeteors[@intCast(bigMeteorsCount)].active = true;
-
-                                smallMeteorsDestroyedCount -= 4;
-                                bigMeteorsCount += 1;
+                            if (smallMeteors[i].position.x > player.collider.x) {
+                                player.rotation = std.math.radiansToDegrees(f32, std.math.pi * 2 - std.math.degreesToRadians(f32, player.rotation));
+                            } else if (smallMeteors[i].position.x < player.collider.x) {
+                                player.rotation = std.math.radiansToDegrees(f32, std.math.pi * 2 - std.math.degreesToRadians(f32, player.rotation));
                             }
-                        }
+                            if (smallMeteors[i].position.y > player.collider.y) {
+                                player.rotation = std.math.radiansToDegrees(f32, std.math.pi - std.math.degreesToRadians(f32, player.rotation));
+                            } else if (smallMeteors[i].position.y < player.collider.y) {
+                                player.rotation = std.math.radiansToDegrees(f32, std.math.pi - std.math.degreesToRadians(f32, player.rotation));
+                            }
 
-                        // Swap the inactive meteor with the last active one
-                        const temp = smallMeteors[i];
-                        smallMeteors[i] = smallMeteors[smallMeteorsCount];
-                        smallMeteors[smallMeteorsCount] = temp;
+                            smallMeteorsCount -= 1;
+                            smallMeteorsDestroyedCount += 1;
 
-                        NewAlien();
+                            // Swap the inactive meteor with the last active one
+                            const temp = smallMeteors[i];
+                            smallMeteors[i] = smallMeteors[smallMeteorsCount];
+                            smallMeteors[smallMeteorsCount] = temp;
 
-                        nextShieldLevel -= 6;
-                    },
+                            // After 4 small meteors are destroyed, create two big ones (until the max meteors is reached)
+                            for (0..2) |_| {
+                                if (bigMeteorsCount < MAX_BIG_METEORS and smallMeteorsDestroyedCount / 4 >= 1) {
+                                    bigMeteors[@intCast(bigMeteorsCount)].RandomizePositionAndSpeed(player, screenSize, true);
+                                    bigMeteors[@intCast(bigMeteorsCount)].active = true;
+
+                                    smallMeteorsDestroyedCount -= 4;
+                                    bigMeteorsCount += 1;
+                                }
+                            }
+
+                            NewAlien();
+
+                            nextShieldLevel -= 6;
+                        },
+                    }
                 }
+
+                // Exit loop when we encounter inactive asteroids
+                if (allBigChecked and allMidChecked and allSmallChecked) break;
             }
 
             // Disable gameover during testing

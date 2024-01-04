@@ -20,11 +20,13 @@ pub const Alien = struct {
 
     pub const AlienStatusType = enum {
         shot,
+        active,
         default,
     };
 
     pub const AlienStatus = union(AlienStatusType) {
         shot: Shoot,
+        active: bool,
         default: bool,
     };
 
@@ -187,6 +189,7 @@ pub const Alien = struct {
                     }
                 }
             }
+            return AlienStatus{ .active = true };
         } else {
             self.shouldDraw = false;
         }

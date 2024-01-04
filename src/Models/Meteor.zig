@@ -25,12 +25,16 @@ pub const Meteor = struct {
     pub const MeteorStatusType = enum {
         shot,
         collide,
+        active,
+        animating,
         default,
     };
 
     pub const MeteorStatus = union(MeteorStatusType) {
         shot: Shoot,
         collide: bool,
+        active: bool,
+        animating: bool,
         default: bool,
     };
 
@@ -234,9 +238,13 @@ pub const Meteor = struct {
                     return MeteorStatus{ .shot = alien_shoots[i] };
                 }
             }
+
+            return MeteorStatus{ .active = true };
         } else if (self.frame < MeteorSprite.Frames - 1) {
             self.frame += raylib.getFrameTime() * ANIMATION_SPEED_MOD;
+            return MeteorStatus{ .animating = true };
         }
+        self.frame = MeteorSprite.Frames - 1;
 
         return MeteorStatus{ .default = true };
     }
