@@ -219,7 +219,7 @@
 />
 
 {#if $isLoading}
-	<StatusContainer spin={true} emoji={true} status={get(Module.statusMessage)} />
+	<StatusContainer spin={true} status={get(Module.statusMessage)} />
 {:else}
 	<div transition:fade={{ delay: 250, duration: 300 }} class="portrait:hidden">
 		<span in:fade={{ duration: 300 }} id="controls" class="hidden">
@@ -292,17 +292,17 @@
 			{/if}
 		</div>
 		{#key status}
-			<StatusContainer spin={starting} emoji={true} {status} />
+			<StatusContainer spin={starting} {status} />
 		{/key}
 	</div>
 
 	<div transition:fade={{ delay: 250, duration: 300 }} class="landscape:hidden">
-		<StatusContainer emoji={true}>
+		<StatusContainer>
 			<svelte:fragment slot="status-slot">
 				{#if isMobile}
-					{$_('page.Rotate')} 🔄
+					{$_('page.Rotate')}<span class="font-emoji">🔄</span>
 				{:else}
-					{$_('page.Resize')} ↔️
+					{$_('page.Resize')}<span class="font-emoji">↔️</span>
 				{/if}
 			</svelte:fragment>
 		</StatusContainer>

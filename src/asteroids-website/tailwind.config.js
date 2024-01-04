@@ -21,7 +21,11 @@ export default {
 			animation: {
 				pingSlow: 'ping 1.5s ease-in-out infinite'
 			}
-		}
+		},
+		fontFamily: {
+			sans: ["Hyperspace", "sans-serif"],
+			emoji: ["Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", "Android Emoji", "EmojiSymbols", "EmojiOne Mozilla", "Twemoji Mozilla", "Segoe UI Symbol", "Noto Color Emoji Compat", "emoji", "noto-emojipedia-fallback"]
+		},
 	},
 	plugins: []
 };
