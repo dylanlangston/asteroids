@@ -86,4 +86,5 @@ pub const MenuViewModel = Shared.View.ViewModel.Create(
 
 fn init() void {
     MenuViewModel.GetVM().init();
+    Shared.Music.SetVolume(.TitleScreenMusic, 0.75);
 }
