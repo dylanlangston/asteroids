@@ -13,7 +13,7 @@
 </p>
 
 
-This [Progressive Web App](https://developer.mozilla.org/en-US/docs/Web/Progressive_web_apps) is a submission to the 2023 *Raylib Slo-Jam* event hosted on [itch.io](https://itch.io/), It was created by [@dylanlangston](https://github.com/dylanlangston) using the following:
+This [Mobile First](https://developer.mozilla.org/en-US/docs/Glossary/Mobile_First) [Progressive Web App](https://developer.mozilla.org/en-US/docs/Web/Progressive_web_apps) is a submission to the 2023 *Raylib Slo-Jam* event hosted on [itch.io](https://itch.io/), It was created by [@dylanlangston](https://github.com/dylanlangston) using the following:
 - [Zig](https://ziglang.org/)
 - [raylib](https://www.raylib.com/) via [raylib-Zig](https://github.com/Not-Nik/raylib-zig/tree/devel)
 - [raygui](https://github.com/raysan5/raygui) via [raygui.zig](https://github.com/ryupold/raygui.zig)
@@ -21,7 +21,7 @@ This [Progressive Web App](https://developer.mozilla.org/en-US/docs/Web/Progress
 - [Wizer](https://github.com/bytecodealliance/wizer)
 - [Binaryen](https://github.com/WebAssembly/binaryen)
 - [Svelte](https://svelte.dev/)
-- [Typescript](https://www.typescriptlang.org/)
+- [TypeScript](https://www.typescriptlang.org/)
 - [TailwindCSS](https://tailwindcss.com/)
 
 #### What's raylib Slo-Jam?
@@ -53,9 +53,73 @@ This [Progressive Web App](https://developer.mozilla.org/en-US/docs/Web/Progress
 4. Change directories into the `./asteroids/src/asteroids-website` folder. Then install the required node packages using `npm install`.
 5. Build the web version by running the command `npm run build`. You can find the generated static site in the `./asteroids/src/asteroids-website/build` folder.
 
+#### Localizing:
+This application is fully localized into English, French, and Spanish. It should be possible to support any language using a Latin Character set. The following steps can be used to translate the application:
+
+*Localizating the Zig portion:*
+1. Open the `./src/Locales/` folder. Copy an existing locale `.zig` file and rename it to the appropriate language name. For example "german.zig".
+2. Edit the new file by translating the strings to the choosen language (i.e. - German).
+3. Open the `./src/Localelizer.zig` file. Add your new language to the __Locales__ enum, take note of the order for later. Then update the __Localelizer.get__ function to handle the new enum. The changes should look something like this:
+```zig
+pub const Localelizer = struct {
+    pub inline fn get(locale: Locales) Locale {
+        switch (locale) {
+            Locales.german => {
+                return @import("./Locales/german.zig").german;
+            },
+        }
+    }
+};
+pub const Locales = enum(usize) {
+    ...
+    german,
+};
+```
+
+*Localizating the Web portion:*
+1. Open the `./src/asteroids-website/src/locales` folder. Copy an existing locale `.json` file and rename it to the appropriate language name. For example "de.json".
+2. Edit the new file by translating the strings to the choosen language (i.e. - German).
+3. Open the `./src/asteroids-website/static/manifests` folder. Copy an existing `manifest.json` file and rename it to the appropriate language name (i.e. - "de.manifest.json").
+4. Edit the new manifest file and translate the appropriate strings to the choosen language (i.e. - German). [Read more about the manifest.json format here.](https://developer.mozilla.org/en-US/docs/Web/Manifest)
+5. Open the `./src/asteroids-website/src/lib/localizer.ts` file. Add your new language to the __Locales__ enum, ensure the order is the same as the Zig enums you updated earlier. Update the __LocaleGroup.LocalePrefixes__ array with the new enum and the language prefix (the file name from step 1). The changes should look something like this:
+```TypeScript
+export enum Locales {
+    ...
+    german,
+}
+
+class LocaleGroup {
+    public static readonly LocalePrefixes = [
+        {
+            key:   Locales.german,
+            value: "de"
+        },
+    ];
+}
+```
+
 ------
 
 ### Credits
+| Font | Source | License |
+|:---- |:------:| -------:|
+| _Hyperspace_ | https://www.fontspace.com/hyperspace-font-f18038 | Freeware, Non-Commercial |
+| _Two Lines_ | https://www.fontspace.com/2-lines-font-f14541 | Freeware, Non-Commercial |
+
+| Palette | Source |
+|:-------:|:------:|
+| _AKC12_ | https://lospec.com/palette-list/akc12 |
+
+| Sound | Creator | Tool | License |
+|:-------:|:------:|:---:|:-------:|
+
 ```TODO```
+
+| Music | Creator | Tool | License |
+|:-------:|:------:|:---:|:-------:|
+
+```TODO```
+
+All the included textures were created using [Piskel](https://www.piskelapp.com/p/create/sprite) and are licensed as Creative Commons (by) Attribution.
 
 [^local-development]: For local development check out [Dev Containers](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers) and [DevPod](https://devpod.sh/).
