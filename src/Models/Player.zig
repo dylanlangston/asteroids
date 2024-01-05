@@ -133,7 +133,7 @@ pub const Player = struct {
                     shoots[i].active = true;
                     shoots[i].rotation = self.rotation;
 
-                    Shared.Sound.Play(.pew);
+                    Shared.Sound.Play(.Pew);
 
                     break;
                 }
