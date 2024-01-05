@@ -326,8 +326,8 @@ pub const Meteor = struct {
         return false;
     }
 
-    const activeRadiusX = 500;
-    const activeRadiusY = 325;
+    const activeRadiusX = 550;
+    const activeRadiusY = 375;
 
     pub inline fn Draw(self: @This(), shipPosition: raylib.Vector2) void {
         if (self.position.x == inactivitePoint and self.position.y == inactivitePoint) return;
