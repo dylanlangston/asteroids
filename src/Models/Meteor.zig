@@ -213,8 +213,6 @@ pub const Meteor = struct {
 
                     self.color = Shared.Color.Red.Base;
 
-                    Shared.Sound.Play(.Explosion);
-
                     return MeteorStatus{ .shot = shoots[i] };
                 }
             }
@@ -232,8 +230,6 @@ pub const Meteor = struct {
                     self.active = false;
 
                     self.color = Shared.Color.Red.Base;
-
-                    Shared.Sound.Play(.Explosion);
 
                     return MeteorStatus{ .shot = alien_shoots[i] };
                 }

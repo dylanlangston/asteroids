@@ -161,6 +161,8 @@ pub const AsteroidsViewModel = Shared.View.ViewModel.Create(
                     player.status = .collide;
                     player.frame = 0;
                     nextShieldLevel -= 1;
+
+                    Shared.Sound.Play(.HitWall);
                 },
                 .shot => {
                     player.status = .shot;
@@ -223,6 +225,8 @@ pub const AsteroidsViewModel = Shared.View.ViewModel.Create(
                             if (i == bigMeteorsCount) allBigChecked = true;
                         },
                         .shot => |shot| {
+                            Shared.Sound.Play(.Explosion);
+
                             bigMeteorsCount -= 1;
                             score += 4;
 
@@ -259,6 +263,8 @@ pub const AsteroidsViewModel = Shared.View.ViewModel.Create(
                         },
                         .collide => {
                             player.status = .collide;
+                            Shared.Sound.Play(.Explosion);
+                            Shared.Sound.Play(.HitWall);
 
                             if (bigMeteors[i].position.x > player.collider.x - halfShipHeight) {
                                 player.rotation = std.math.radiansToDegrees(f32, std.math.pi * 2 - std.math.degreesToRadians(f32, player.rotation));
@@ -317,6 +323,8 @@ pub const AsteroidsViewModel = Shared.View.ViewModel.Create(
                             if (i == midMeteorsCount) allMidChecked = true;
                         },
                         .shot => |shot| {
+                            Shared.Sound.Play(.MedExplosion);
+
                             midMeteorsCount -= 1;
                             score += 2;
 
@@ -353,6 +361,8 @@ pub const AsteroidsViewModel = Shared.View.ViewModel.Create(
                         },
                         .collide => {
                             player.status = .collide;
+                            Shared.Sound.Play(.MedExplosion);
+                            Shared.Sound.Play(.HitWall);
 
                             if (mediumMeteors[i].position.x > player.collider.x) {
                                 player.rotation = std.math.radiansToDegrees(f32, std.math.pi * 2 - std.math.degreesToRadians(f32, player.rotation));
@@ -411,6 +421,8 @@ pub const AsteroidsViewModel = Shared.View.ViewModel.Create(
                             if (i == smallMeteorsCount) allSmallChecked = true;
                         },
                         .shot => {
+                            Shared.Sound.Play(.SmallExplosion);
+
                             smallMeteorsCount -= 1;
                             smallMeteorsDestroyedCount += 1;
                             score += 1;
@@ -437,6 +449,8 @@ pub const AsteroidsViewModel = Shared.View.ViewModel.Create(
                         },
                         .collide => {
                             player.status = .collide;
+                            Shared.Sound.Play(.SmallExplosion);
+                            Shared.Sound.Play(.HitWall);
 
                             if (smallMeteors[i].position.x > player.collider.x) {
                                 player.rotation = std.math.radiansToDegrees(f32, std.math.pi * 2 - std.math.degreesToRadians(f32, player.rotation));

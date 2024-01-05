@@ -138,7 +138,7 @@ pub const Alien = struct {
                     shoots[i].lifeSpawn = 0;
                     self.active = false;
 
-                    Shared.Sound.Play(.Explosion);
+                    Shared.Sound.Play(.AlienExplosion);
 
                     return AlienStatus{ .shot = shoots[i] };
                 }

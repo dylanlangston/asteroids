@@ -180,6 +180,12 @@ pub const Shared = struct {
                 raylib.playSound(s.?);
             }
         }
+        pub inline fn PlaySingleVoice(sound: AssetManager.Sounds) void {
+            const s = Get(sound);
+            if (s != null and !raylib.isSoundPlaying(s.?)) {
+                raylib.playSound(s.?);
+            }
+        }
         pub inline fn Pause(sound: AssetManager.Sounds) void {
             const s = Get(sound);
             if (s != null and raylib.isSoundPlaying(s.?)) {

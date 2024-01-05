@@ -74,6 +74,7 @@ pub const Player = struct {
 
         // Player logic: acceleration
         if (Shared.Input.Up_Held()) {
+            Shared.Sound.PlaySingleVoice(.Acceleration);
             if (self.acceleration < 1) self.acceleration += 0.04;
         } else {
             if (self.acceleration > 0) {
