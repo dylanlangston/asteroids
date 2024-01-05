@@ -15,7 +15,7 @@ pub const AssetManager = struct {
     const EmbeddedFonts = RawAsset.Embed(Fonts, font_assets);
     var LoadedFonts: std.EnumMap(Fonts, raylib.Font) = std.EnumMap(Fonts, raylib.Font){};
     fn LoadFont(asset: RawAsset) raylib.Font {
-        var fontChars: [95]i32 = .{};
+        var fontChars: [250]i32 = .{};
         inline for (0..fontChars.len) |i| fontChars[i] = @as(i32, @intCast(i)) + 32;
         const f = raylib.loadFontFromMemory(asset.FileType, asset.Bytes, 100, &fontChars);
         raylib.setTextureFilter(
