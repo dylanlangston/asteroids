@@ -61,7 +61,7 @@ pub const AsteroidsViewModel = Shared.View.ViewModel.Create(
 
         // Initialize game variables
         pub inline fn init() void {
-            Shared.Music.SetVolume(.BackgroundMusic, 0.35);
+            Shared.Music.SetVolume(.BackgroundMusic, 0.45);
 
             const settings = Shared.Settings.GetSettings();
             if (settings.NoDamage != null) {
