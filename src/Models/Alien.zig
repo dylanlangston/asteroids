@@ -183,7 +183,7 @@ pub const Alien = struct {
                         alien_shoots[i].active = true;
                         alien_shoots[i].rotation = self.rotation;
 
-                        Shared.Sound.Play(.pew);
+                        Shared.Sound.Play(.AlienPew);
 
                         break;
                     }
