@@ -331,6 +331,7 @@ pub const Meteor = struct {
 
     pub inline fn Draw(self: @This(), shipPosition: raylib.Vector2) void {
         if (self.position.x == inactivitePoint and self.position.y == inactivitePoint) return;
+        if (self.frame == MeteorSprite.Frames - 1) return;
 
         const visibleX = self.position.x - shipPosition.x;
         const visibleY = self.position.y - shipPosition.y;
