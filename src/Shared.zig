@@ -15,7 +15,7 @@ const vl = @import("ViewLocator.zig");
 const Views = @import("ViewLocator.zig").Views;
 const V = @import("./Views/View.zig").View;
 const VM = @import("./ViewModels/ViewModel.zig").ViewModel;
-const Colors = @import("Colors.zig").Colors;
+const Colors = @import("Colors.zig").DefaultColors;
 const Helpers_ = @import("Helpers.zig").Helpers;
 const RndGen = std.rand.DefaultPrng;
 const Sprites = @import("Sprite.zig").Sprite;
@@ -228,6 +228,12 @@ pub const Shared = struct {
             const s = Get(music);
             if (s != null and raylib.isMusicStreamPlaying(s.?)) {
                 raylib.pauseMusicStream(s.?);
+            }
+        }
+        pub inline fn Resume(music: AssetManager.Musics) void {
+            const s = Get(music);
+            if (s != null) {
+                raylib.resumeMusicStream(s.?);
             }
         }
         pub inline fn Stop(music: AssetManager.Musics) void {
