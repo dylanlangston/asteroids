@@ -42,5 +42,11 @@ pub const GameOverViewModel = Shared.View.ViewModel.Create(
             startTime = Shared.Time.getTimestamp();
         }
     },
-    .{},
+    .{
+        .DeInit = deinit,
+    },
 );
+
+fn deinit() void {
+    Shared.Sound.Stop(.Gameover);
+}
