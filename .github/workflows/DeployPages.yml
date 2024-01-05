@@ -158,6 +158,8 @@ jobs:
     needs: [build, deploy-github-pages]
     permissions:
       contents: write
+    environment:
+      name: production
     steps:
     - name: Download artifact
       id: download
