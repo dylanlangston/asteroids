@@ -45,15 +45,15 @@ fn DrawFunction() Shared.View.Views {
 
     // Draw meteors
     for (0..vm.MAX_SMALL_METEORS) |i| {
-        if (i < vm.MAX_BIG_METEORS) {
-            vm.bigMeteors[i].Draw(vm.player.position);
-        }
+        vm.smallMeteors[i].Draw(vm.player.position);
 
         if (i < vm.MAX_MEDIUM_METEORS) {
             vm.mediumMeteors[i].Draw(vm.player.position);
         }
 
-        vm.smallMeteors[i].Draw(vm.player.position);
+        if (i < vm.MAX_BIG_METEORS) {
+            vm.bigMeteors[i].Draw(vm.player.position);
+        }
     }
 
     // Draw shoot
