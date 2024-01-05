@@ -19,7 +19,7 @@ pub const PausedViewModel = Shared.View.ViewModel.Create(
         pub inline fn PauseView(v: Shared.View.Views) void {
             frameCount = 0;
 
-            Shared.Music.Stop(.BackgroundMusic);
+            Shared.Music.Pause(.BackgroundMusic);
             for (std.enums.values(Shared.Sound.Sounds)) |sound| {
                 Shared.Sound.Pause(sound);
             }
