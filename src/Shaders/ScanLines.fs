@@ -11,7 +11,7 @@ uniform sampler2D texture0;
 
 uniform float screenHeight;
 
-float frequency = 4.0;
+float frequency = 5.0;
 
 void main()
 {
