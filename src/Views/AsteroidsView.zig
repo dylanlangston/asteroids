@@ -27,7 +27,13 @@ fn DrawFunction() Shared.View.Views {
 
     // Flash shield if player hurt
     if (vm.player.status != .default) {
-        raylib.drawCircleV(vm.player.position, vm.player.collider.z * 1.75, Shared.Color.Yellow.Base.alpha((Shared.Random.Get().float(f32) * 0.2) + 0.1));
+        raylib.drawCircleGradient(
+            @intFromFloat(vm.player.position.x),
+            @intFromFloat(vm.player.position.y),
+            vm.player.collider.z * 1.75,
+            Shared.Color.Transparent,
+            Shared.Color.Yellow.Base.alpha((Shared.Random.Get().float(f32) * 0.2) + 0.2),
+        );
     }
 
     // Draw spaceship
