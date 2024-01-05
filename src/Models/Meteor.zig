@@ -51,7 +51,7 @@ pub const Meteor = struct {
             .radius = radius,
             .rotation = Shared.Random.Get().float(f32) * 365,
             .active = false,
-            .color = Shared.Color.Blue.Base,
+            .color = Shared.Color.White,
             .frame = 0,
         };
 
@@ -123,8 +123,6 @@ pub const Meteor = struct {
         if (self.active) {
             // Reset Frame
             self.frame = 0;
-            // Reset color
-            self.color = Shared.Color.White;
 
             // Check Collision with player based on circle radius
             if (raylib.checkCollisionCircles(
@@ -139,8 +137,6 @@ pub const Meteor = struct {
                 // Phase 2, check per pixel collision with player
                 if (PerPixelCollisionDetection(self.*, player, shipHeight, base_size)) {
                     self.active = false;
-
-                    self.color = Shared.Color.Red.Base;
 
                     Shared.Sound.Play(.Explosion);
                     return MeteorStatus{ .collide = true };
@@ -211,8 +207,6 @@ pub const Meteor = struct {
                     shoots[i].lifeSpawn = 0;
                     self.active = false;
 
-                    self.color = Shared.Color.Red.Base;
-
                     return MeteorStatus{ .shot = shoots[i] };
                 }
             }
@@ -228,8 +222,6 @@ pub const Meteor = struct {
                     alien_shoots[i].active = false;
                     alien_shoots[i].lifeSpawn = 0;
                     self.active = false;
-
-                    self.color = Shared.Color.Red.Base;
 
                     return MeteorStatus{ .shot = alien_shoots[i] };
                 }
