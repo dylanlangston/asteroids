@@ -17,6 +17,11 @@ pub const GameOverViewModel = Shared.View.ViewModel.Create(
             score = Score;
             highScore = HighScore;
 
+            Shared.Music.Stop(.BackgroundMusic);
+            for (std.enums.values(Shared.Sound.Sounds)) |sound| {
+                Shared.Sound.Stop(sound);
+            }
+
             Shared.Sound.Play(.Gameover);
 
             if (score > highScore) {

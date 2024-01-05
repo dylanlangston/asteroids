@@ -180,6 +180,24 @@ pub const Shared = struct {
                 raylib.playSound(s.?);
             }
         }
+        pub inline fn Pause(sound: AssetManager.Sounds) void {
+            const s = Get(sound);
+            if (s != null and raylib.isSoundPlaying(s.?)) {
+                raylib.pauseSound(s.?);
+            }
+        }
+        pub inline fn Resume(sound: AssetManager.Sounds) void {
+            const s = Get(sound);
+            if (s != null) {
+                raylib.resumeSound(s.?);
+            }
+        }
+        pub inline fn Stop(sound: AssetManager.Sounds) void {
+            const s = Get(sound);
+            if (s != null and raylib.isSoundPlaying(s.?)) {
+                raylib.stopSound(s.?);
+            }
+        }
     };
 
     pub const Music = struct {
@@ -198,6 +216,18 @@ pub const Shared = struct {
                 raylib.playMusicStream(s.?);
             } else if (s != null) {
                 raylib.updateMusicStream(s.?);
+            }
+        }
+        pub inline fn Pause(music: AssetManager.Musics) void {
+            const s = Get(music);
+            if (s != null and raylib.isMusicStreamPlaying(s.?)) {
+                raylib.pauseMusicStream(s.?);
+            }
+        }
+        pub inline fn Stop(music: AssetManager.Musics) void {
+            const s = Get(music);
+            if (s != null and raylib.isMusicStreamPlaying(s.?)) {
+                raylib.stopMusicStream(s.?);
             }
         }
         pub inline fn SetVolume(music: AssetManager.Musics, volume: f32) void {

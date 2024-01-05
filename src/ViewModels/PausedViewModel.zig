@@ -19,6 +19,11 @@ pub const PausedViewModel = Shared.View.ViewModel.Create(
         pub inline fn PauseView(v: Shared.View.Views) void {
             frameCount = 0;
 
+            Shared.Music.Stop(.BackgroundMusic);
+            for (std.enums.values(Shared.Sound.Sounds)) |sound| {
+                Shared.Sound.Pause(sound);
+            }
+
             raylib.endDrawing();
             const img = raylib.loadImageFromScreen();
             defer img.unload();
@@ -33,5 +38,12 @@ pub const PausedViewModel = Shared.View.ViewModel.Create(
     },
     .{
         .BypassDeinit = true,
+        .DeInit = deinit,
     },
 );
+
+fn deinit() void {
+    for (std.enums.values(Shared.Sound.Sounds)) |sound| {
+        Shared.Sound.Resume(sound);
+    }
+}
