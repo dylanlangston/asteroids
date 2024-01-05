@@ -16,10 +16,10 @@ uniform vec2 size;
 
 float freqX = 25.0;
 float freqY = 25.0;
-float ampX = 20.0;
-float ampY = 20.0;
-float speedX = 4.0;
-float speedY = 4.0;
+float ampX = 40.0;
+float ampY = 40.0;
+float speedX = 8.0;
+float speedY = 8.0;
 
 void main() {
     float pixelWidth = 1.0 / size.x;

@@ -4,6 +4,7 @@ const raylib_math = @import("raylib-math");
 const Shared = @import("../Shared.zig").Shared;
 const Shoot = @import("./Shoot.zig").Shoot;
 const Alien = @import("./Alien.zig").Alien;
+const Flames = @import("./Flames.zig").Flames;
 
 pub const Player = struct {
     position: raylib.Vector2,
@@ -208,6 +209,16 @@ pub const Player = struct {
         const shipTexture = Shared.Texture.Get(.Ship);
         const shipWidthF = @as(f32, @floatFromInt(shipTexture.width));
         const shipHeightF = @as(f32, @floatFromInt(shipTexture.height));
+
+        if (Shared.Input.Up_Held()) {
+            Flames.Draw(raylib.Rectangle.init(
+                self.position.x,
+                self.position.y,
+                base_size,
+                (base_size * 2) * self.acceleration,
+            ), self.rotation - 180);
+        }
+
         raylib.drawTexturePro(
             shipTexture,
             raylib.Rectangle.init(0, 0, shipWidthF, shipHeightF),
