@@ -8,6 +8,21 @@ export enum Locales {
 }
 
 class LocaleGroup {
+	public static readonly LocalePrefixes = [
+		{
+			key:   Locales.english,
+			value: "en"
+		},
+		{
+			key:   Locales.french,
+			value: "fr"
+		},
+		{
+			key:   Locales.spanish,
+			value: "es"
+		},
+	];
+
 	public readonly Locale: Locales;
 	public readonly Index: number;
 	public readonly Prefix: string;
@@ -18,16 +33,7 @@ class LocaleGroup {
 	}
 
 	private GetLocalePrefix(locale: Locales): string {
-		switch (locale) {
-			case Locales.english:
-				return 'en';
-			case Locales.spanish:
-				return 'es';
-			case Locales.french:
-				return 'fr';
-			default:
-				return 'undefined';
-		}
+		return LocaleGroup.LocalePrefixes.find(v => v.key == locale)?.value ?? 'undefined';
 	}
 }
 
@@ -35,9 +41,9 @@ export class Localizer {
 	private static _ = new Localizer();
 
 	constructor() {
-		register('en', () => import('../locales/en.json'));
-		register('es', () => import('../locales/es.json'));
-		register('fr', () => import('../locales/fr.json'));
+		for (let prefix of LocaleGroup.LocalePrefixes.map(p => p.value)) {
+			register(prefix, () => import(`../locales/${prefix}.json`));
+		}
 
 		init({
 			fallbackLocale: 'en',
@@ -52,6 +58,7 @@ export class Localizer {
 			const sortedLocales = allLocales
 				.filter((l) => l.Index > -1)
 				.sort((a, b) => a.Index - b.Index);
+			console.log(sortedLocales);
 			Localizer.Locale = sortedLocales.at(0);
 		}
 		return Localizer.Locale;
