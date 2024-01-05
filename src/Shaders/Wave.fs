@@ -14,10 +14,10 @@ uniform float seconds;
 
 uniform vec2 size;
 
-float freqX = 25.0;
-float freqY = 25.0;
-float ampX = 40.0;
-float ampY = 40.0;
+float freqX = 10.0;
+float freqY = 10.0;
+float ampX = 100.0;
+float ampY = 100.0;
 float speedX = 8.0;
 float speedY = 8.0;
 

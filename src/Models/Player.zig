@@ -215,7 +215,7 @@ pub const Player = struct {
                 self.position.x,
                 self.position.y,
                 base_size,
-                (base_size * 2) * self.acceleration,
+                base_size * 2 * self.acceleration,
             ), self.rotation - 180);
         }
 
