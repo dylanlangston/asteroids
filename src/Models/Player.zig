@@ -49,7 +49,7 @@ pub const Player = struct {
                 position.y,
                 colliderSize,
             ),
-            .color = Shared.Color.Gray.Light,
+            .color = Shared.Color.White,
         };
     }
 

@@ -28,8 +28,8 @@ pub const Starscape = struct {
                     @intFromFloat(star.x),
                     @intFromFloat(star.y),
                     star.z,
-                    Shared.Color.Blue.Base,
-                    Shared.Color.Yellow.Base,
+                    Shared.Color.White,
+                    Shared.Color.Yellow.Light,
                 );
             }
         }
@@ -70,7 +70,7 @@ pub const Starscape = struct {
                 0,
             ),
             0,
-            Shared.Color.Tone.Base,
+            Shared.Color.Yellow.Light,
         );
 
         // raylib.drawTexturePro(
@@ -114,7 +114,7 @@ pub const Starscape = struct {
                 (position.y / textHeightF) * (textHeightF * 0.5),
             ),
             0,
-            Shared.Color.Red.Light,
+            Shared.Color.Red.Base,
         );
 
         raylib.drawTexturePro(
@@ -136,7 +136,7 @@ pub const Starscape = struct {
                 (position.y / textHeightF) * (textHeightF * 0.25),
             ),
             0,
-            Shared.Color.Tone.Base,
+            Shared.Color.Yellow.Light,
         );
 
         // const paralaxAngles = [_]f32{ 0.2, 0.05 };

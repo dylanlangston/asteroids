@@ -319,6 +319,9 @@
 	}
 
 	.btn {
-		@apply rounded bg-green-light/[.5] p-2 m-2 fill-yellow-light/[.75];
+		@apply rounded bg-green-mid/[.5] p-2 m-2 fill-yellow-mid/[.75] fill-yellow-mid/[.75];
+	}
+	.btn:hover {
+		@apply rounded bg-green-mid/[.5] p-2 m-2 fill-yellow-dark/[.75];
 	}
 </style>

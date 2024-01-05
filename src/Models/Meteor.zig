@@ -124,7 +124,7 @@ pub const Meteor = struct {
             // Reset Frame
             self.frame = 0;
             // Reset color
-            self.color = Shared.Color.Blue.Base;
+            self.color = Shared.Color.White;
 
             // Check Collision with player based on circle radius
             if (raylib.checkCollisionCircles(
@@ -278,7 +278,7 @@ pub const Meteor = struct {
                     meteor.radius,
                 ),
                 meteor.rotation * 365,
-                Shared.Color.Tone.Light,
+                Shared.Color.White,
             );
         }
         const meteorRenderImage = raylib.Image.fromTexture(meteorRenderTexture.texture);
@@ -300,7 +300,7 @@ pub const Meteor = struct {
                 raylib.Rectangle.init(player.position.x - x1, player.position.y - y1, base_size, shipHeight),
                 raylib.Vector2.init(base_size / 2, shipHeight / 2),
                 player.rotation,
-                Shared.Color.Tone.Light,
+                Shared.Color.White,
             );
         }
         const playerRenderImage = raylib.Image.fromTexture(playerRenderTexture.texture);

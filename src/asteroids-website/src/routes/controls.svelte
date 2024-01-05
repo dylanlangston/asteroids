@@ -175,10 +175,15 @@
 	#a.down,
 	#start.down {
 		background-color: theme(colors.green-dark);
+		color: theme(colors.yellow-dark);
+	}
+
+	button.down > .arrow {
+		border: solid theme(colors.yellow-dark);
 	}
 
 	.arrow {
-		border: solid theme(colors.yellow-light);
+		border: solid theme(colors.yellow-mid);
 		border-width: 0 3px 3px 0;
 		display: inline-block;
 		padding: 3px;

@@ -1,5 +1,6 @@
 const std = @import("std");
 const Shared = @import("../Shared.zig").Shared;
+const Colors = @import("../Colors.zig").DefaultColors;
 const raylib = @import("raylib");
 const DylanSplashScreenViewModel = @import("../ViewModels/DylanSplashScreenViewModel.zig").DylanSplashScreenViewModel;
 
@@ -9,7 +10,7 @@ fn DrawFunction() Shared.View.Views {
 
     framesCounter += raylib.getFrameTime() * 60;
 
-    raylib.clearBackground(Shared.Color.Tone.Dark);
+    raylib.clearBackground(Colors.Tone.Dark);
 
     const text = Shared.Locale.GetLocale().?.Dylan_Splash_Text;
     const font = Shared.Font.Get(.TwoLines);

@@ -26,7 +26,7 @@ fn Background(target: raylib.Vector2) void {
 }
 
 pub fn DrawFunction() Shared.View.Views {
-    raylib.clearBackground(Shared.Color.Tone.Dark);
+    raylib.clearBackground(Shared.Color.Blue.Dark);
 
     Shared.Music.Play(.TitleScreenMusic);
 
@@ -54,10 +54,8 @@ pub fn DrawFunction() Shared.View.Views {
     );
     camera.DrawWithArg(void, raylib.Vector2, Background, playerPosition);
 
-    const foregroundColor = Shared.Color.Blue.Base;
-    const backgroundColor = Shared.Color.Blue.Light.alpha(0.75);
-    _ = backgroundColor;
-    const accentColor = Shared.Color.Blue.Dark;
+    const foregroundColor = Shared.Color.Yellow.Base;
+    const accentColor = Shared.Color.Yellow.Dark;
 
     // Title
     const TitleTextSize = raylib.measureTextEx(
@@ -76,7 +74,7 @@ pub fn DrawFunction() Shared.View.Views {
         ),
         titleFontsizeF,
         @floatFromInt(font.glyphPadding),
-        Shared.Color.Brown.Base,
+        Shared.Color.Red.Base,
     );
 
     // raylib.drawText(

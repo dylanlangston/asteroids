@@ -11,7 +11,7 @@ const AsteroidsViewModel = @import("../ViewModels/AsteroidsViewModel.zig").Aster
 const vm: type = AsteroidsViewModel.GetVM();
 
 fn DrawFunction() Shared.View.Views {
-    raylib.clearBackground(Shared.Color.Tone.Dark);
+    raylib.clearBackground(Shared.Color.Blue.Dark);
 
     vm.starScape.Draw(
         vm.screenSize.x,
@@ -22,7 +22,7 @@ fn DrawFunction() Shared.View.Views {
     raylib.drawRectangleLinesEx(
         raylib.Rectangle.init(0, 0, vm.screenSize.x, vm.screenSize.y),
         3,
-        Shared.Color.Green.Light,
+        Shared.Color.Yellow.Dark,
     );
 
     // Flash shield if player hurt
@@ -102,7 +102,7 @@ fn DrawWithCamera() Shared.View.Views {
         ),
         5 * onePixelScaled,
         5,
-        Shared.Color.Gray.Dark.alpha(0.5),
+        Shared.Color.Red.Dark.alpha(0.5),
     );
     if (vm.shieldLevel > 0) {
         raylib.drawRectangleRounded(
@@ -133,7 +133,7 @@ fn DrawWithCamera() Shared.View.Views {
         5 * onePixelScaled,
         5,
         onePixelScaled,
-        Shared.Color.Gray.Dark,
+        Shared.Color.Red.Dark,
     );
 
     const locale = Shared.Locale.GetLocale();
@@ -142,9 +142,9 @@ fn DrawWithCamera() Shared.View.Views {
     var scoreBuffer: [64]u8 = undefined;
     Shared.Helpers.DrawTextWithFontRightAligned(
         std.fmt.bufPrintZ(&scoreBuffer, "{s}{}", .{ locale.?.Score, vm.score }) catch locale.?.ScoreNotFound,
-        Shared.Color.Blue.Light,
+        Shared.Color.Yellow.Light,
         font,
-        onePixelScaled * 10,
+        onePixelScaled * 15,
         screenWidth - (5 * onePixelScaled),
         5,
     );

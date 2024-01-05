@@ -36,13 +36,13 @@ pub fn DrawFunction() Shared.View.Views {
             rec2,
             raylib.Vector2.init(0, 0),
             0,
-            Shared.Color.Brown.Light,
+            Shared.Color.White,
         );
     }
 
-    const foregroundColor = Shared.Color.Blue.Base;
-    const backgroundColor = Shared.Color.Blue.Light.alpha(0.75);
-    const accentColor = Shared.Color.Blue.Dark;
+    const foregroundColor = Shared.Color.Yellow.Base;
+    const backgroundColor = Shared.Color.Green.Base.alpha(0.75);
+    const accentColor = Shared.Color.Yellow.Dark;
 
     const background_rec = raylib.Rectangle.init(
         startX,
@@ -56,13 +56,6 @@ pub fn DrawFunction() Shared.View.Views {
         0.1,
         10,
         backgroundColor,
-    );
-    raylib.drawRectangleRoundedLines(
-        background_rec,
-        0.1,
-        10,
-        5,
-        foregroundColor,
     );
 
     const locale = Shared.Locale.GetLocale().?;

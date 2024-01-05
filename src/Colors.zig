@@ -53,6 +53,10 @@ pub const DefaultColors = struct {
 };
 
 pub const AKC12 = struct {
+    pub const Transparent = raylib.Color.blank;
+    pub const White = raylib.Color.white;
+    pub const Black = raylib.Color.black;
+
     pub const Red = Color{
         .Base = raylib.Color.init(194, 75, 110, 255),
         .Dark = raylib.Color.init(167, 49, 105, 255),

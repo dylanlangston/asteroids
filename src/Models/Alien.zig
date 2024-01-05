@@ -43,7 +43,7 @@ pub const Alien = struct {
             .radius = 10,
             .rotation = Shared.Random.Get().float(f32) * 360,
             .active = false,
-            .color = Shared.Color.Yellow.Base,
+            .color = Shared.Color.Green.Dark,
             .frame = Shared.Random.Get().float(f32) * 10,
         };
 
