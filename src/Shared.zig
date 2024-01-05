@@ -131,20 +131,20 @@ pub const Shared = struct {
             const loadedShader = Get(shader);
             loadedShader.activate();
             defer loadedShader.deactivate();
-            const blankTexture = Texture.Get(texture);
+            const loadedTexture = Texture.Get(texture);
 
             raylib.drawTexturePro(
-                blankTexture,
+                loadedTexture,
                 raylib.Rectangle.init(
                     0,
                     0,
-                    @as(f32, @floatFromInt(blankTexture.width)),
-                    @as(f32, @floatFromInt(blankTexture.height)),
+                    @as(f32, @floatFromInt(loadedTexture.width)),
+                    @as(f32, @floatFromInt(loadedTexture.height)),
                 ),
                 position,
                 raylib.Vector2.init(0, 0),
                 0,
-                Shared.Color.Transparent,
+                Shared.Color.White,
             );
         }
 
@@ -271,11 +271,18 @@ pub const Shared = struct {
                     loaded_settings.?.CurrentResolution.Height,
                 );
 
+                const screenHeight: f32 = @floatFromInt(loaded_settings.?.CurrentResolution.Height);
+                const screenWidth: f32 = @floatFromInt(loaded_settings.?.CurrentResolution.Width);
+                const screenSize = .{ screenWidth, screenHeight };
+
                 // Update shader scanlines
-                const shader = Shared.Shader.Get(.ScanLines);
-                const screenHeight: f32 = @floatFromInt(raylib.getScreenHeight());
-                const screenHeightLoc = raylib.getShaderLocation(shader, "screenHeight");
-                raylib.setShaderValue(shader, screenHeightLoc, &screenHeight, @intFromEnum(raylib.ShaderUniformDataType.shader_uniform_float));
+                const scanLineShader = Shared.Shader.Get(.ScanLines);
+                const screenHeightLoc = raylib.getShaderLocation(scanLineShader, "screenHeight");
+                raylib.setShaderValue(scanLineShader, screenHeightLoc, &screenHeight, @intFromEnum(raylib.ShaderUniformDataType.shader_uniform_float));
+
+                const waveShader = Shared.Shader.Get(.Wave);
+                const screenSizeLoc = raylib.getShaderLocation(waveShader, "size");
+                raylib.setShaderValue(waveShader, screenSizeLoc, &screenSize, @intFromEnum(raylib.ShaderUniformDataType.shader_uniform_vec2));
             }
 
             if (original_settings.UserLocale != loaded_settings.?.UserLocale) {
