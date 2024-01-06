@@ -19,11 +19,27 @@ fn DrawFunction() Shared.View.Views {
         vm.player.position,
     );
 
-    raylib.drawRectangleLinesEx(
-        raylib.Rectangle.init(0, 0, vm.screenSize.x, vm.screenSize.y),
-        3,
-        Shared.Color.Yellow.Dark,
-    );
+    if (vm.player.position.x < 500 or vm.player.position.y < 500 or vm.player.position.x > vm.screenSize.x - 500 or vm.player.position.y > vm.screenSize.y - 500) {
+        {
+            const wave = Shared.Shader.Get(.Wave);
+            wave.activate();
+            defer wave.deactivate();
+
+            const waveShaderLoc = raylib.getShaderLocation(wave, "seconds");
+            raylib.setShaderValue(wave, waveShaderLoc, &Shared.Random.Get().float(f32), @intFromEnum(raylib.ShaderUniformDataType.shader_uniform_float));
+
+            raylib.drawRectangleLinesEx(
+                raylib.Rectangle.init(-5, -5, vm.screenSize.x + 10, vm.screenSize.y + 10),
+                5,
+                Shared.Color.Red.Dark.alpha((Shared.Random.Get().float(f32) * 0.2) + 0.2),
+            );
+        }
+        raylib.drawRectangleLinesEx(
+            raylib.Rectangle.init(-5, -5, vm.screenSize.x + 10, vm.screenSize.y + 10),
+            2,
+            Shared.Color.Red.Light.alpha((Shared.Random.Get().float(f32) * 0.2) + 0.2),
+        );
+    }
 
     // Flash shield if player hurt
     if (vm.player.status != .default) {
