@@ -68,6 +68,13 @@ pub const Shoot = struct {
 
     pub inline fn Draw(self: @This()) void {
         if (self.active) {
+            const wave = Shared.Shader.Get(.Wave);
+            wave.activate();
+            defer wave.deactivate();
+
+            const waveShaderLoc = raylib.getShaderLocation(wave, "seconds");
+            raylib.setShaderValue(wave, waveShaderLoc, &Shared.Random.Get().float(f32), @intFromEnum(raylib.ShaderUniformDataType.shader_uniform_float));
+
             raylib.drawCircleGradient(
                 @intFromFloat(self.position.x),
                 @intFromFloat(self.position.y),
