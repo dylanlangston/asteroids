@@ -281,8 +281,8 @@ pub const Shared = struct {
                 raylib.setShaderValue(scanLineShader, screenHeightLoc, &screenHeight, @intFromEnum(raylib.ShaderUniformDataType.shader_uniform_float));
 
                 const waveShader = Shared.Shader.Get(.Wave);
-                const screenSizeLoc = raylib.getShaderLocation(waveShader, "size");
-                raylib.setShaderValue(waveShader, screenSizeLoc, &screenSize, @intFromEnum(raylib.ShaderUniformDataType.shader_uniform_vec2));
+                const waveScreenSizeLoc = raylib.getShaderLocation(waveShader, "size");
+                raylib.setShaderValue(waveShader, waveScreenSizeLoc, &screenSize, @intFromEnum(raylib.ShaderUniformDataType.shader_uniform_vec2));
             }
 
             if (original_settings.UserLocale != loaded_settings.?.UserLocale) {
