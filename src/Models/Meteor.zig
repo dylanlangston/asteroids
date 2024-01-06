@@ -327,7 +327,7 @@ pub const Meteor = struct {
         if (visibleY > activeRadiusY or visibleY < -activeRadiusY) return;
 
         const spriteFrame = MeteorSprite.getSpriteFrame(@intFromFloat(self.frame));
-        const color: raylib.Color = if (self.active) self.color else raylib.Color.fade(self.color, 0.3);
+        const color: raylib.Color = if (self.active) self.color else raylib.Color.fade(self.color, (MeteorSprite.Frames - self.frame) / MeteorSprite.Frames);
 
         raylib.drawTextureNPatch(
             spriteFrame.Texture,
