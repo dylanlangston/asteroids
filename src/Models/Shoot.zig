@@ -68,10 +68,17 @@ pub const Shoot = struct {
 
     pub inline fn Draw(self: @This()) void {
         if (self.active) {
+            raylib.drawCircleGradient(
+                @intFromFloat(self.position.x),
+                @intFromFloat(self.position.y),
+                self.radius + 1,
+                Shared.Color.Transparent,
+                Shared.Color.White.alpha(0.5),
+            );
             raylib.drawCircleV(
                 self.position,
                 self.radius,
-                self.color,
+                self.color.alpha(0.75),
             );
         }
     }

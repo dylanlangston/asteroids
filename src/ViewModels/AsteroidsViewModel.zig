@@ -77,7 +77,7 @@ pub const AsteroidsViewModel = Shared.View.ViewModel.Create(
 
             // Initialization shoot
             inline for (0..PLAYER_MAX_SHOOTS) |i| {
-                shoot[i] = Shoot.init(Shared.Color.White);
+                shoot[i] = Shoot.init(Shared.Color.Yellow.Light);
             }
 
             // Initialization Meteors
