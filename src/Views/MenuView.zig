@@ -26,7 +26,7 @@ fn Background(target: raylib.Vector2) void {
 }
 
 pub fn DrawFunction() Shared.View.Views {
-    raylib.clearBackground(Shared.Color.Blue.Dark);
+    raylib.clearBackground(Shared.Color.Blue.Base);
 
     Shared.Music.Play(.TitleScreenMusic);
 

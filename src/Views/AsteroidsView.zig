@@ -11,7 +11,7 @@ const AsteroidsViewModel = @import("../ViewModels/AsteroidsViewModel.zig").Aster
 const vm: type = AsteroidsViewModel.GetVM();
 
 fn DrawFunction() Shared.View.Views {
-    raylib.clearBackground(Shared.Color.Blue.Dark);
+    raylib.clearBackground(Shared.Color.Blue.Base);
 
     vm.starScape.Draw(
         vm.screenSize.x,
