@@ -40,7 +40,7 @@ pub const Alien = struct {
                 0,
                 0,
             ),
-            .radius = 10,
+            .radius = 13,
             .rotation = Shared.Random.Get().float(f32) * 360,
             .active = false,
             .color = Shared.Color.Green.Dark,
@@ -201,15 +201,28 @@ pub const Alien = struct {
     const activeRadiusY = 325;
 
     pub inline fn Draw(self: @This()) void {
-        if (!self.shouldDraw) return;
+        if (!self.shouldDraw or !self.active) return;
 
-        const color: raylib.Color = if (self.active) self.color else raylib.Color.fade(self.color, 0.3);
+        const alienTexture = Shared.Texture.Get(.Alien);
+        const alienWidthF = @as(f32, @floatFromInt(alienTexture.width));
+        const alienHeightF = @as(f32, @floatFromInt(alienTexture.height));
 
-        raylib.drawCircle(
-            @intFromFloat(self.position.x),
-            @intFromFloat(self.position.y),
-            self.radius,
-            color,
+        const size = self.radius * 2;
+
+        raylib.drawTexturePro(
+            alienTexture,
+            raylib.Rectangle.init(0, 0, if (Shared.Random.Get().boolean()) alienWidthF else -alienWidthF, alienHeightF),
+            raylib.Rectangle.init(self.position.x, self.position.y, size, size),
+            raylib.Vector2.init(self.radius, self.radius),
+            0,
+            Shared.Color.White,
         );
+
+        // raylib.drawCircle(
+        //     @intFromFloat(self.position.x),
+        //     @intFromFloat(self.position.y),
+        //     self.radius,
+        //     color,
+        // );
     }
 };
