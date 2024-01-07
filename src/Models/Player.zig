@@ -214,8 +214,8 @@ pub const Player = struct {
             Flames.Draw(raylib.Rectangle.init(
                 self.position.x,
                 self.position.y,
-                base_size,
-                base_size * 2 * self.acceleration,
+                base_size * 0.5,
+                base_size * self.acceleration,
             ), self.rotation - 180);
         }
 
