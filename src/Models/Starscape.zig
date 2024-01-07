@@ -18,9 +18,9 @@ pub const Starscape = struct {
                 (Shared.Random.Get().float(f32) * (MAX_STAR_SIZE - MIN_STAR_SIZE)) + MIN_STAR_SIZE,
             );
         }
-        var renderTexture = raylib.loadRenderTexture(@intFromFloat(screenSize.x), @intFromFloat(screenSize.y));
+        var starsRenderTexture = raylib.loadRenderTexture(@intFromFloat(screenSize.x), @intFromFloat(screenSize.y));
         {
-            raylib.beginTextureMode(renderTexture);
+            raylib.beginTextureMode(starsRenderTexture);
             defer raylib.endTextureMode();
             raylib.clearBackground(Shared.Color.Transparent);
             for (stars) |star| {
@@ -29,13 +29,13 @@ pub const Starscape = struct {
                     @intFromFloat(star.y),
                     star.z,
                     Shared.Color.White,
-                    Shared.Color.Yellow.Light,
+                    Shared.Color.Yellow.Dark,
                 );
             }
         }
 
         return Starscape{
-            .starTexture = renderTexture.texture,
+            .starTexture = starsRenderTexture.texture,
         };
     }
 
@@ -51,6 +51,7 @@ pub const Starscape = struct {
     ) void {
         const textWidthF: f32 = @floatFromInt(self.starTexture.width);
         const textHeightF: f32 = @floatFromInt(self.starTexture.height);
+
         raylib.drawTexturePro(
             self.starTexture,
             raylib.Rectangle.init(
