@@ -110,10 +110,16 @@ class LocaleGroup {
 |:-------:|:------:|
 | _AKC12_ | https://lospec.com/palette-list/akc12 |
 
-| Sound | Creator | Tool | License |
-|:-------:|:------:|:---:|:-------:|
-
-```TODO```
+| Sound | Creator | Tool | Copy/Paste | License |
+|:-------:|:------:|:---:|:---------- |:-------:|
+| _[Acceleration](./src/Sounds/Acceleration.ogg)_ | [miajohnson99](https://github.com/miajohnson99) | [Chiptone](https://sfbgames.itch.io/chiptone) | `eNpjYig-PkOQgcFIngEIOhkZGBrq3RknMTEzvGH6X_-_ntXIGCTRUH_GB5WeEYldPE0NQjOsYzcynghi_7eHiMBowgJ8vG2nQbR3-ClGZDNhdv4HQ0cHixAGegIAUKwyuw..` | Creative Commons (by) Attribution |
+| _[Alien Explosion](./src/Sounds/AlienExplosion.ogg)_ | [miajohnson99](https://github.com/miajohnson99) | [Chiptone](https://sfbgames.itch.io/chiptone) | `eNpjYig-PkOQieOMAQODHOvaOwwMDfUMDPNY-pmm8_2vV4pmEZBgYAAJnvGB0HdU_HVB9GNVHSMQnWG4-CiI7jEP7wPRaWpHHEA00zp2I-OJDAwKjM-lny4FiVxT3nkPbPx_e4hRMJoZXYCPt-00iPYOP8UIMRMiPiMSqg4MI1XmRzHQEwAAYv454w..` | Creative Commons (by) Attribution |
+| _[Alien Pew](./src/Sounds/AlienPew.ogg)_ | [miajohnson99](https://github.com/miajohnson99) | [Chiptone](https://sfbgames.itch.io/chiptone) | `eNpjYig-PkOQgeWMQ8MpBjBoqGdgmMTUxiDH-r_eN4nFyBgieMYHQk-22HwXRDNqZ20E0TnqkTtBtHDe73kgOk0Nasg6diPjiQwMjEy8up4HQSIv1XbeA8v8t4cogdHM6AJ8vG2nQbR3-ClGZDNnRELVgWGkCsRNdAMAw4g3_g..` | Creative Commons (by) Attribution |
+| _[Explosion](./src/Sounds/Explosion.ogg)_ | [miajohnson99](https://github.com/miajohnson99) | [Chiptone](https://sfbgames.itch.io/chiptone) | `eNpjYig-PkOQkSNNi4Hh6953dxgYGuoZGJJZH7P-4_pfrxTNIiDBwAASPOODSs-IxC6epnbEAUQzrmM3Mp7IwKDA-t8eIgOjGdAFmNEF-HjbToNo7_BTjBAzUe38D4amcqlpDPQEADcqNn8.` | Creative Commons (by) Attribution |
+| _[Hit Wall](./src/Sounds/HitWall.ogg)_ | [miajohnson99](https://github.com/miajohnson99) | [Chiptone](https://sfbgames.itch.io/chiptone) | `eNpjYig-PkOQgeW_vlcrAxg01DMwlDHwM9kx_q__b898zRkieMYHQj9WNdsHomdEoorD6DQ1qCHr2I2MJ4LY_-0hIjCasAAfb9tpEO0dfooR2UyYnf_B0NEhOJmBngAA6yE0Wg..` | Creative Commons (by) Attribution |
+| _[Med Explosion](./src/Sounds/MedExplosion.ogg)_ | [miajohnson99](https://github.com/miajohnson99) | [Chiptone](https://sfbgames.itch.io/chiptone) | `eNpjYig-PkOQg-O_MgND7X8GIGioZ2CYxDSD-R_X_3q9WAYjY4jgGR9UekYkdvE0tSMOIJpxHbuR8USQ2H97iAyMJizAx9t2GkR7h59ihJiJaud_MHTWdkhgoCcAAKqnNQY.` | Creative Commons (by) Attribution |
+| _[Pew](./src/Sounds/Pew.ogg)_ | [miajohnson99](https://github.com/miajohnson99) | [Chiptone](https://sfbgames.itch.io/chiptone) | `eNpjYig-PkOQie2_vcFeAYkmBQaGhnp3RmaGcOaVLP_ra-IZjIwZGECCZ3wg9BGF3OMg-poz6zZkcRidpgahGdaxGxlPBDKZeHU9D4JEXqrtvAeimf7bQ5TAaGZ0AT7ettMg2jv8FCOymTMioerAMFKF15eBngAATc423A..` | Creative Commons (by) Attribution |
+| _[Small Explosion](./src/Sounds/SmallExplosion.ogg)_ | [miajohnson99](https://github.com/miajohnson99) | [Chiptone](https://sfbgames.itch.io/chiptone) | `eNpjYig-PkOQgSNNjoGh9j8DEDTUMzCEM59j_Mf1v_6_PYORMUTwjA8qPSMSu3iaGtSQdexGxhNBbKAhYBEYTViAj7ftNIj2Dj_FiGwmzM7_YFhl8iCKgZ4AACVNNOI.` | Creative Commons (by) Attribution |
 
 | Music | Creator | Tool | License |
 |:-------:|:------:|:---:|:-------:|
