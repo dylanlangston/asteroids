@@ -12,6 +12,7 @@
   <a href="https://api.github.com/repos/dylanlangston/asteroids"><img alt="GitHub repo size" src="https://img.shields.io/github/repo-size/dylanlangston/asteroids"></a>
 </p>
 
+Asteroid Arena is a twist on the classic game with an expanded world where asteroids bounce off the walls. Try to keep up as the amount of asteroids increases the more you destroy. Also watch out for rogue aliens!!
 
 This [Mobile First](https://developer.mozilla.org/en-US/docs/Glossary/Mobile_First) [Progressive Web App](https://developer.mozilla.org/en-US/docs/Web/Progressive_web_apps) is a submission to the 2023 *Raylib Slo-Jam* event hosted on [itch.io](https://itch.io/), It was created by [@dylanlangston](https://github.com/dylanlangston) using the following:
 - [Zig](https://ziglang.org/)
