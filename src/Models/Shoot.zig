@@ -68,24 +68,31 @@ pub const Shoot = struct {
 
     pub inline fn Draw(self: @This()) void {
         if (self.active) {
-            const wave = Shared.Shader.Get(.Wave);
-            wave.activate();
-            defer wave.deactivate();
+            const shootTexture = Shared.Texture.Get(.Shoot);
+            const shootWidthF = @as(f32, @floatFromInt(shootTexture.width));
+            const shootHeightF = @as(f32, @floatFromInt(shootTexture.height));
+            const shootAspectRatio = shootHeightF / shootWidthF;
 
-            const waveShaderLoc = raylib.getShaderLocation(wave, "seconds");
-            raylib.setShaderValue(wave, waveShaderLoc, &Shared.Random.Get().float(f32), @intFromEnum(raylib.ShaderUniformDataType.shader_uniform_float));
+            const waveShader = Shared.Shader.Get(.Wave);
+            const waveShaderLoc = raylib.getShaderLocation(waveShader, "seconds");
+            raylib.setShaderValue(waveShader, waveShaderLoc, &Shared.Random.Get().float(f32), @intFromEnum(raylib.ShaderUniformDataType.shader_uniform_float));
+            waveShader.activate();
+            defer waveShader.deactivate();
 
-            raylib.drawCircleGradient(
-                @intFromFloat(self.position.x),
-                @intFromFloat(self.position.y),
-                self.radius + 1,
-                Shared.Color.Transparent,
-                Shared.Color.White.alpha(0.5),
+            const width = self.radius * 2;
+
+            raylib.drawTexturePro(
+                shootTexture,
+                raylib.Rectangle.init(0, 0, shootWidthF, shootHeightF),
+                raylib.Rectangle.init(self.position.x, self.position.y, width, width * shootAspectRatio),
+                raylib.Vector2.init(self.radius, 0),
+                self.rotation,
+                self.color.alpha((Shared.Random.Get().float(f32) * 0.2) + 0.55),
             );
             raylib.drawCircleV(
                 self.position,
                 self.radius,
-                self.color.alpha(0.75),
+                self.color.alpha((Shared.Random.Get().float(f32) * 0.2) + 0.55),
             );
         }
     }
