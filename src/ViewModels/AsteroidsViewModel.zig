@@ -14,7 +14,7 @@ const Alien = @import("../Models/Alien.zig").Alien;
 pub const AsteroidsViewModel = Shared.View.ViewModel.Create(
     struct {
         // Define Constants
-        pub const PLAYER_BASE_SIZE: f32 = 20;
+        pub const PLAYER_BASE_SIZE: f32 = 30;
         pub const PLAYER_MAX_SHOOTS: i32 = 10;
 
         pub const MAX_BIG_METEORS: u16 = 64;
@@ -31,10 +31,7 @@ pub const AsteroidsViewModel = Shared.View.ViewModel.Create(
 
         pub const screenSize: raylib.Vector2 = raylib.Vector2.init(3200, 1800);
 
-        pub const shipHeight: f32 = (PLAYER_BASE_SIZE / 2) / @tan(std.math.degreesToRadians(
-            f32,
-            20,
-        ));
+        pub const shipHeight: f32 = PLAYER_BASE_SIZE;
         pub const halfShipHeight: f32 = shipHeight / 2;
 
         pub var player: Player = undefined;
@@ -71,7 +68,7 @@ pub const AsteroidsViewModel = Shared.View.ViewModel.Create(
             shieldLevel = MAX_SHIELD;
             nextShieldLevel = MAX_SHIELD;
 
-            player = Player.init(screenSize, shipHeight, 12);
+            player = Player.init(screenSize, shipHeight, halfShipHeight);
 
             score = 0;
 
