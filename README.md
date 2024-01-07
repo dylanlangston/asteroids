@@ -120,6 +120,6 @@ class LocaleGroup {
 
 ```TODO```
 
-All the included textures were created using [Piskel](https://www.piskelapp.com/p/create/sprite) and are licensed as Creative Commons (by) Attribution.
+All the included textures were created using [Piskel](https://www.piskelapp.com/p/create/sprite) and can be found in the [`Piskel`](./Piskel/) folder. They are licensed as Creative Commons (by) Attribution.
 
 [^local-development]: For local development check out [Dev Containers](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers) and [DevPod](https://devpod.sh/).
