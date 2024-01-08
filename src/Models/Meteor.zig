@@ -132,7 +132,7 @@ pub const Meteor = struct {
                 ),
                 player.collider.z,
                 self.position,
-                self.radius,
+                self.radius * 1.25,
             )) {
                 // Phase 2, check per pixel collision with player
                 if (PerPixelCollisionDetection(self.*, player, shipHeight, base_size)) {
@@ -254,6 +254,8 @@ pub const Meteor = struct {
             raylib.beginTextureMode(meteorRenderTexture);
             defer raylib.endTextureMode();
 
+            raylib.clearBackground(Shared.Color.Transparent);
+
             // Draw Meteor
             const spriteFrame = MeteorSprite.getSpriteFrame(@intFromFloat(meteor.frame));
             raylib.drawTextureNPatch(
@@ -282,6 +284,8 @@ pub const Meteor = struct {
             raylib.beginTextureMode(playerRenderTexture);
             defer raylib.endTextureMode();
 
+            raylib.clearBackground(Shared.Color.Transparent);
+
             // Draw Player
             const shipTexture = Shared.Texture.Get(.Ship);
             const shipWidthF = @as(f32, @floatFromInt(shipTexture.width));
@@ -298,14 +302,34 @@ pub const Meteor = struct {
         const playerRenderImage = raylib.Image.fromTexture(playerRenderTexture.texture);
         defer playerRenderImage.unload();
 
-        for (0..@as(usize, @intFromFloat(height))) |y| {
-            for (0..@as(usize, @intFromFloat(width))) |x| {
+        // const debugRec = raylib.Rectangle.init(100, 100, width, height);
+        // raylib.drawRectangleRec(debugRec, Shared.Color.Yellow.Light.alpha(0.1));
+        // raylib.drawTexturePro(
+        //     playerRenderTexture.texture,
+        //     raylib.Rectangle.init(0, 0, width, -height),
+        //     debugRec,
+        //     raylib.Vector2.init(0, 0),
+        //     0,
+        //     Shared.Color.White,
+        // );
+        // raylib.drawTexturePro(
+        //     meteorRenderTexture.texture,
+        //     raylib.Rectangle.init(0, 0, width, -height),
+        //     debugRec,
+        //     raylib.Vector2.init(0, 0),
+        //     0,
+        //     Shared.Color.White,
+        // );
+
+        for (0..std.math.absCast(@as(i32, @intFromFloat(height)))) |y| {
+            for (0..std.math.absCast(@as(i32, @intFromFloat(width)))) |x| {
                 // Get the color from each image
                 const meteorColor = raylib.getImageColor(meteorRenderImage, @intCast(x), @intCast(y));
                 const playerColor = raylib.getImageColor(playerRenderImage, @intCast(x), @intCast(y));
 
                 if (meteorColor.a == 255 and playerColor.a == 255) // If both colors are not transparent (the alpha channel is not 0), then there is a collision
                 {
+                    //raylib.drawRectangleRec(debugRec, Shared.Color.Red.Light.alpha(0.1));
                     return true;
                 }
             }
