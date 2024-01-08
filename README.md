@@ -17,7 +17,6 @@ Asteroid Arena is a twist on the classic game with an expanded world where aster
 This [Mobile First](https://developer.mozilla.org/en-US/docs/Glossary/Mobile_First) [Progressive Web App](https://developer.mozilla.org/en-US/docs/Web/Progressive_web_apps) is a submission to the 2023 *Raylib Slo-Jam* event hosted on [itch.io](https://itch.io/), It was created by [@dylanlangston](https://github.com/dylanlangston) using the following:
 - [Zig](https://ziglang.org/)
 - [raylib](https://www.raylib.com/) via [raylib-Zig](https://github.com/Not-Nik/raylib-zig/tree/devel)
-- [raygui](https://github.com/raysan5/raygui) via [raygui.zig](https://github.com/ryupold/raygui.zig)
 - [Emscripten](https://emscripten.org/)
 - [Binaryen](https://github.com/WebAssembly/binaryen)
 - [Svelte](https://svelte.dev/)
