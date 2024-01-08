@@ -124,8 +124,11 @@ class LocaleGroup {
 | _[Pew](./src/Sounds/Pew.ogg)_ | [miajohnson99](https://github.com/miajohnson99) | [Chiptone](https://sfbgames.itch.io/chiptone) | `eNpjYig-PkOQie2_vcFeAYkmBQaGhnp3RmaGcOaVLP_ra-IZjIwZGECCZ3wg9BGF3OMg-poz6zZkcRidpgahGdaxGxlPBDKZeHU9D4JEXqrtvAeimf7bQ5TAaGZ0AT7ettMg2jv8FCOymTMioerAMFKF15eBngAATc423A..` | Creative Commons (by) Attribution |
 | _[Small Explosion](./src/Sounds/SmallExplosion.ogg)_ | [miajohnson99](https://github.com/miajohnson99) | [Chiptone](https://sfbgames.itch.io/chiptone) | `eNpjYig-PkOQgSNNjoGh9j8DEDTUMzCEM59j_Mf1v_6_PYORMUTwjA8qPSMSu3iaGtSQdexGxhNBbKAhYBEYTViAj7ftNIj2Dj_FiGwmzM7_YFhl8iCKgZ4AACVNNOI.` | Creative Commons (by) Attribution |
 
-| Music | Creator | Tool | License |
-|:-------:|:------:|:---:|:-------:|
+| Music | Creator | Tool | Link | License |
+|:-------:|:------:|:---:|:----:|:-------:|
+| _[Background](./src/Music/BackgroundMusic.ogg)_ | [miajohnson99](https://github.com/miajohnson99) | [BeepBox](https://www.beepbox.co/) | [Background](https://www.beepbox.co/#9n31s1k9l00e05t1Aa7g05j07r1i0o432T0v2u00f10l7q8142d35w2h0E0T5v2u50f0qwx10p511d08H-JJAArrqiih999h0E1b6T1v2u01f10r8q011d35AcF8B5Q0259P8998E0T3v3uf7f0qwx10m711d08SZIztrsrzrqiiiiiE1b6b4zhm4zhl4zdi4h4hp22mISLA2qJaHaAZlHJK3x1c3qXHqGiOGyox8vrdTmpHZ6WJJiLjIS5DAOJWYe8ebdHWEq-WHGL1qxkWHGL2oGKHaKFJvokBjjGicBsaq_4idkz9icz9q5dltBJR-FnprjljkFJv9kzt0yCL05dJdldl80) | Creative Commons (by) Attribution |
+| _[Game Over](./src/Sounds/Gameover.ogg)_ | [miajohnson99](https://github.com/miajohnson99) | [BeepBox](https://www.beepbox.co/) | [Game Over](https://www.beepbox.co/#9n30s1k9l00e00t2ma4g00j07r1i0o432T0v1u00f0q012d08w2h2E306060cT5v3u50f0qwx10p511d08H-JJAArrqiih999h0E1b6T1v1u84f10r8q011d35AcF8B5Q0259P8998E0b4hp1uFH-5I59O82CLUmOs3i0FJvQCLQsh00) | Creative Commons (by) Attribution |
+| _[Title Screen](./src/Music/TitleScreenMusic.ogg)_ | [miajohnson99](https://github.com/miajohnson99) | [BeepBox](https://www.beepbox.co/) | [Title Screen](https://www.beepbox.co/#9n30s1k9l00e04t1Za7g04j07r1i0o432T0v1u00f0q012d08w2h0E0T5v2u50f0qwx10p511d08H-JJAArrqiih999h0E1b6T1v2u84f10r8q011d35AcF8B5Q0259P8998E0b4zhh8Qkid5p22BIR_6GgAR_u8TwullupL4l5JFEZ6CODrHGHXAIHcCXHYQePrHSGqGqHWqKAiiSXAHaAtESLsl5dHYaoaDcq-2FIR_ixdvRAt2Zk6CzNGZGLbbGGqHWqJO-WG-KKMmrz-dky9JvHDy8umrnXiVmbKQbujnZpepAZ54nrNSw) | Creative Commons (by) Attribution |
 
 ```TODO```
 
