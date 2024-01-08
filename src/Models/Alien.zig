@@ -4,6 +4,7 @@ const raylib_math = @import("raylib-math");
 const Shared = @import("../Shared.zig").Shared;
 const Player = @import("./Player.zig").Player;
 const Shoot = @import("./Shoot.zig").Shoot;
+const Explosion = @import("./Explosion.zig").Explosion;
 
 pub const Alien = struct {
     position: raylib.Vector2,
@@ -14,6 +15,7 @@ pub const Alien = struct {
     color: raylib.Color,
     frame: f32,
     shouldDraw: bool = false,
+    explosion: Explosion,
 
     const ANIMATION_SPEED_MOD = 10;
     pub const ALIEN_SPEED: f32 = 4;
@@ -45,6 +47,7 @@ pub const Alien = struct {
             .active = false,
             .color = Shared.Color.Green.Dark,
             .frame = Shared.Random.Get().float(f32) * 10,
+            .explosion = Explosion{ .active = false, .particle = undefined, .lifeSpawn = 0, .position = undefined, .blastRadius = 40 },
         };
 
         return alien;
@@ -76,6 +79,10 @@ pub const Alien = struct {
     }
 
     pub inline fn Update(self: *@This(), player: Player, comptime shoots: []Shoot, comptime alien_shoots: []Shoot, screenSize: raylib.Vector2) AlienStatus {
+        if (self.explosion.active) {
+            self.explosion.Update(screenSize);
+        }
+
         // If Active
         if (self.active) {
             if (self.frame > 10) {
@@ -137,6 +144,7 @@ pub const Alien = struct {
                     shoots[i].active = false;
                     shoots[i].lifeSpawn = 0;
                     self.active = false;
+                    self.explosion = Explosion.init(self.position, Shared.Color.Yellow, self.radius);
 
                     Shared.Sound.Play(.AlienExplosion);
 
@@ -201,6 +209,10 @@ pub const Alien = struct {
     const activeRadiusY = 325;
 
     pub inline fn Draw(self: @This()) void {
+        if (self.explosion.active) {
+            self.explosion.Draw();
+        }
+
         if (!self.shouldDraw or !self.active) return;
 
         const alienTexture = Shared.Texture.Get(.Alien);
