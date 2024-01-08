@@ -58,6 +58,8 @@ pub fn DrawFunction() Shared.View.Views {
     const accentColor = Shared.Color.Yellow.Dark;
 
     // Title
+    const titleTexture = Shared.Texture.Get(.title);
+
     const TitleTextSize = raylib.measureTextEx(
         font,
         title,
@@ -65,6 +67,16 @@ pub fn DrawFunction() Shared.View.Views {
         @floatFromInt(font.glyphPadding),
     );
     const titleFontsizeF: f32 = TitleTextSize.y;
+    const titleTextureHeight: f32 = @as(f32, @floatFromInt(titleTexture.height)) / 1400 * screenWidth;
+    const titleTextureWidth: f32 = @as(f32, @floatFromInt(titleTexture.width)) / 787.5 * screenHeight;
+    raylib.drawTexturePro(
+        titleTexture,
+        raylib.Rectangle.init(0, 0, @floatFromInt(titleTexture.width), @floatFromInt(titleTexture.height)),
+        raylib.Rectangle.init(((screenWidth - titleTextureWidth) / 2), startY - (titleTextureHeight / 2), titleTextureWidth, titleTextureHeight),
+        raylib.Vector2.init(0, 0),
+        0,
+        Shared.Color.White.alpha(0.5),
+    );
     raylib.drawTextEx(
         font,
         title,
