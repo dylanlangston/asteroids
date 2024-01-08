@@ -72,6 +72,7 @@ pub const Explosion = struct {
         if (self.active) {
             for (0..PARTICLE_COUNT) |i| {
                 self.particle[i].Draw();
+                if (@as(f32, @floatFromInt(i)) > self.blastRadius * 2) break;
             }
         }
     }
