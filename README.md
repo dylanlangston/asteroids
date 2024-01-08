@@ -19,7 +19,6 @@ This [Mobile First](https://developer.mozilla.org/en-US/docs/Glossary/Mobile_Fir
 - [raylib](https://www.raylib.com/) via [raylib-Zig](https://github.com/Not-Nik/raylib-zig/tree/devel)
 - [raygui](https://github.com/raysan5/raygui) via [raygui.zig](https://github.com/ryupold/raygui.zig)
 - [Emscripten](https://emscripten.org/)
-- [Wizer](https://github.com/bytecodealliance/wizer)
 - [Binaryen](https://github.com/WebAssembly/binaryen)
 - [Svelte](https://svelte.dev/)
 - [TypeScript](https://www.typescriptlang.org/)
