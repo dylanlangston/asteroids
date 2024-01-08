@@ -6,7 +6,7 @@ const Player = @import("./Player.zig").Player;
 const Shoot = @import("./Shoot.zig").Shoot;
 const Alien = @import("./Alien.zig").Alien;
 
-pub const MeteorSprite = Shared.Sprite.init(5, .Yellow_Meteor);
+pub const MeteorSprite = Shared.Sprite.init(5, .Meteor1);
 
 pub const Meteor = struct {
     position: raylib.Vector2,
@@ -304,7 +304,7 @@ pub const Meteor = struct {
                 const meteorColor = raylib.getImageColor(meteorRenderImage, @intCast(x), @intCast(y));
                 const playerColor = raylib.getImageColor(playerRenderImage, @intCast(x), @intCast(y));
 
-                if (meteorColor.a != 0 and playerColor.a != 0) // If both colors are not transparent (the alpha channel is not 0), then there is a collision
+                if (meteorColor.a == 255 and playerColor.a == 255) // If both colors are not transparent (the alpha channel is not 0), then there is a collision
                 {
                     return true;
                 }
