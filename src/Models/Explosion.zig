@@ -18,6 +18,7 @@ pub const Explosion = struct {
         var particles: [PARTICLE_COUNT]Particle = undefined;
         for (0..PARTICLE_COUNT) |i| {
             particles[i] = Particle.init(position, GetRandomColor(color), Shared.Random.Get().float(f32) * 4);
+            if (@as(f32, @floatFromInt(i)) > blastRadius * 2) break;
         }
 
         return Explosion{
@@ -60,8 +61,10 @@ pub const Explosion = struct {
                 }
 
                 self.particle[i] = particle;
+
+                if (@as(f32, @floatFromInt(i)) > self.blastRadius * 2) break;
             }
-            self.active = nonActiveCount < PARTICLE_COUNT;
+            self.active = @as(f32, @floatFromInt(nonActiveCount)) < self.blastRadius;
         }
     }
 
