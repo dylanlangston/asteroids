@@ -242,13 +242,13 @@ pub const AsteroidsViewModel = Shared.View.ViewModel.Create(
 
                                 if (@rem(midMeteorsCount, 2) == 0) {
                                     mediumMeteors[@intCast(midMeteorsCount)].speed = raylib.Vector2.init(
-                                        @cos(std.math.degreesToRadians(f32, shot.rotation)) * Meteor.METEORS_SPEED * -1,
-                                        @sin(std.math.degreesToRadians(f32, shot.rotation)) * Meteor.METEORS_SPEED * -1,
+                                        @cos(std.math.degreesToRadians(f32, shot.rotation)) * Meteor.METEORS_SPEED * Shared.Random.Get().float(f32) * -1,
+                                        @sin(std.math.degreesToRadians(f32, shot.rotation)) * Meteor.METEORS_SPEED * Shared.Random.Get().float(f32) * -1,
                                     );
                                 } else {
                                     mediumMeteors[@intCast(midMeteorsCount)].speed = raylib.Vector2.init(
-                                        @cos(std.math.degreesToRadians(f32, shot.rotation)) * Meteor.METEORS_SPEED,
-                                        @sin(std.math.degreesToRadians(f32, shot.rotation)) * Meteor.METEORS_SPEED,
+                                        @cos(std.math.degreesToRadians(f32, shot.rotation)) * Meteor.METEORS_SPEED * Shared.Random.Get().float(f32),
+                                        @sin(std.math.degreesToRadians(f32, shot.rotation)) * Meteor.METEORS_SPEED * Shared.Random.Get().float(f32),
                                     );
                                 }
 
@@ -291,13 +291,13 @@ pub const AsteroidsViewModel = Shared.View.ViewModel.Create(
 
                                 if (@rem(midMeteorsCount, 2) == 0) {
                                     mediumMeteors[@intCast(midMeteorsCount)].speed = raylib.Vector2.init(
-                                        @cos(std.math.degreesToRadians(f32, player.rotation)) * Meteor.METEORS_SPEED * -1,
-                                        @sin(std.math.degreesToRadians(f32, player.rotation)) * Meteor.METEORS_SPEED * -1,
+                                        @cos(std.math.degreesToRadians(f32, player.rotation)) * Meteor.METEORS_SPEED * Shared.Random.Get().float(f32) * -1,
+                                        @sin(std.math.degreesToRadians(f32, player.rotation)) * Meteor.METEORS_SPEED * Shared.Random.Get().float(f32) * -1,
                                     );
                                 } else {
                                     mediumMeteors[@intCast(midMeteorsCount)].speed = raylib.Vector2.init(
-                                        @cos(std.math.degreesToRadians(f32, player.rotation)) * Meteor.METEORS_SPEED,
-                                        @sin(std.math.degreesToRadians(f32, player.rotation)) * Meteor.METEORS_SPEED,
+                                        @cos(std.math.degreesToRadians(f32, player.rotation)) * Meteor.METEORS_SPEED * Shared.Random.Get().float(f32),
+                                        @sin(std.math.degreesToRadians(f32, player.rotation)) * Meteor.METEORS_SPEED * Shared.Random.Get().float(f32),
                                     );
                                 }
 
@@ -340,13 +340,13 @@ pub const AsteroidsViewModel = Shared.View.ViewModel.Create(
 
                                 if (@rem(smallMeteorsCount, 2) == 0) {
                                     smallMeteors[@intCast(smallMeteorsCount)].speed = raylib.Vector2.init(
-                                        @cos(std.math.degreesToRadians(f32, shot.rotation)) * Meteor.METEORS_SPEED * -1,
-                                        @sin(std.math.degreesToRadians(f32, shot.rotation)) * Meteor.METEORS_SPEED * -1,
+                                        @cos(std.math.degreesToRadians(f32, shot.rotation)) * Meteor.METEORS_SPEED * Shared.Random.Get().float(f32) * -1,
+                                        @sin(std.math.degreesToRadians(f32, shot.rotation)) * Meteor.METEORS_SPEED * Shared.Random.Get().float(f32) * -1,
                                     );
                                 } else {
                                     smallMeteors[@intCast(smallMeteorsCount)].speed = raylib.Vector2.init(
-                                        @cos(std.math.degreesToRadians(f32, shot.rotation)) * Meteor.METEORS_SPEED,
-                                        @sin(std.math.degreesToRadians(f32, shot.rotation)) * Meteor.METEORS_SPEED,
+                                        @cos(std.math.degreesToRadians(f32, shot.rotation)) * Meteor.METEORS_SPEED * Shared.Random.Get().float(f32),
+                                        @sin(std.math.degreesToRadians(f32, shot.rotation)) * Meteor.METEORS_SPEED * Shared.Random.Get().float(f32),
                                     );
                                 }
 
@@ -389,13 +389,13 @@ pub const AsteroidsViewModel = Shared.View.ViewModel.Create(
 
                                 if (@rem(smallMeteorsCount, 2) == 0) {
                                     smallMeteors[@intCast(smallMeteorsCount)].speed = raylib.Vector2.init(
-                                        @cos(std.math.degreesToRadians(f32, player.rotation)) * Meteor.METEORS_SPEED * -1,
-                                        @sin(std.math.degreesToRadians(f32, player.rotation)) * Meteor.METEORS_SPEED * -1,
+                                        @cos(std.math.degreesToRadians(f32, player.rotation)) * Meteor.METEORS_SPEED * Shared.Random.Get().float(f32) * -1,
+                                        @sin(std.math.degreesToRadians(f32, player.rotation)) * Meteor.METEORS_SPEED * Shared.Random.Get().float(f32) * -1,
                                     );
                                 } else {
                                     smallMeteors[@intCast(smallMeteorsCount)].speed = raylib.Vector2.init(
-                                        @cos(std.math.degreesToRadians(f32, player.rotation)) * Meteor.METEORS_SPEED,
-                                        @sin(std.math.degreesToRadians(f32, player.rotation)) * Meteor.METEORS_SPEED,
+                                        @cos(std.math.degreesToRadians(f32, player.rotation)) * Meteor.METEORS_SPEED * Shared.Random.Get().float(f32),
+                                        @sin(std.math.degreesToRadians(f32, player.rotation)) * Meteor.METEORS_SPEED * Shared.Random.Get().float(f32),
                                     );
                                 }
 
