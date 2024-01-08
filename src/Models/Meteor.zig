@@ -5,6 +5,7 @@ const Shared = @import("../Shared.zig").Shared;
 const Player = @import("./Player.zig").Player;
 const Shoot = @import("./Shoot.zig").Shoot;
 const Alien = @import("./Alien.zig").Alien;
+const Explosion = @import("./Explosion.zig").Explosion;
 
 pub const SpriteFrames = 5;
 const MeteorSprite1 = Shared.Sprite.init(SpriteFrames, .Meteor1);
@@ -27,6 +28,7 @@ pub const Meteor = struct {
     color: raylib.Color,
     frame: f32,
     meteorSprite: Shared.Sprite,
+    explosion: Explosion,
 
     const ANIMATION_SPEED_MOD = 15;
     pub const METEORS_SPEED = 3;
@@ -65,6 +67,7 @@ pub const Meteor = struct {
             .color = Shared.Color.White,
             .frame = 0,
             .meteorSprite = GetSprite(),
+            .explosion = Explosion{ .active = false, .particle = undefined, .lifeSpawn = 0, .position = undefined, .blastRadius = radius },
         };
 
         return meteor;
@@ -166,6 +169,10 @@ pub const Meteor = struct {
     }
 
     pub inline fn Update(self: *@This(), player: Player, comptime shoots: []Shoot, comptime aliens: []Alien, comptime alien_shoots: []Shoot, screenSize: raylib.Vector2, shipHeight: f32, base_size: f32) MeteorStatus {
+        if (self.explosion.active) {
+            self.explosion.Update(screenSize);
+        }
+
         // If Active
         if (self.active) {
             // Reset Frame
@@ -184,6 +191,7 @@ pub const Meteor = struct {
                 // Phase 2, check per pixel collision with player
                 if (PerPixelCollisionDetection(self.*, player, shipHeight, base_size)) {
                     self.active = false;
+                    self.explosion = Explosion.init(self.position, Shared.Color.Green, self.radius);
 
                     Shared.Sound.Play(.Explosion);
                     return MeteorStatus{ .collide = true };
@@ -253,6 +261,7 @@ pub const Meteor = struct {
                     shoots[i].active = false;
                     shoots[i].lifeSpawn = 0;
                     self.active = false;
+                    self.explosion = Explosion.init(self.position, Shared.Color.Green, self.radius);
 
                     return MeteorStatus{ .shot = shoots[i] };
                 }
@@ -269,6 +278,7 @@ pub const Meteor = struct {
                     alien_shoots[i].active = false;
                     alien_shoots[i].lifeSpawn = 0;
                     self.active = false;
+                    self.explosion = Explosion.init(self.position, Shared.Color.Green, self.radius);
 
                     return MeteorStatus{ .shot = alien_shoots[i] };
                 }
@@ -280,6 +290,10 @@ pub const Meteor = struct {
             return MeteorStatus{ .animating = true };
         }
         self.frame = SpriteFrames - 1;
+
+        if (self.explosion.active) {
+            return MeteorStatus{ .animating = true };
+        }
 
         return MeteorStatus{ .default = true };
     }
@@ -388,6 +402,10 @@ pub const Meteor = struct {
     const activeRadiusY = 375;
 
     pub inline fn Draw(self: @This(), shipPosition: raylib.Vector2) void {
+        if (self.explosion.active) {
+            self.explosion.Draw();
+        }
+
         if (self.position.x == inactivitePoint and self.position.y == inactivitePoint) return;
         if (self.frame == SpriteFrames - 1) return;
 

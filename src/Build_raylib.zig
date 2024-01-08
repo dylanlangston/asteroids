@@ -260,6 +260,8 @@ pub fn linkWithEmscripten(
         "-sMODULARIZE",
         "-sEXPORT_NAME=emscriptenModuleFactory",
         "-sEXPORT_ES6",
+        "-sINITIAL_MEMORY=4mb",
+        "-sSTACK_SIZE=1mb",
     });
     return emcc_command;
 }
