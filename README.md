@@ -130,8 +130,6 @@ class LocaleGroup {
 | _[Game Over](./src/Sounds/Gameover.ogg)_ | [miajohnson99](https://github.com/miajohnson99) | [BeepBox](https://www.beepbox.co/) | [Game Over](https://www.beepbox.co/#9n30s1k9l00e00t2ma4g00j07r1i0o432T0v1u00f0q012d08w2h2E306060cT5v3u50f0qwx10p511d08H-JJAArrqiih999h0E1b6T1v1u84f10r8q011d35AcF8B5Q0259P8998E0b4hp1uFH-5I59O82CLUmOs3i0FJvQCLQsh00) | Creative Commons (by) Attribution |
 | _[Title Screen](./src/Music/TitleScreenMusic.ogg)_ | [miajohnson99](https://github.com/miajohnson99) | [BeepBox](https://www.beepbox.co/) | [Title Screen](https://www.beepbox.co/#9n30s1k9l00e04t1Za7g04j07r1i0o432T0v1u00f0q012d08w2h0E0T5v2u50f0qwx10p511d08H-JJAArrqiih999h0E1b6T1v2u84f10r8q011d35AcF8B5Q0259P8998E0b4zhh8Qkid5p22BIR_6GgAR_u8TwullupL4l5JFEZ6CODrHGHXAIHcCXHYQePrHSGqGqHWqKAiiSXAHaAtESLsl5dHYaoaDcq-2FIR_ixdvRAt2Zk6CzNGZGLbbGGqHWqJO-WG-KKMmrz-dky9JvHDy8umrnXiVmbKQbujnZpepAZ54nrNSw) | Creative Commons (by) Attribution |
 
-```TODO```
-
 All the included textures were created using [Piskel](https://www.piskelapp.com/p/create/sprite) and can be found in the [`Piskel`](./Piskel/) folder. They are licensed as Creative Commons (by) Attribution.
 
 [^local-development]: For local development check out [Dev Containers](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers) and [DevPod](https://devpod.sh/).
