@@ -10,7 +10,7 @@ pub const Particle = struct {
     active: bool,
     color: raylib.Color,
 
-    const ANIMATION_SPEED_MOD = 100;
+    const ANIMATION_SPEED_MOD = 200;
 
     const PARTICLE_MAX_SPEED: f32 = 100;
     const PARTICLE_MIN_SPEED: f32 = 20;
@@ -22,8 +22,8 @@ pub const Particle = struct {
         return Particle{
             .position = position,
             .speed = raylib.Vector2.init(
-                @cos((std.math.degreesToRadians(f32, rotation) * (PARTICLE_MAX_SPEED - PARTICLE_MIN_SPEED)) + PARTICLE_MIN_SPEED),
-                @sin((std.math.degreesToRadians(f32, rotation) * (PARTICLE_MAX_SPEED - PARTICLE_MIN_SPEED)) + PARTICLE_MIN_SPEED),
+                @cos(std.math.degreesToRadians(f32, rotation)),
+                @sin(std.math.degreesToRadians(f32, rotation)),
             ),
             .radius = radius,
             .active = true,
@@ -36,20 +36,20 @@ pub const Particle = struct {
         self.position = position;
         const rotation = Shared.Random.Get().float(f32) * 360;
         self.speed = raylib.Vector2.init(
-            @cos((std.math.degreesToRadians(f32, rotation) * (PARTICLE_MAX_SPEED - PARTICLE_MIN_SPEED)) + PARTICLE_MIN_SPEED),
-            @sin((std.math.degreesToRadians(f32, rotation) * (PARTICLE_MAX_SPEED - PARTICLE_MIN_SPEED)) + PARTICLE_MIN_SPEED),
+            @cos(std.math.degreesToRadians(f32, rotation)),
+            @sin(std.math.degreesToRadians(f32, rotation)),
         );
         self.active = true;
         self.lifeSpawn = Shared.Random.Get().float(f32) * (LifeSpanLength / 2);
     }
 
-    pub inline fn Update(self: *@This(), screenSize: raylib.Vector2, endLifeSpan: f32) void {
+    pub inline fn Update(self: *@This(), screenSize: raylib.Vector2, distance: f32) void {
         if (self.active) {
             self.lifeSpawn += raylib.getFrameTime() * ANIMATION_SPEED_MOD;
 
             // Movement
-            self.position.x += self.speed.x;
-            self.position.y -= self.speed.y;
+            self.position.x += self.speed.x * (distance / 20);
+            self.position.y -= self.speed.y * (distance / 20);
 
             // Collision logic: particle vs walls
             if (self.position.x > screenSize.x + self.radius) {
@@ -68,7 +68,7 @@ pub const Particle = struct {
             }
 
             // Life of particle
-            if (self.lifeSpawn >= endLifeSpan) {
+            if (self.lifeSpawn >= LifeSpanLength) {
                 self.position.x = 0;
                 self.position.y = 0;
                 self.speed.x = 0;
