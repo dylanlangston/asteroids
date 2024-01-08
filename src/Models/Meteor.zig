@@ -6,7 +6,17 @@ const Player = @import("./Player.zig").Player;
 const Shoot = @import("./Shoot.zig").Shoot;
 const Alien = @import("./Alien.zig").Alien;
 
-pub const MeteorSprite = Shared.Sprite.init(5, .Meteor1);
+pub const SpriteFrames = 5;
+const MeteorSprite1 = Shared.Sprite.init(SpriteFrames, .Meteor1);
+const MeteorSprite2 = Shared.Sprite.init(SpriteFrames, .Meteor2);
+const MeteorSprite3 = Shared.Sprite.init(SpriteFrames, .Meteor3);
+const MeteorSprite4 = Shared.Sprite.init(SpriteFrames, .Meteor4);
+const MeteorSprite5 = Shared.Sprite.init(SpriteFrames, .Meteor5);
+const MeteorSprite6 = Shared.Sprite.init(SpriteFrames, .Meteor6);
+const MeteorSprite7 = Shared.Sprite.init(SpriteFrames, .Meteor7);
+const MeteorSprite8 = Shared.Sprite.init(SpriteFrames, .Meteor8);
+const MeteorSprite9 = Shared.Sprite.init(SpriteFrames, .Meteor9);
+const MeteorSprite10 = Shared.Sprite.init(SpriteFrames, .Meteor10);
 
 pub const Meteor = struct {
     position: raylib.Vector2,
@@ -16,6 +26,7 @@ pub const Meteor = struct {
     active: bool,
     color: raylib.Color,
     frame: f32,
+    meteorSprite: Shared.Sprite,
 
     const ANIMATION_SPEED_MOD = 15;
     pub const METEORS_SPEED = 3;
@@ -53,9 +64,45 @@ pub const Meteor = struct {
             .active = false,
             .color = Shared.Color.White,
             .frame = 0,
+            .meteorSprite = GetSprite(),
         };
 
         return meteor;
+    }
+
+    inline fn GetSprite() Shared.Sprite {
+        switch (Shared.Random.Get().intRangeAtMost(u8, 0, 20)) {
+            0...1 => {
+                return MeteorSprite1;
+            },
+            2...3 => {
+                return MeteorSprite2;
+            },
+            4...5 => {
+                return MeteorSprite3;
+            },
+            6...7 => {
+                return MeteorSprite4;
+            },
+            8...9 => {
+                return MeteorSprite5;
+            },
+            10...12 => {
+                return MeteorSprite6;
+            },
+            13...15 => {
+                return MeteorSprite7;
+            },
+            16 => {
+                return MeteorSprite8;
+            },
+            17...18 => {
+                return MeteorSprite9;
+            },
+            else => {
+                return MeteorSprite10;
+            },
+        }
     }
 
     pub inline fn RandomizePositionAndSpeed(self: *@This(), player: Player, screenSize: raylib.Vector2, offscreen: bool) void {
@@ -228,18 +275,17 @@ pub const Meteor = struct {
             }
 
             return MeteorStatus{ .active = true };
-        } else if (self.frame < MeteorSprite.Frames - 1) {
+        } else if (self.frame < SpriteFrames - 1) {
             self.frame += raylib.getFrameTime() * ANIMATION_SPEED_MOD;
             return MeteorStatus{ .animating = true };
         }
-        self.frame = MeteorSprite.Frames - 1;
+        self.frame = SpriteFrames - 1;
 
         return MeteorStatus{ .default = true };
     }
 
     // Very costly to calculate so this should be used sparingly
     pub fn PerPixelCollisionDetection(meteor: Meteor, player: Player, shipHeight: f32, base_size: f32) bool {
-
         // Calculate the intersecting rectangle
         const x1 = @max(meteor.position.x - meteor.radius, player.collider.x - player.collider.z);
         const x2 = @min(meteor.position.x + meteor.radius, player.collider.x + player.collider.z);
@@ -257,7 +303,7 @@ pub const Meteor = struct {
             raylib.clearBackground(Shared.Color.Transparent);
 
             // Draw Meteor
-            const spriteFrame = MeteorSprite.getSpriteFrame(@intFromFloat(meteor.frame));
+            const spriteFrame = meteor.meteorSprite.getSpriteFrame(@intFromFloat(meteor.frame));
             raylib.drawTextureNPatch(
                 spriteFrame.Texture,
                 spriteFrame.NPatchInfo,
@@ -343,15 +389,15 @@ pub const Meteor = struct {
 
     pub inline fn Draw(self: @This(), shipPosition: raylib.Vector2) void {
         if (self.position.x == inactivitePoint and self.position.y == inactivitePoint) return;
-        if (self.frame == MeteorSprite.Frames - 1) return;
+        if (self.frame == SpriteFrames - 1) return;
 
         const visibleX = self.position.x - shipPosition.x;
         const visibleY = self.position.y - shipPosition.y;
         if (visibleX > activeRadiusX or visibleX < -activeRadiusX) return;
         if (visibleY > activeRadiusY or visibleY < -activeRadiusY) return;
 
-        const spriteFrame = MeteorSprite.getSpriteFrame(@intFromFloat(self.frame));
-        const color: raylib.Color = if (self.active) self.color else raylib.Color.fade(self.color, (MeteorSprite.Frames - self.frame) / MeteorSprite.Frames);
+        const spriteFrame = self.meteorSprite.getSpriteFrame(@intFromFloat(self.frame));
+        const color: raylib.Color = if (self.active) self.color else raylib.Color.fade(self.color, (SpriteFrames - self.frame) / SpriteFrames);
 
         raylib.drawTextureNPatch(
             spriteFrame.Texture,
