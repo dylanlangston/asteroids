@@ -177,9 +177,9 @@ jobs:
         artifacts: "${{ steps.download.outputs.download-path }}/../asteroids-v${{ needs.build.outputs.datetime}}.zip"
         artifactContentType: application/zip
         body: |
-          **Asteroids Game - _Prerelease v${{ needs.build.outputs.datetime }}_**
+          **Asteroids Game - _Release v${{ needs.build.outputs.datetime }}_**
           ${{ github.event.head_commit.message }}
-        prerelease: true
+        prerelease: false
         draft: false
         commit: ${{ github.head_ref }}
         tag: v${{ needs.build.outputs.datetime }}
