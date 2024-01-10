@@ -20,6 +20,13 @@ pub const Localelizer = struct {
     }
 };
 
+pub const Locales = enum(usize) {
+    unknown = 0,
+    english,
+    spanish,
+    french,
+};
+
 pub const Locale = struct {
     Dylan_Splash_Text: [:0]const u8,
     Title: [:0]const u8,
@@ -35,25 +42,8 @@ pub const Locale = struct {
     Missing_Text: [:0]const u8,
 };
 
-pub const Locales = enum(usize) {
-    unknown = 0,
-    english,
-    spanish,
-    french,
-};
-
 export fn updateWasmLocale(locale: usize) void {
     Logger.Info_Formatted("Setting Locale to: {}", .{locale});
-    switch (locale) {
-        @intFromEnum(Locales.spanish) => {
-            Shared.Settings.UpdateSettings(.{ .UserLocale = Locales.spanish });
-        },
-        @intFromEnum(Locales.french) => {
-            Shared.Settings.UpdateSettings(.{ .UserLocale = Locales.french });
-        },
-        // Default to English
-        else => {
-            Shared.Settings.UpdateSettings(.{ .UserLocale = Locales.english });
-        },
-    }
+    const localeEnum: Locales = @enumFromInt(@max(locale, @intFromEnum(Locales.english)));
+    Shared.Settings.UpdateSettings(.{ .UserLocale = localeEnum });
 }
