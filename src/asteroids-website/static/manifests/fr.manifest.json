@@ -1,8 +1,8 @@
 {
 	"name": "Arène d'astéroïdes",
 	"short_name": "Arène d'astéroïdes",
-	"theme_color": "#2485a6",
-	"background_color": "#754d45",
+	"theme_color": "#ffc27a",
+	"background_color": "#201433",
 	"display_override": ["standalone", "window-controls-overlay", "fullscreen"],
 	"display": "minimal-ui",
 	"orientation": "landscape",

@@ -1,8 +1,8 @@
 {
 	"name": "Arena de asteroides",
 	"short_name": "Arena de asteroides",
-	"theme_color": "#2485a6",
-	"background_color": "#754d45",
+	"theme_color": "#ffc27a",
+	"background_color": "#201433",
 	"display_override": ["standalone", "window-controls-overlay", "fullscreen"],
 	"display": "minimal-ui",
 	"orientation": "landscape",
